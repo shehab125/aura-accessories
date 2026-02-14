@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout — Aura Accessories</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+    <style>
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: var(--space-10);
+            align-items: start;
+        }
+
+        .step-indicator {
+            display: flex;
+            gap: var(--space-2);
+            align-items: center;
+            margin-bottom: var(--space-10);
+            justify-content: center;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        .step.active {
+            color: var(--gold);
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            font-weight: 700;
+        }
+
+        .step.active .step-num {
+            background: var(--gold);
+            color: var(--black);
+            border-color: var(--gold);
+        }
+
+        .step-line {
+            width: 40px;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: var(--space-3);
+        }
+
+        .payment-option:hover,
+        .payment-option.active {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .payment-option input[type="radio"] {
+            accent-color: var(--gold);
+            width: 18px;
+            height: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-loader">
+        <div class="loader-ring"></div>
+    </div>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="nav-brand"><img src="aura-accessories-logo.svg" alt="AURA" class="nav-logo"></a>
+            <div class="nav-links"><a href="index.html" data-i18n="home">Home</a><a href="shop.html"
+                    data-i18n="shop">Shop</a><a href="cart.html" data-i18n="cart">Cart</a>
+            </div>
+            <div class="nav-icons" style="margin-left:auto;">
+                <a href="#" class="nav-icon-btn" id="lang-toggle"
+                    style="font-weight:700; font-size:var(--text-xs); width:auto; padding:0 var(--space-2);">EN</a>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-menu" id="mobile-menu"><a href="index.html" data-i18n="home">Home</a><a href="shop.html"
+            data-i18n="shop">Shop</a><a href="cart.html" data-i18n="cart">Cart</a></div>
+
+    <section class="section" style="padding-top: calc(80px + var(--space-10));">
+        <div class="container">
+            <!-- Steps -->
+            <div class="step-indicator reveal">
+                <div class="step active"><span class="step-num">1</span> Shipping</div>
+                <div class="step-line"></div>
+                <div class="step"><span class="step-num">2</span> Payment</div>
+                <div class="step-line"></div>
+                <div class="step"><span class="step-num">3</span> Confirmation</div>
+            </div>
+
+            <div class="checkout-grid">
+                <!-- Form -->
+                <div class="reveal-left">
+                    <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-8);" data-i18n="shippingAddress">Shipping Information</h2>
+                    <form id="checkout-form">
+                        <div class="form-group"><label class="form-label" data-i18n="fullName">Full Name</label><input type="text" name="customerName" class="form-input" placeholder="Ahmed Mohamed" required></div>
+                        <div class="form-group"><label class="form-label" data-i18n="email">Email</label><input type="email" name="customerEmail" class="form-input" placeholder="ahmed@email.com" required></div>
+                        <div class="form-group"><label class="form-label" data-i18n="phoneNumber">Phone</label><input type="tel" name="customerPhone" class="form-input" placeholder="+20 1XX XXX XXXX" required></div>
+                        <div class="form-group"><label class="form-label" data-i18n="address">Address</label><input type="text" name="address" class="form-input" placeholder="Street, City" required></div>
+                        <div class="form-group"><label class="form-label" data-i18n="orderNotes">Notes (optional)</label><textarea name="notes" class="form-input" rows="2" placeholder="Delivery instructions..."></textarea></div>
+
+                        <!-- Payment: استلام فقط (Cash on Delivery only) -->
+                        <h3 style="font-size: var(--text-lg); margin: var(--space-8) 0 var(--space-4);" data-i18n="payment">Payment</h3>
+                        <div class="payment-option active">
+                            <input type="radio" name="payment" value="cod" checked>
+                            <div style="flex:1">
+                                <div style="font-weight:500; font-size: var(--text-sm);">🏠 استلام فقط / Cash on Delivery</div>
+                                <div style="font-size: var(--text-xs); color: var(--text-secondary);">ادفع عند الاستلام — Pay when you receive your order</div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: var(--space-4);">
+                            <label class="form-label">رقم واتساب أو صورة التحويل (اختياري) / WhatsApp or transfer screenshot (optional)</label>
+                            <input type="text" name="paymentNote" class="form-input" placeholder="+20 1XX XXX XXXX or note">
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Summary -->
+                <div class="reveal-right">
+                    <div class="glass-card" style="position:sticky; top:100px; padding: var(--space-8);">
+                        <h3 style="font-size: var(--text-xl); margin-bottom: var(--space-6); color: var(--gold);" data-i18n="orderSummary">Order Summary</h3>
+                        <div id="checkout-items" style="margin-bottom: var(--space-6); max-height:300px; overflow-y:auto;"></div>
+                        <div style="font-size: var(--text-sm);">
+                            <div style="display:flex; justify-content:space-between; margin-bottom: var(--space-3);">
+                                <span style="color: var(--text-secondary);" data-i18n="cartSubtotal">Subtotal</span><span id="checkout-subtotal">EGP 0</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom: var(--space-3);">
+                                <span style="color: var(--text-secondary);" data-i18n="shipping">Shipping</span><span id="checkout-shipping">EGP 50</span>
+                            </div>
+                        </div>
+                        <div style="border-top: 1px solid var(--border-color); padding-top: var(--space-4); margin: var(--space-4) 0 var(--space-6);">
+                            <div style="display:flex; justify-content:space-between; font-size: var(--text-xl); font-weight:700;">
+                                <span data-i18n="cartTotal">Total</span><span style="color: var(--gold);" id="checkout-total">EGP 0</span>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-lg" style="width:100%;" id="place-order-btn" data-i18n="placeOrder">Place Order</button>
+                        <p style="font-size: var(--text-xs); color: var(--text-secondary); text-align:center; margin-top: var(--space-4);">🔒 استلام فقط — دفعتك آمنة عند الاستلام</p>
+                        <div id="checkout-ora-pts" style="margin-top: var(--space-6); padding: var(--space-4); background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.2); border-radius: var(--radius-md); text-align:center; display:none;">
+                            <span style="font-size: var(--text-sm); color: var(--gold);">✦</span>
+                            <span style="font-size: var(--text-sm);" id="checkout-ora-text"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="nav-brand" style="margin-bottom: var(--space-4);"><img
+                            src="aura-accessories-logo.svg" alt="AURA" class="nav-logo"></a>
+                    <p data-i18n="footerText">Premium handcrafted accessories for men and women.</p>
+                    <div class="footer-social" style="margin-top: var(--space-4); display:flex; gap:var(--space-4);">
+                        <a href="#" style="transition:color var(--transition-fast);"
+                            onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color=''"
+                            aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" />
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                <path d="M17.5 6.5h.01" />
+                            </svg></a>
+                        <a href="#" style="transition:color var(--transition-fast);"
+                            onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color=''"
+                            aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                            </svg></a>
+                        <a href="#" style="transition:color var(--transition-fast);"
+                            onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color=''"
+                            aria-label="Twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+                            </svg></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="footer-heading" data-i18n="shop">Shop</h4>
+                    <ul class="footer-links">
+                        <li><a href="shop.html?gender=women" data-i18n="womenCollection">Women</a></li>
+                        <li><a href="shop.html?gender=men" data-i18n="menCollection">Men</a></li>
+                        <li><a href="shop.html" data-i18n="viewAll">All</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-heading" data-i18n="company">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="about.html" data-i18n="about">About</a></li>
+                        <li><a href="blog.html" data-i18n="journal">Journal</a></li>
+                        <li><a href="contact.html" data-i18n="contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-heading" data-i18n="legal">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="privacy.html" data-i18n="privacy">Privacy Policy</a></li>
+                        <li><a href="terms.html" data-i18n="terms">Terms of Use</a></li>
+                        <li><a href="faq.html" data-i18n="faq">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-i18n="rightsReserved">© 2026 Aura Accessories. All rights reserved.</p>
+                <div class="footer-payments"><span>VISA</span><span>MasterCard</span><span>Vodafone
+                        Cash</span><span>Fawry</span></div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        const SHIPPING_FEE = 50;
+        const FREE_SHIPPING_THRESHOLD = 500;
+
+        function renderCheckoutSummary() {
+            const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const itemsEl = document.getElementById('checkout-items');
+            const subtotalEl = document.getElementById('checkout-subtotal');
+            const shippingEl = document.getElementById('checkout-shipping');
+            const totalEl = document.getElementById('checkout-total');
+            const oraEl = document.getElementById('checkout-ora-pts');
+            const oraText = document.getElementById('checkout-ora-text');
+            const lang = document.documentElement.lang || 'en';
+
+            if (!cart.length) {
+                itemsEl.innerHTML = '<p style="color:var(--text-secondary);">' + (lang === 'ar' ? 'سلتك فاضية' : 'Your cart is empty') + '. <a href="cart.html">' + (lang === 'ar' ? 'عربة التسوق' : 'Cart') + '</a></p>';
+                subtotalEl.textContent = 'EGP 0';
+                shippingEl.textContent = 'EGP 0';
+                totalEl.textContent = 'EGP 0';
+                if (oraEl) oraEl.style.display = 'none';
+                document.getElementById('place-order-btn').disabled = true;
+                return;
+            }
+
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+            const total = subtotal + shipping;
+            const points = Math.floor(total / 10);
+
+            itemsEl.innerHTML = cart.map(item => `
+                <div style="display:flex; gap: var(--space-3); align-items:center; padding: var(--space-3) 0; border-bottom: 1px solid var(--border-color);">
+                    <div style="width:50px; height:50px; background:var(--bg-tertiary); border-radius: var(--radius-sm); overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                        ${item.image ? `<img src="${item.image}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="color:var(--gold);">✦</span>'}
+                    </div>
+                    <div style="flex:1">
+                        <div style="font-size: var(--text-sm); font-weight:500;">${item.name}</div>
+                        <div style="font-size: var(--text-xs); color: var(--text-secondary);">Qty: ${item.qty}</div>
+                    </div>
+                    <span style="font-size: var(--text-sm); color: var(--gold);">EGP ${(item.price * item.qty).toLocaleString()}</span>
+                </div>
+            `).join('');
+
+            subtotalEl.textContent = 'EGP ' + subtotal.toLocaleString();
+            shippingEl.textContent = shipping === 0 ? (lang === 'ar' ? 'مجاني' : 'Free') : 'EGP ' + shipping;
+            totalEl.textContent = 'EGP ' + total.toLocaleString();
+            if (oraEl && oraText) {
+                oraEl.style.display = 'block';
+                oraText.innerHTML = lang === 'ar' ? `هتكتسب <strong style="color: var(--gold);">${points} نقطة أورا</strong> من الطلب ده!` : `You'll earn <strong style="color: var(--gold);">${points} Aura Points</strong> with this order!`;
+            }
+        }
+
+        async function placeOrder() {
+            const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            if (!cart.length) {
+                if (typeof showToast === 'function') showToast(document.documentElement.lang === 'ar' ? 'سلتك فاضية' : 'Your cart is empty', 'error');
+                return;
+            }
+            const form = document.getElementById('checkout-form');
+            const customerName = form.querySelector('[name="customerName"]').value.trim();
+            const customerEmail = form.querySelector('[name="customerEmail"]').value.trim();
+            const customerPhone = form.querySelector('[name="customerPhone"]').value.trim();
+            const address = form.querySelector('[name="address"]').value.trim();
+            const notes = form.querySelector('[name="notes"]').value.trim() || null;
+            const paymentNote = form.querySelector('[name="paymentNote"]').value.trim();
+            if (!customerName || !customerEmail || !customerPhone || !address) {
+                if (typeof showToast === 'function') showToast(document.documentElement.lang === 'ar' ? 'املأ بيانات التوصيل' : 'Please fill shipping details', 'error');
+                return;
+            }
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+            const total = subtotal + shipping;
+            const items = cart.map(i => ({ id: i.id, product_id: i.id, qty: i.qty, price: i.price }));
+            const btn = document.getElementById('place-order-btn');
+            btn.disabled = true;
+            btn.textContent = document.documentElement.lang === 'ar' ? 'جاري التأكيد...' : 'Placing...';
+            try {
+                const token = localStorage.getItem('aura_token');
+                const res = await fetch(window.location.origin + '/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
+                    body: JSON.stringify({
+                        customerName,
+                        customerEmail,
+                        customerPhone,
+                        address: address + (paymentNote ? ' | Payment note: ' + paymentNote : ''),
+                        notes,
+                        payment_method: 'cod',
+                        total,
+                        items
+                    })
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.error || (document.documentElement.lang === 'ar' ? 'فشل إنشاء الطلب' : 'Failed to create order'));
+                localStorage.removeItem('aura_cart');
+                if (typeof updateCartBadge === 'function') updateCartBadge();
+                const msg = document.documentElement.lang === 'ar' ? 'تم تأكيد الطلب بنجاح! رقم الطلب: ' + (data.order_number != null ? data.order_number : data.id) : 'Order placed! Order #' + (data.order_number != null ? data.order_number : data.id);
+                if (typeof showToast === 'function') showToast(msg, 'success');
+                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+            } catch (e) {
+                btn.disabled = false;
+                btn.textContent = document.querySelector('[data-i18n="placeOrder"]') ? document.querySelector('[data-i18n="placeOrder"]').textContent : 'Place Order';
+                if (typeof showToast === 'function') showToast(e.message || 'Error', 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCheckoutSummary();
+            document.getElementById('place-order-btn').addEventListener('click', placeOrder);
+        });
+    </script>
+</body>
+
+</html>

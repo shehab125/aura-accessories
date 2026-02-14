@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Aura Accessories</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            padding: var(--space-6);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .admin-sidebar .brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-8);
+            padding-bottom: var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .admin-sidebar .brand span {
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+
+        .admin-sidebar .brand h2 {
+            font-size: var(--text-base);
+            color: var(--text-primary);
+        }
+
+        .admin-sidebar .brand small {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+        }
+
+        .admin-nav a {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-1);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: rgba(212, 175, 55, 0.08);
+            color: var(--gold);
+        }
+
+        .admin-main {
+            padding: var(--space-8);
+            overflow-y: auto;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            transition: all var(--transition-base);
+        }
+
+        .stat-box:hover {
+            border-color: var(--gold);
+        }
+
+        .stat-box .number {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .stat-box .label {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            margin-top: var(--space-1);
+        }
+
+        .admin-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+
+        .admin-card h3 {
+            font-size: var(--text-lg);
+            margin-bottom: var(--space-4);
+            color: var(--gold);
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--text-sm);
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .admin-table th {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .admin-table tr:hover td {
+            background: rgba(212, 175, 55, 0.03);
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+
+        .form-group label {
+            display: block;
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: var(--space-3);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+        }
+
+        .btn-sm {
+            padding: var(--space-1) var(--space-3);
+            font-size: var(--text-xs);
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-danger {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            cursor: pointer;
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+        }
+
+        .btn-danger:hover {
+            background: rgba(231, 76, 60, 0.25);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal h3 {
+            color: var(--gold);
+            margin-bottom: var(--space-6);
+        }
+
+        @media(max-width:768px) {
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-sidebar {
+                display: none;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="brand">
+                <span>✦</span>
+                <div>
+                    <h2>Aura Admin</h2><small>Management Dashboard</small>
+                </div>
+            </div>
+            <nav class="admin-nav">
+                <a class="active" onclick="showSection('dashboard')">📊 Dashboard</a>
+                <a onclick="showSection('products')">📦 Products</a>
+                <a onclick="showSection('orders')">🛒 Orders</a>
+                <a onclick="showSection('blog')">📝 Blog</a>
+                <a onclick="showSection('chat')">💬 Chat Bot</a>
+                <a onclick="showSection('users')">👥 Users</a>
+                <a onclick="showSection('settings')">⚙️ Settings</a>
+                <a href="index.html"
+                    style="margin-top:var(--space-6);border-top:1px solid var(--border-color);padding-top:var(--space-4);">←
+                    Back to Website</a>
+                <a href="account.html">👤 My Account</a>
+            </nav>
+        </aside>
+        <!-- Main -->
+        <main class="admin-main">
+            <!-- Dashboard Section -->
+            <div id="sec-dashboard" class="admin-section active">
+                <div class="admin-header">
+                    <h1 style="font-size:var(--text-2xl);">Dashboard</h1>
+                    <span style="color:var(--text-secondary);font-size:var(--text-sm);">Welcome, Admin</span>
+                </div>
+                <div class="stats-grid" id="stats-grid"></div>
+                <div class="admin-card">
+                    <h3>Recent Orders</h3>
+                    <div id="recent-orders-table" style="overflow-x:auto;"></div>
+                </div>
+            </div>
+            <!-- Products Section -->
+            <div id="sec-products" class="admin-section">
+                <div class="admin-header">
+                    <h1 style="font-size:var(--text-2xl);">Products</h1>
+                    <button class="btn btn-primary btn-sm" onclick="openProductModal()">+ Add Product</button>
+                </div>
+                <div class="admin-card">
+                    <div id="products-table" style="overflow-x:auto;"></div>
+                </div>
+            </div>
+            <!-- Orders Section -->
+            <div id="sec-orders" class="admin-section">
+                <div class="admin-header">
+                    <h1 style="font-size:var(--text-2xl);">Orders</h1>
+                </div>
+                <div class="admin-card">
+                    <div id="orders-table" style="overflow-x:auto;"></div>
+                </div>
+            </div>
+            <!-- Blog Section -->
+            <div id="sec-blog" class="admin-section">
+                <div class="admin-header">
+                    <h1 style="font-size:var(--text-2xl);">Blog Posts</h1>
+                    <button class="btn btn-primary btn-sm" onclick="openBlogModal()">+ Add Post</button>
+                </div>
+                <div class="admin-card">
+                    <div id="blog-table" style="overflow-x:auto;"></div>
+                </div>
+            </div>
+            <!-- Chat Section -->
+            <div id="sec-chat" class="admin-section">
+                <div class="admin-header">
+                    <h1 style="font-size:var(--text-2xl);">Chat Bot (مربوط بالمنتجات)</h1>
+                </div>
+                <div class="admin-card">
+                    <p style="color:var(--text-secondary); margin-bottom: var(--space-4);">الشات ده بيرد بناءً على بيانات المنتجات من الداتابيز. لو اليوزر عايز منتج معين هيديله لينك المنتج.</p>
+                    <div id="admin-chat-messages" style="height:320px; overflow-y:auto; background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);"></div>
+                    <div style="display:flex; gap: var(--space-2);">
+                        <input type="text" id="admin-chat-input" class="form-input" placeholder="اكتب رسالة تجربة..." style="flex:1;" onkeypress="if(event.key==='Enter')sendAdminChat()">
+                        <button class="btn btn-primary btn-sm" onclick="sendAdminChat()">إرسال</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Users Section -->
+            <div id="sec-users" class="admin-section">
+                <div class="admin-header">
+                    <h1 style="font-size:var(--text-2xl);">Users</h1>
+                </div>
+                <div class="admin-card">
+                    <div id="users-table" style="overflow-x:auto;"></div>
+                </div>
+            </div>
+            <!-- Settings Section -->
+            <div id="sec-settings" class="admin-section">
+                <div class="admin-header">
+                    <h1 style="font-size:var(--text-2xl);">Site Settings</h1>
+                </div>
+                <div class="admin-card">
+                    <h3>General</h3>
+                    <form id="settings-form"></form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="modal">
+            <h3 id="product-modal-title">Add Product</h3>
+            <form id="product-form">
+                <div class="form-row">
+                    <div class="form-group"><label>Name (EN)</label><input name="name" required></div>
+                    <div class="form-group"><label>Name (AR)</label><input name="nameAr" dir="rtl" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Category</label><select name="category">
+                            <option>necklaces</option>
+                            <option>rings</option>
+                            <option>earrings</option>
+                            <option>bracelets</option>
+                        </select></div>
+                    <div class="form-group"><label>Gender</label><select name="gender">
+                            <option>women</option>
+                            <option>men</option>
+                        </select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Price (EGP)</label><input name="price" type="number" required></div>
+                    <div class="form-group"><label>Old Price</label><input name="oldPrice" type="number"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Material</label><input name="material"></div>
+                    <div class="form-group"><label>Style</label><select name="style">
+                            <option>classic</option>
+                            <option>modern</option>
+                            <option>bohemian</option>
+                            <option>luxury</option>
+                        </select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Color</label><input name="color"></div>
+                    <div class="form-group"><label>Badge</label><input name="badge" placeholder="e.g. Best Seller, New">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Rating</label><input name="rating" type="number" step="0.1" min="0"
+                            max="5" value="4.5"></div>
+                    <div class="form-group"><label>Reviews</label><input name="reviews" type="number" value="0"></div>
+                </div>
+                <div class="form-group"><label>Occasion</label><input name="occasion"
+                        placeholder="daily, evening, formal, casual"></div>
+                <div class="form-group"><label>Dimensions</label><input name="dimensions"></div>
+                <div class="form-group"><label>Weight</label><input name="weight"></div>
+                <div class="form-group"><label>Care (EN)</label><textarea name="care" rows="2"></textarea></div>
+                <div class="form-group"><label>Story (EN)</label><textarea name="story" rows="2"></textarea></div>
+                <div class="form-group"><label>Story (AR)</label><textarea name="storyAr" rows="2" dir="rtl"></textarea>
+                </div>
+                <div class="form-group"><label>Sizes (comma-separated)</label><input name="sizes" placeholder="S, M, L">
+                </div>
+                <div class="form-group"><label>Colors (comma-separated)</label><input name="colors"
+                        placeholder="Gold, Silver"></div>
+                <div class="form-group"><label>Materials (comma-separated)</label><input name="materials"
+                        placeholder="18K Gold, Sterling Silver"></div>
+                <!-- Images upload for product -->
+                <div class="form-group"><label>Images</label><input name="images" type="file" accept="image/*" multiple></div>
+                <input type="hidden" name="editId" value="">
+                <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6);">
+                    <button type="button" class="btn btn-outline btn-sm"
+                        onclick="closeModal('product-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Blog Modal -->
+    <div class="modal-overlay" id="blog-modal">
+        <div class="modal">
+            <h3 id="blog-modal-title">Add Blog Post</h3>
+            <form id="blog-form">
+                <div class="form-row">
+                    <div class="form-group"><label>Title (EN)</label><input name="title" required></div>
+                    <div class="form-group"><label>Title (AR)</label><input name="titleAr" dir="rtl" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Category (EN)</label><input name="category"></div>
+                    <div class="form-group"><label>Category (AR)</label><input name="categoryAr" dir="rtl"></div>
+                </div>
+                <div class="form-group"><label>Excerpt (EN)</label><textarea name="excerpt" rows="2"></textarea></div>
+                <div class="form-group"><label>Excerpt (AR)</label><textarea name="excerptAr" rows="2"
+                        dir="rtl"></textarea></div>
+                <div class="form-group"><label>Content (EN)</label><textarea name="content" rows="4"></textarea></div>
+                <div class="form-group"><label>Content (AR)</label><textarea name="contentAr" rows="4"
+                        dir="rtl"></textarea></div>
+                <!-- Image upload for blog post -->
+                <div class="form-group"><label>Image</label><input name="image" type="file" accept="image/*"></div>
+                <input type="hidden" name="editId" value="">
+                <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6);">
+                    <button type="button" class="btn btn-outline btn-sm"
+                        onclick="closeModal('blog-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Upload a file to Cloudinary and return its secure URL.
+         * Fetches a secure signature from the server to avoid exposing the API Secret.
+         * @param {File} file The file to upload
+         * @returns {Promise<string>} The Cloudinary secure URL of the uploaded asset
+         */
+        async function uploadToCloudinary(file) {
+            // 1. Get signature from server
+            const sigRes = await fetch(API + '/api/upload/signature', { headers });
+            if (!sigRes.ok) throw new Error('Failed to get upload signature');
+            const { signature, timestamp, cloudName, apiKey, uploadPreset } = await sigRes.json();
+
+            // 2. Upload to Cloudinary using the signature
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('api_key', apiKey);
+            formData.append('timestamp', timestamp);
+            formData.append('upload_preset', uploadPreset);
+            formData.append('signature', signature);
+
+            const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
+            const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            if (!data || !data.secure_url) {
+                throw new Error(data.error?.message || 'Cloudinary upload failed');
+            }
+            return data.secure_url;
+        }
+        const TOKEN = localStorage.getItem('aura_token');
+        const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}` };
+
+        if (!TOKEN) { window.location.href = 'account.html'; return; }
+        // Protect admin: only admins can access. Check role from server (not from stale token).
+        (async function checkAdmin() {
+            try {
+                const r = await fetch(window.location.origin + '/api/auth/me', { headers });
+                if (!r.ok) { window.location.href = 'account.html'; return; }
+                const user = await r.json();
+                if (user.role !== 'admin') { window.location.href = 'index.html'; return; }
+            } catch (e) { window.location.href = 'account.html'; }
+        })();
+
+        // Navigation
+        function showSection(name) {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('sec-' + name)?.classList.add('active');
+            document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('active'));
+            event?.target?.classList.add('active');
+            if (name === 'dashboard') loadDashboard();
+            if (name === 'products') loadProducts();
+            if (name === 'orders') loadOrders();
+            if (name === 'blog') loadBlog();
+            if (name === 'chat') initAdminChat();
+            if (name === 'users') loadUsers();
+            if (name === 'settings') loadSettings();
+        }
+
+        function initAdminChat() {
+            const el = document.getElementById('admin-chat-messages');
+            if (!el || el.dataset.inited) return;
+            el.dataset.inited = '1';
+            el.innerHTML = '<p style="color:var(--text-secondary);">اكتب رسالة للبوت (مثلاً: عايز قلادة ذهب أو خاتم). البوت هيرد بناءً على المنتجات في الداتابيز.</p>';
+        }
+        async function sendAdminChat() {
+            const input = document.getElementById('admin-chat-input');
+            const msg = input && input.value.trim();
+            if (!msg) return;
+            const messages = document.getElementById('admin-chat-messages');
+            messages.innerHTML += '<div style="margin-bottom:8px; text-align:left;"><strong>أنت:</strong> ' + msg + '</div>';
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+            try {
+                const r = await fetch(API + '/api/admin/chat', { method: 'POST', headers, body: JSON.stringify({ message: msg }) });
+                const data = await r.json();
+                const reply = data.reply || data.error || 'لا رد';
+                messages.innerHTML += '<div style="margin-bottom:8px; padding:8px; background: rgba(212,175,55,0.1); border-radius:8px; text-align:left;"><strong>البوت:</strong> ' + reply.replace(/\n/g, '<br>') + '</div>';
+            } catch (e) {
+                messages.innerHTML += '<div style="color:var(--danger);">خطأ في الاتصال.</div>';
+            }
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // Dashboard
+        async function loadDashboard() {
+            try {
+                const res = await fetch(`${API}/api/admin/stats`, { headers });
+                const s = await res.json();
+                document.getElementById('stats-grid').innerHTML = `
+                <div class="stat-box"><div class="number">${s.totalProducts}</div><div class="label">Products</div></div>
+                <div class="stat-box"><div class="number">${s.totalOrders}</div><div class="label">Orders</div></div>
+                <div class="stat-box"><div class="number">${s.totalUsers}</div><div class="label">Users</div></div>
+                <div class="stat-box"><div class="number">EGP ${(s.totalRevenue || 0).toLocaleString()}</div><div class="label">Revenue</div></div>`;
+                document.getElementById('recent-orders-table').innerHTML = s.recentOrders.length ? `<table class="admin-table"><thead><tr><th>Order</th><th>Total</th><th>Status</th><th>Date</th></tr></thead><tbody>${s.recentOrders.map(o => `<tr><td>${o.orderNumber || o.id}</td><td>EGP ${(o.total || 0).toLocaleString()}</td><td>${o.status}</td><td>${new Date(o.createdAt).toLocaleDateString()}</td></tr>`).join('')}</tbody></table>` : '<p style="color:var(--text-secondary);text-align:center;padding:var(--space-6);">No orders yet</p>';
+            } catch (e) { console.error(e); }
+        }
+
+        // Products
+        async function loadProducts() {
+            const res = await fetch(`${API}/api/products/all`, { headers });
+            const products = await res.json();
+            document.getElementById('products-table').innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Badge</th><th>Actions</th></tr></thead><tbody>${products.map(p => `<tr><td>${p.id}</td><td>${p.images && p.images.length ? `<img src="${p.images[0]}" style="width:40px;height:40px;object-fit:cover;margin-right:8px;border-radius:4px;">` : ''}${p.name}<br><small style="color:var(--text-secondary)">${p.nameAr || ''}</small></td><td>${p.category}</td><td>EGP ${(p.price || 0).toLocaleString()}</td><td>${p.badge || '-'}</td><td><button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">Edit</button> <button class="btn-danger" onclick="deleteProduct('${p.id}')">Delete</button></td></tr>`).join('')}</tbody></table>`;
+        }
+
+        function openProductModal(data) {
+            const form = document.getElementById('product-form');
+            form.reset();
+            form.querySelector('[name="editId"]').value = '';
+            document.getElementById('product-modal-title').textContent = 'Add Product';
+            if (data) {
+                document.getElementById('product-modal-title').textContent = 'Edit Product';
+                Object.keys(data).forEach(k => { const el = form.querySelector(`[name="${k}"]`); if (el) el.value = Array.isArray(data[k]) ? data[k].join(', ') : (data[k] ?? ''); });
+                form.querySelector('[name="editId"]').value = data.id;
+            }
+            document.getElementById('product-modal').classList.add('active');
+        }
+
+        async function editProduct(id) {
+            const res = await fetch(`${API}/api/products/${id}`, { headers });
+            const p = await res.json();
+            openProductModal({ ...p, nameAr: p.name_ar || p.nameAr, storyAr: p.story_ar || p.storyAr, description: p.description, descriptionAr: p.description_ar || p.descriptionAr });
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm(document.documentElement.lang === 'ar' ? 'حذف هذا المنتج؟' : 'Delete this product?')) return;
+            const r = await fetch(`${API}/api/products/${id}`, { method: 'DELETE', headers });
+            if (r.ok) loadProducts(); else alert((await r.json()).error || 'Failed');
+        }
+
+        document.getElementById('product-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const data = Object.fromEntries(fd);
+            // Handle image uploads via Cloudinary
+            const imageInput = e.target.querySelector('[name="images"]');
+            if (imageInput && imageInput.files && imageInput.files.length > 0) {
+                data.images = [];
+                for (const file of imageInput.files) {
+                    try {
+                        const url = await uploadToCloudinary(file);
+                        data.images.push(url);
+                    } catch (err) {
+                        console.error('Image upload error', err);
+                    }
+                }
+            }
+            data.price = Number(data.price);
+            data.oldPrice = data.oldPrice ? Number(data.oldPrice) : null;
+            data.rating = Number(data.rating);
+            data.reviews = Number(data.reviews);
+            data.sizes = data.sizes ? data.sizes.split(',').map(s => s.trim()) : [];
+            data.colors = data.colors ? data.colors.split(',').map(s => s.trim()) : [];
+            data.materials = data.materials ? data.materials.split(',').map(s => s.trim()) : [];
+            const editId = data.editId; delete data.editId;
+            const r = editId ? await fetch(`${API}/api/products/${editId}`, { method: 'PUT', headers, body: JSON.stringify(data) }) : await fetch(`${API}/api/products`, { method: 'POST', headers, body: JSON.stringify(data) });
+            if (!r.ok) alert((await r.json()).error || (document.documentElement.lang === 'ar' ? 'فشل الحفظ' : 'Save failed'));
+            else alert(document.documentElement.lang === 'ar' ? 'تم حفظ المنتج بنجاح!' : 'Product saved!');
+            closeModal('product-modal');
+            loadProducts();
+        });
+
+        // Orders
+        async function loadOrders() {
+            const res = await fetch(`${API}/api/orders`, { headers });
+            const orders = await res.json();
+            document.getElementById('orders-table').innerHTML = orders.length ? `<table class="admin-table"><thead><tr><th>Order #</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>${orders.map(o => `<tr><td>${o.order_number != null ? o.order_number : (o.orderNumber || o.id)}</td><td>${o.customer_name || o.customerName || 'Guest'}</td><td>EGP ${(o.total || 0).toLocaleString()}</td><td><select onchange="updateOrderStatus('${o.id}',this.value)" style="background:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-primary);padding:4px 8px;border-radius:4px;font-size:var(--text-xs);"><option ${o.status === 'pending' ? 'selected' : ''}>pending</option><option ${o.status === 'processing' ? 'selected' : ''}>processing</option><option ${o.status === 'shipped' ? 'selected' : ''}>shipped</option><option ${o.status === 'delivered' ? 'selected' : ''}>delivered</option><option ${o.status === 'cancelled' ? 'selected' : ''}>cancelled</option></select></td><td>${new Date(o.created_at || o.createdAt).toLocaleDateString()}</td><td></td></tr>`).join('')}</tbody></table>` : '<p style="color:var(--text-secondary);text-align:center;padding:var(--space-6);">No orders yet</p>';
+        }
+
+        async function updateOrderStatus(id, status) {
+            const r = await fetch(`${API}/api/orders/${id}`, { method: 'PUT', headers, body: JSON.stringify({ status }) });
+            if (r.ok) loadOrders(); else alert((await r.json()).error || 'Failed');
+        }
+
+        // Blog
+        async function loadBlog() {
+            const res = await fetch(`${API}/api/blog/all`, { headers });
+            const posts = await res.json();
+            document.getElementById('blog-table').innerHTML = `<table class="admin-table"><thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead><tbody>${posts.map(p => `<tr><td>${p.image_url || p.image ? `<img src="${p.image_url || p.image}" style="width:40px;height:40px;object-fit:cover;margin-right:8px;border-radius:4px;">` : ''}${p.title}<br><small style="color:var(--text-secondary)">${p.title_ar || p.titleAr || ''}</small></td><td>${p.category}</td><td>${p.published_at ? new Date(p.published_at).toLocaleDateString() : (p.date || '')}</td><td><button class="btn btn-outline btn-sm" onclick="editBlog('${p.id}')">Edit</button> <button class="btn-danger" onclick="deleteBlog('${p.id}')">Delete</button></td></tr>`).join('')}</tbody></table>`;
+        }
+
+        function openBlogModal(data) {
+            const form = document.getElementById('blog-form');
+            form.reset();
+            form.querySelector('[name="editId"]').value = '';
+            document.getElementById('blog-modal-title').textContent = 'Add Blog Post';
+            if (data) {
+                document.getElementById('blog-modal-title').textContent = 'Edit Blog Post';
+                Object.keys(data).forEach(k => { const el = form.querySelector(`[name="${k}"]`); if (el) el.value = data[k] ?? ''; });
+                form.querySelector('[name="editId"]').value = data.id;
+            }
+            document.getElementById('blog-modal').classList.add('active');
+        }
+
+        async function editBlog(id) {
+            const res = await fetch(`${API}/api/blog/all`, { headers });
+            const posts = await res.json();
+            const post = posts.find(p => p.id === id || String(p.id) === String(id));
+            if (post) openBlogModal({ ...post, image: post.image_url || post.image, titleAr: post.title_ar || post.titleAr, excerptAr: post.excerpt_ar, contentAr: post.content_ar });
+        }
+
+        async function deleteBlog(id) {
+            if (!confirm(document.documentElement.lang === 'ar' ? 'حذف هذا المقال؟' : 'Delete this post?')) return;
+            const r = await fetch(`${API}/api/blog/${id}`, { method: 'DELETE', headers });
+            if (r.ok) loadBlog(); else alert((await r.json()).error || 'Failed');
+        }
+
+        document.getElementById('blog-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const data = Object.fromEntries(fd);
+            // Handle blog image upload via Cloudinary
+            const imageInput = e.target.querySelector('[name="image"]');
+            if (imageInput && imageInput.files && imageInput.files[0]) {
+                try {
+                    const url = await uploadToCloudinary(imageInput.files[0]);
+                    data.image = url;
+                } catch (err) {
+                    console.error('Blog image upload error', err);
+                }
+            }
+            const editId = data.editId; delete data.editId;
+            const payload = { ...data, image_url: data.image, titleAr: data.titleAr, excerptAr: data.excerptAr, contentAr: data.contentAr };
+            const r = editId ? await fetch(`${API}/api/blog/${editId}`, { method: 'PUT', headers, body: JSON.stringify(payload) }) : await fetch(`${API}/api/blog`, { method: 'POST', headers, body: JSON.stringify(payload) });
+            if (!r.ok) alert((await r.json()).error || (document.documentElement.lang === 'ar' ? 'فشل الحفظ' : 'Save failed'));
+            else alert(document.documentElement.lang === 'ar' ? 'تم حفظ المقال بنجاح!' : 'Post saved!');
+            closeModal('blog-modal');
+            loadBlog();
+        });
+
+        // Users
+        async function loadUsers() {
+            const res = await fetch(`${API}/api/users`, { headers });
+            const users = await res.json();
+            document.getElementById('users-table').innerHTML = `<table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td><select onchange="changeRole(${u.id},this.value)" style="background:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-primary);padding:4px 8px;border-radius:4px;font-size:var(--text-xs);"><option ${u.role === 'customer' ? 'selected' : ''}>customer</option><option ${u.role === 'admin' ? 'selected' : ''}>admin</option></select></td><td>${new Date(u.createdAt).toLocaleDateString()}</td><td><button class="btn-danger" onclick="deleteUser(${u.id})">Delete</button></td></tr>`).join('')}</tbody></table>`;
+        }
+
+        async function changeRole(id, role) { await fetch(`${API}/api/users/${id}/role`, { method: 'PUT', headers, body: JSON.stringify({ role }) }); }
+        async function deleteUser(id) {
+            if (!confirm(document.documentElement.lang === 'ar' ? 'حذف هذا المستخدم؟' : 'Delete this user?')) return;
+            const r = await fetch(`${API}/api/users/${id}`, { method: 'DELETE', headers });
+            if (r.ok) loadUsers(); else alert((await r.json()).error || 'Failed');
+        }
+
+        // Settings
+        async function loadSettings() {
+            const res = await fetch(`${API}/api/settings/admin`, { headers });
+            const s = await res.json();
+            document.getElementById('settings-form').innerHTML = `
+            <div class="form-row"><div class="form-group"><label>Site Name (EN)</label><input name="siteName" value="${s.siteName || ''}"></div><div class="form-group"><label>Site Name (AR)</label><input name="siteNameAr" value="${s.siteNameAr || ''}" dir="rtl"></div></div>
+            <div class="form-row"><div class="form-group"><label>Hero Title (EN)</label><input name="heroTitle" value="${s.heroTitle || ''}"></div><div class="form-group"><label>Hero Title (AR)</label><input name="heroTitleAr" value="${s.heroTitleAr || ''}" dir="rtl"></div></div>
+            <div class="form-row"><div class="form-group"><label>Hero Highlight (EN)</label><input name="heroHighlight" value="${s.heroHighlight || ''}"></div><div class="form-group"><label>Hero Highlight (AR)</label><input name="heroHighlightAr" value="${s.heroHighlightAr || ''}" dir="rtl"></div></div>
+            <div class="form-row"><div class="form-group"><label>Hero Subtitle (EN)</label><textarea name="heroSubtitle" rows="2">${s.heroSubtitle || ''}</textarea></div><div class="form-group"><label>Hero Subtitle (AR)</label><textarea name="heroSubtitleAr" rows="2" dir="rtl">${s.heroSubtitleAr || ''}</textarea></div></div>
+            <div class="form-row"><div class="form-group"><label>Contact Email</label><input name="contactEmail" value="${s.contactEmail || ''}"></div><div class="form-group"><label>Contact Phone</label><input name="contactPhone" value="${s.contactPhone || ''}"></div></div>
+            <div class="form-row"><div class="form-group"><label>Contact Address (EN)</label><input name="contactAddress" value="${s.contactAddress || ''}"></div><div class="form-group"><label>Contact Address (AR)</label><input name="contactAddressAr" value="${s.contactAddressAr || ''}" dir="rtl"></div></div>
+            <div class="form-row"><div class="form-group"><label>Shipping Fee (EGP)</label><input name="shippingFee" type="number" value="${s.shippingFee || 50}"></div><div class="form-group"><label>Free Shipping Threshold (EGP)</label><input name="freeShippingThreshold" type="number" value="${s.freeShippingThreshold || 500}"></div></div>
+            <h3 style="color:var(--gold);margin:var(--space-6) 0 var(--space-4);">Social Links</h3>
+            <div class="form-row"><div class="form-group"><label>Instagram</label><input name="instagram" value="${s.socialLinks?.instagram || ''}"></div><div class="form-group"><label>Facebook</label><input name="facebook" value="${s.socialLinks?.facebook || ''}"></div></div>
+            <div class="form-row"><div class="form-group"><label>Twitter</label><input name="twitter" value="${s.socialLinks?.twitter || ''}"></div><div class="form-group"><label>WhatsApp</label><input name="whatsapp" value="${s.socialLinks?.whatsapp || ''}"></div></div>
+            <h3 style="color:var(--gold);margin:var(--space-6) 0 var(--space-4);">AI Configuration</h3>
+            <div class="form-group"><label>OpenAI API Key</label><input name="openaiApiKey" type="password" value="${s.openaiApiKey || ''}" placeholder="sk-..."></div>
+            <div class="form-group"><label>OpenAI Model</label><select name="openaiModel"><option ${s.openaiModel === 'gpt-4' ? 'selected' : ''}>gpt-4</option><option ${s.openaiModel === 'gpt-4o' ? 'selected' : ''}>gpt-4o</option><option ${s.openaiModel === 'gpt-3.5-turbo' ? 'selected' : ''}>gpt-3.5-turbo</option></select></div>
+            <div class="form-group"><label>AIMLAPI Key</label><input name="aimlApiKey" type="password" value="${s.aimlApiKey || ''}" placeholder="AIMLAPI key"></div>
+            <div class="form-group"><label>AIMLAPI Model</label><input name="aimlModel" value="${s.aimlModel || 'google/gemini-3-pro-preview'}"></div>
+            <button type="submit" class="btn btn-primary" style="margin-top:var(--space-6);">Save Settings</button>`;
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const data = Object.fromEntries(fd);
+            data.shippingFee = Number(data.shippingFee);
+            data.freeShippingThreshold = Number(data.freeShippingThreshold);
+            data.socialLinks = { instagram: data.instagram, facebook: data.facebook, twitter: data.twitter, whatsapp: data.whatsapp };
+            delete data.instagram; delete data.facebook; delete data.twitter; delete data.whatsapp;
+            await fetch(`${API}/api/settings`, { method: 'PUT', headers, body: JSON.stringify(data) });
+            alert(document.documentElement.lang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
+        });
+
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); }));
+
+        // Init
+        loadDashboard();
+    </script>
+</body>
+
+</html>

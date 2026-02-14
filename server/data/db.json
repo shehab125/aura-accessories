@@ -1,0 +1,573 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin",
+      "email": "admin@aura.com",
+      "ora_points": 0,
+      "password": "$2a$10$xNglCIYz0W8ByMqKIuHxPOMBS7KH5do3JlEi9cRwe3KgkBFjguDaC",
+      "role": "admin",
+      "createdAt": "2026-01-01T00:00:00Z"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Celestial Gold Necklace",
+      "nameAr": "قلادة سيليستيال الذهبية",
+      "category": "necklaces",
+      "gender": "women",
+      "price": 850,
+      "oldPrice": 1100,
+      "material": "gold",
+      "style": "classic",
+      "color": "gold",
+      "rating": 4.8,
+      "reviews": 124,
+      "badge": "Best Seller",
+      "occasion": "evening",
+      "dimensions": "Chain: 45cm, Pendant: 2.5cm",
+      "weight": "12g",
+      "care": "Avoid contact with perfumes. Store in the provided Aura pouch. Clean with a soft dry cloth.",
+      "story": "Inspired by the celestial patterns seen in the Egyptian night sky, this pendant captures the golden warmth of starlight. Each link is hand-polished to achieve a mirror finish.",
+      "storyAr": "مستوحاة من الأنماط السماوية المرئية في سماء الليل المصرية، هذه القلادة تلتقط الدفء الذهبي لضوء النجوم.",
+      "sizes": [
+        "40cm",
+        "45cm",
+        "50cm"
+      ],
+      "colors": [
+        "Gold",
+        "Rose Gold"
+      ],
+      "materials": [
+        "18K Gold",
+        "14K Gold"
+      ],
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "Midnight Leather Bracelet",
+      "nameAr": "سوار جلد ميدنايت",
+      "category": "bracelets",
+      "gender": "men",
+      "price": 450,
+      "oldPrice": null,
+      "material": "leather",
+      "style": "modern",
+      "color": "black",
+      "rating": 4.6,
+      "reviews": 89,
+      "badge": "",
+      "occasion": "casual",
+      "dimensions": "Width: 1.2cm, Adjustable: 18-22cm",
+      "weight": "18g",
+      "care": "Keep away from water. Apply leather conditioner monthly.",
+      "story": "Crafted from Italian full-grain leather with a titanium clasp.",
+      "storyAr": "مصنوع من الجلد الإيطالي الفاخر مع مشبك تيتانيوم.",
+      "sizes": [
+        "S (16-18cm)",
+        "M (18-20cm)",
+        "L (20-22cm)"
+      ],
+      "colors": [
+        "Black",
+        "Brown",
+        "Navy"
+      ],
+      "materials": [
+        "Italian Leather"
+      ],
+      "active": true
+    },
+    {
+      "id": 3,
+      "name": "Rose Quartz Ring",
+      "nameAr": "خاتم الكوارتز الوردي",
+      "category": "rings",
+      "gender": "women",
+      "price": 650,
+      "oldPrice": 800,
+      "material": "silver",
+      "style": "bohemian",
+      "color": "pink",
+      "rating": 4.9,
+      "reviews": 201,
+      "badge": "New",
+      "occasion": "daily",
+      "dimensions": "Band: 3mm, Stone: 8mm",
+      "weight": "5g",
+      "care": "Remove before washing hands. Avoid harsh chemicals.",
+      "story": "Featuring a natural rose quartz stone set in a delicate sterling silver band.",
+      "storyAr": "يضم حجر كوارتز وردي طبيعي في خاتم فضة استرليني رقيق.",
+      "sizes": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "colors": [
+        "Silver/Pink",
+        "Gold/Pink"
+      ],
+      "materials": [
+        "Sterling Silver",
+        "14K Gold"
+      ],
+      "active": true
+    },
+    {
+      "id": 4,
+      "name": "Titanium Chain Bracelet",
+      "nameAr": "سوار سلسلة تيتانيوم",
+      "category": "bracelets",
+      "gender": "men",
+      "price": 550,
+      "oldPrice": null,
+      "material": "titanium",
+      "style": "modern",
+      "color": "silver",
+      "rating": 4.7,
+      "reviews": 67,
+      "badge": "",
+      "occasion": "daily",
+      "dimensions": "Width: 0.8cm, Length: 20cm",
+      "weight": "22g",
+      "care": "Titanium is hypoallergenic and water-resistant.",
+      "story": "Forged from aerospace-grade titanium.",
+      "storyAr": "مصنوع من التيتانيوم عالي الجودة.",
+      "sizes": [
+        "18cm",
+        "20cm",
+        "22cm"
+      ],
+      "colors": [
+        "Silver",
+        "Black",
+        "Gunmetal"
+      ],
+      "materials": [
+        "Grade 5 Titanium"
+      ],
+      "active": true
+    },
+    {
+      "id": 5,
+      "name": "Pearl Drop Earrings",
+      "nameAr": "أقراط لؤلؤ متدلية",
+      "category": "earrings",
+      "gender": "women",
+      "price": 720,
+      "oldPrice": 950,
+      "material": "gold",
+      "style": "classic",
+      "color": "white",
+      "rating": 4.8,
+      "reviews": 156,
+      "badge": "Best Seller",
+      "occasion": "evening",
+      "dimensions": "Drop: 3.5cm, Pearl: 10mm",
+      "weight": "6g (pair)",
+      "care": "Pearls are delicate — put on last, take off first.",
+      "story": "Genuine freshwater pearls suspended from 18K gold hooks.",
+      "storyAr": "لآلئ المياه العذبة الحقيقية معلقة من خطافات ذهب عيار 18.",
+      "sizes": [
+        "One Size"
+      ],
+      "colors": [
+        "White/Gold",
+        "Cream/Gold",
+        "White/Silver"
+      ],
+      "materials": [
+        "18K Gold + Freshwater Pearl"
+      ],
+      "active": true
+    },
+    {
+      "id": 6,
+      "name": "Onyx Signet Ring",
+      "nameAr": "خاتم أونيكس سيجنت",
+      "category": "rings",
+      "gender": "men",
+      "price": 780,
+      "oldPrice": null,
+      "material": "silver",
+      "style": "classic",
+      "color": "black",
+      "rating": 4.5,
+      "reviews": 45,
+      "badge": "New",
+      "occasion": "formal",
+      "dimensions": "Face: 14mm x 12mm, Band: 4mm",
+      "weight": "15g",
+      "care": "Clean with warm soapy water.",
+      "story": "A modern take on the traditional signet ring.",
+      "storyAr": "لمسة عصرية على خاتم السيجنت التقليدي.",
+      "sizes": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "colors": [
+        "Silver/Black",
+        "Gold/Black"
+      ],
+      "materials": [
+        "Sterling Silver",
+        "18K Gold"
+      ],
+      "active": true
+    },
+    {
+      "id": 7,
+      "name": "Diamond Aura Pendant",
+      "nameAr": "قلادة أورا الماسية",
+      "category": "necklaces",
+      "gender": "women",
+      "price": 1200,
+      "oldPrice": 1500,
+      "material": "gold",
+      "style": "luxury",
+      "color": "gold",
+      "rating": 5,
+      "reviews": 312,
+      "badge": "Exclusive",
+      "occasion": "evening",
+      "dimensions": "Chain: 42cm, Pendant: 1.8cm",
+      "weight": "8g",
+      "care": "Clean with a professional jewelry cleaner.",
+      "story": "Our signature piece with a brilliant-cut diamond.",
+      "storyAr": "قطعتنا المميزة مع ألماس بقطع بريلينت.",
+      "sizes": [
+        "40cm",
+        "42cm",
+        "45cm"
+      ],
+      "colors": [
+        "Gold",
+        "White Gold",
+        "Rose Gold"
+      ],
+      "materials": [
+        "18K Gold + Natural Diamond"
+      ],
+      "active": true
+    },
+    {
+      "id": 8,
+      "name": "Woven Steel Cuff",
+      "nameAr": "سوار فولاذ منسوج",
+      "category": "bracelets",
+      "gender": "men",
+      "price": 380,
+      "oldPrice": 500,
+      "material": "steel",
+      "style": "modern",
+      "color": "silver",
+      "rating": 4.4,
+      "reviews": 33,
+      "badge": "",
+      "occasion": "casual",
+      "dimensions": "Width: 1.5cm, Inner diameter: 6.5cm",
+      "weight": "35g",
+      "care": "Stainless steel is low-maintenance.",
+      "story": "Intricately woven stainless steel cables.",
+      "storyAr": "كابلات فولاذية منسوجة بدقة.",
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "Silver",
+        "Black",
+        "Gold"
+      ],
+      "materials": [
+        "316L Stainless Steel"
+      ],
+      "active": true
+    },
+    {
+      "id": 9,
+      "name": "Sapphire Halo Ring",
+      "nameAr": "خاتم هالو الياقوت",
+      "category": "rings",
+      "gender": "women",
+      "price": 1450,
+      "oldPrice": null,
+      "material": "gold",
+      "style": "luxury",
+      "color": "blue",
+      "rating": 4.9,
+      "reviews": 178,
+      "badge": "Exclusive",
+      "occasion": "evening",
+      "dimensions": "Stone: 6mm, Band: 2mm, Halo: 10mm",
+      "weight": "4g",
+      "care": "Sapphires are durable. Clean with warm soapy water.",
+      "story": "A vivid blue Ceylon sapphire surrounded by diamonds.",
+      "storyAr": "ياقوت سيلاني أزرق زاهٍ محاط بالألماس.",
+      "sizes": [
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "colors": [
+        "Gold/Blue",
+        "White Gold/Blue"
+      ],
+      "materials": [
+        "18K Gold + Ceylon Sapphire"
+      ],
+      "active": true
+    },
+    {
+      "id": 10,
+      "name": "Carbon Fiber Necklace",
+      "nameAr": "قلادة كربون فايبر",
+      "category": "necklaces",
+      "gender": "men",
+      "price": 620,
+      "oldPrice": 750,
+      "material": "carbon",
+      "style": "modern",
+      "color": "black",
+      "rating": 4.6,
+      "reviews": 55,
+      "badge": "",
+      "occasion": "casual",
+      "dimensions": "Chain: 55cm, Pendant: 3cm x 2cm",
+      "weight": "14g",
+      "care": "Carbon fiber is extremely durable.",
+      "story": "A fusion of motorsport engineering and jewelry design.",
+      "storyAr": "مزيج من هندسة رياضة السيارات وتصميم المجوهرات.",
+      "sizes": [
+        "50cm",
+        "55cm",
+        "60cm"
+      ],
+      "colors": [
+        "Black/Silver",
+        "Black/Gold"
+      ],
+      "materials": [
+        "Carbon Fiber + Stainless Steel"
+      ],
+      "active": true
+    },
+    {
+      "id": 11,
+      "name": "Crystal Aurora Earrings",
+      "nameAr": "أقراط كريستال أورورا",
+      "category": "earrings",
+      "gender": "women",
+      "price": 580,
+      "oldPrice": null,
+      "material": "crystal",
+      "style": "bohemian",
+      "color": "multicolor",
+      "rating": 4.7,
+      "reviews": 92,
+      "badge": "New",
+      "occasion": "daily",
+      "dimensions": "Drop: 2.8cm, Crystal: 6mm",
+      "weight": "4g (pair)",
+      "care": "Crystals are fragile — handle with care.",
+      "story": "Swarovski crystals cut to catch light beautifully.",
+      "storyAr": "كريستالات سواروفسكي مقطوعة لتلتقط الضوء بجمال.",
+      "sizes": [
+        "One Size"
+      ],
+      "colors": [
+        "Aurora",
+        "Clear",
+        "Rose"
+      ],
+      "materials": [
+        "Sterling Silver + Swarovski Crystal"
+      ],
+      "active": true
+    },
+    {
+      "id": 12,
+      "name": "Leather Wrap Bracelet",
+      "nameAr": "سوار جلدي ملفوف",
+      "category": "bracelets",
+      "gender": "men",
+      "price": 320,
+      "oldPrice": 400,
+      "material": "leather",
+      "style": "bohemian",
+      "color": "brown",
+      "rating": 4.3,
+      "reviews": 28,
+      "badge": "",
+      "occasion": "casual",
+      "dimensions": "Width: 2cm, Wraps: 3x around wrist",
+      "weight": "20g",
+      "care": "Natural leather ages beautifully. Keep dry.",
+      "story": "Triple-wrapped vegetable-tanned leather.",
+      "storyAr": "جلد نباتي ملفوف ثلاث مرات.",
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "Brown",
+        "Tan",
+        "Black"
+      ],
+      "materials": [
+        "Vegetable-Tanned Leather"
+      ],
+      "active": true
+    }
+  ],
+  "blog": [
+    {
+      "id": 1,
+      "title": "Top 10 Accessory Trends for 2026",
+      "titleAr": "أبرز 10 صيحات إكسسوارات لعام 2026",
+      "category": "Trends",
+      "categoryAr": "صيحات",
+      "date": "2026-02-10",
+      "excerpt": "Discover the hottest accessory trends that are defining this year's fashion landscape.",
+      "excerptAr": "اكتشف أحدث صيحات الإكسسوارات التي تحدد عالم الموضة هذا العام.",
+      "content": "Full article content here...",
+      "contentAr": "محتوى المقال الكامل هنا...",
+      "active": true
+    },
+    {
+      "id": 2,
+      "title": "How to Care for Your Gold Jewelry",
+      "titleAr": "كيف تعتني بمجوهراتك الذهبية",
+      "category": "Care Guide",
+      "categoryAr": "دليل العناية",
+      "date": "2026-02-05",
+      "excerpt": "Expert tips to keep your gold pieces looking brand new.",
+      "excerptAr": "نصائح خبراء للحفاظ على قطعك الذهبية كالجديدة.",
+      "content": "Full article content here...",
+      "contentAr": "محتوى المقال الكامل هنا...",
+      "active": true
+    },
+    {
+      "id": 3,
+      "title": "Men's Accessories: A Complete Guide",
+      "titleAr": "إكسسوارات الرجال: دليل شامل",
+      "category": "Men's Style",
+      "categoryAr": "ستايل الرجال",
+      "date": "2026-01-28",
+      "excerpt": "Everything you need to know about choosing the right accessories.",
+      "excerptAr": "كل ما تحتاج معرفته عن اختيار الإكسسوارات المناسبة.",
+      "content": "Full article content here...",
+      "contentAr": "محتوى المقال الكامل هنا...",
+      "active": true
+    },
+    {
+      "id": 4,
+      "title": "The Art of Layering Necklaces",
+      "titleAr": "فن تنسيق القلادات",
+      "category": "Style Tips",
+      "categoryAr": "نصائح الأناقة",
+      "date": "2026-01-20",
+      "excerpt": "Master the art of layering necklaces like a fashion pro.",
+      "excerptAr": "أتقن فن تنسيق القلادات مثل محترفي الموضة.",
+      "content": "Full article content here...",
+      "contentAr": "محتوى المقال الكامل هنا...",
+      "active": true
+    }
+  ],
+  "orders": [],
+  "settings": {
+    "siteName": "Aura Accessories",
+    "siteNameAr": "أورا للإكسسوارات",
+    "heroTitle": "Discover Your",
+    "heroTitleAr": "اكتشف",
+    "heroHighlight": "Aura",
+    "heroHighlightAr": "هالتك",
+    "heroSubtitle": "Handcrafted luxury accessories that define your unique style.",
+    "heroSubtitleAr": "إكسسوارات فاخرة مصنوعة يدوياً تحدد أسلوبك الفريد.",
+    "marqueeItems": [
+      {
+        "en": "✦ Free Shipping Over EGP 500",
+        "ar": "✦ شحن مجاني فوق ٥٠٠ جنيه"
+      },
+      {
+        "en": "✦ Premium Handcrafted Quality",
+        "ar": "✦ جودة فاخرة مصنوعة يدوياً"
+      },
+      {
+        "en": "✦ 14-Day Easy Returns",
+        "ar": "✦ إرجاع سهل خلال ١٤ يوم"
+      },
+      {
+        "en": "✦ AI-Powered Custom Designs",
+        "ar": "✦ تصاميم مخصصة بالذكاء الاصطناعي"
+      },
+      {
+        "en": "✦ Authentic Guarantee",
+        "ar": "✦ ضمان الأصالة"
+      }
+    ],
+    "testimonials": [
+      {
+        "text": "Aura Accessories completely transformed my style. The quality is unmatched and every piece feels luxurious.",
+        "textAr": "أورا للإكسسوارات غيّرت ستايلي بالكامل. الجودة لا مثيل لها وكل قطعة تشعرك بالفخامة.",
+        "name": "Sara M.",
+        "nameAr": "سارة م.",
+        "role": "Fashion Blogger",
+        "roleAr": "مدونة أزياء",
+        "rating": 5
+      },
+      {
+        "text": "The best accessories store in Egypt! I love the attention to detail and the unique designs.",
+        "textAr": "أفضل متجر إكسسوارات في مصر! أحب الاهتمام بالتفاصيل والتصاميم الفريدة.",
+        "name": "Ahmed K.",
+        "nameAr": "أحمد ك.",
+        "role": "Loyal Customer",
+        "roleAr": "عميل مخلص",
+        "rating": 5
+      },
+      {
+        "text": "I designed a custom bracelet using the AI tool — the result was beyond my expectations.",
+        "textAr": "صممت سوار مخصص باستخدام أداة الذكاء الاصطناعي — النتيجة فاقت توقعاتي.",
+        "name": "Nour H.",
+        "nameAr": "نور ح.",
+        "role": "Designer",
+        "roleAr": "مصممة",
+        "rating": 5
+      },
+      {
+        "text": "Premium quality at fair prices. The leather bracelets are exceptional.",
+        "textAr": "جودة فاخرة بأسعار معقولة. الأساور الجلدية استثنائية.",
+        "name": "Omar T.",
+        "nameAr": "عمر ت.",
+        "role": "Business Professional",
+        "roleAr": "رجل أعمال",
+        "rating": 4
+      }
+    ],
+    "socialLinks": {
+      "instagram": "#",
+      "facebook": "#",
+      "twitter": "#",
+      "whatsapp": ""
+    },
+    "contactEmail": "hello@aura-accessories.com",
+    "contactPhone": "+20 123 456 7890",
+    "contactAddress": "Cairo, Egypt",
+    "contactAddressAr": "القاهرة، مصر",
+    "shippingFee": 50,
+    "freeShippingThreshold": 500,
+    "openaiApiKey": "",
+    "openaiModel": "gpt-4"
+  }
+}

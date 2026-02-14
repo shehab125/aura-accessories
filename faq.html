@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ — Aura Accessories</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+</head>
+
+<body>
+    <div class="page-loader">
+        <div class="loader-ring"></div>
+    </div>
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="index.html" class="nav-brand"><img src="aura-accessories-logo.svg" alt="AURA" class="nav-logo"></a>
+            <div class="nav-links"><a href="index.html" data-i18n="home">Home</a><a href="shop.html"
+                    data-i18n="shop">Shop</a><a href="design.html" data-i18n="design">Design
+                    Your Aura</a><a href="blog.html" data-i18n="journal">Journal</a><a href="about.html"
+                    data-i18n="about">About</a><a href="contact.html" data-i18n="contact">Contact</a></div>
+            <div class="nav-icons">
+                <a href="#" class="nav-icon-btn" id="lang-toggle"
+                    style="font-weight:700; font-size:var(--text-xs); width:auto; padding:0 var(--space-2);">EN</a>
+                <div class="theme-toggle" title="Toggle theme"></div>
+                <button class="nav-icon-btn" onclick="document.getElementById('search-modal').classList.toggle('active')"
+                    title="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                </button>
+                <a href="account.html" class="nav-icon-btn" title="Account">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </a>
+                <a href="cart.html" class="nav-icon-btn" title="Cart" style="position:relative"><svg
+                        width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg><span class="badge cart-badge" style="display:none" data-i18n="cart">0</span></a>
+                <button class="nav-icon-btn" style="position:relative;" onclick="window.location.href='account.html'"
+                    title="Wishlist">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                    <span class="badge wishlist-badge" style="display:none;">0</span>
+                </button>
+            </div>
+            <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+    <div class="mobile-menu" id="mobile-menu"><a href="index.html" data-i18n="home">Home</a><a href="shop.html"
+            data-i18n="shop">Shop</a><a href="design.html" data-i18n="design">Design Your Aura</a><a href="blog.html"
+            data-i18n="journal">Journal</a><a href="about.html" data-i18n="about">About</a><a href="contact.html"
+            data-i18n="contact">Contact</a><a href="cart.html" data-i18n="cart">Cart</a><a href="account.html"
+            data-i18n="login">Account</a></div>
+
+    <!-- Search Modal -->
+    <div class="modal-overlay" id="search-modal">
+        <div class="modal" style="max-width:650px;">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; margin-bottom: var(--space-6);">
+                <h3 style="font-size: var(--text-2xl);" data-i18n="search">Search</h3>
+                <button class="nav-icon-btn"
+                    onclick="document.getElementById('search-modal').classList.remove('active')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div style="position:relative;">
+                <input type="text" id="search-input" class="form-input" placeholder="Search for accessories..."
+                    data-i18n-placeholder="searchPlaceholder"
+                    style="padding-left: var(--space-10); font-size: var(--text-lg);">
+                <svg
+                    style="position:absolute; left:var(--space-3); top:50%; transform:translateY(-50%); color:var(--text-secondary);"
+                    width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                </svg>
+                <div id="search-results"
+                    style="display:none; position:absolute; top:100%; left:0; width:100%; background:var(--bg-card); border:1px solid var(--border-color); border-radius: var(--radius-md); margin-top: var(--space-2); max-height:300px; overflow-y:auto; z-index:10;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-header">
+        <div class="container">
+            <span class="section-label">Help Center</span>
+            <h1 style="font-size: var(--text-5xl);">Frequently Asked Questions</h1>
+            <p
+                style="color: var(--text-secondary); margin-top: var(--space-4); max-width:500px; margin-left:auto; margin-right:auto;">
+                Find answers to the most common questions about our products and services.</p>
+        </div>
+    </div>
+
+    <section class="section">
+        <div class="container container-narrow">
+
+            <!-- Shipping -->
+            <div class="reveal" style="margin-bottom: var(--space-10);">
+                <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6); color: var(--gold);">🚚 Shipping &
+                    Delivery</h2>
+                <div class="accordion-group">
+                    <div class="accordion-item">
+                        <button class="accordion-header">How long does shipping take?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Standard shipping within Egypt takes 3-5 business days.
+                                Express shipping is available for 1-2 business day delivery. We ship to all governorates
+                                across Egypt.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">How much does shipping cost?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Standard shipping costs EGP 50. Express shipping costs EGP
+                                120. Orders over EGP 500 qualify for free standard shipping.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">Can I track my order?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Yes! Once your order ships, you'll receive a tracking
+                                number via email and SMS. You can also track your order from your account dashboard.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">Do you ship internationally?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Currently we ship only within Egypt. International
+                                shipping is coming soon. Follow us on social media for updates!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Returns -->
+            <div class="reveal" style="margin-bottom: var(--space-10);">
+                <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6); color: var(--gold);">↩ Returns &
+                    Exchange</h2>
+                <div class="accordion-group">
+                    <div class="accordion-item">
+                        <button class="accordion-header">What is your return policy?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">We offer a 14-day return policy. Items must be unused, in
+                                original packaging, and with all tags attached. Custom-designed pieces are
+                                non-returnable.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">How do I initiate a return?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Contact us via email at support@auraaccessories.com or
+                                WhatsApp. Our team will guide you through the return process and arrange pickup if
+                                needed.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">Can I exchange an item?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Yes, exchanges are free within 14 days. Simply contact our
+                                support team and we'll arrange the exchange for you.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment -->
+            <div class="reveal" style="margin-bottom: var(--space-10);">
+                <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6); color: var(--gold);">💳 Payment
+                </h2>
+                <div class="accordion-group">
+                    <div class="accordion-item">
+                        <button class="accordion-header">What payment methods do you accept?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">We accept Visa, MasterCard, Vodafone Cash, Fawry, and Cash
+                                on Delivery. All online payments are secured with 256-bit SSL encryption.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">Is it safe to pay online?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Absolutely. We use industry-standard SSL encryption and
+                                never store your card details. All transactions are processed through secure payment
+                                gateways.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">Do you offer installment plans?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Yes! We offer installment plans through ValU and other
+                                Egyptian installment providers for orders over EGP 500.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warranty Policy -->
+            <div class="reveal" style="margin-bottom: var(--space-10);">
+                <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6); color: var(--gold);">🛡️ Warranty
+                    Policy</h2>
+                <div class="accordion-group">
+                    <div class="accordion-item">
+                        <button class="accordion-header">What does the warranty cover?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Our 1-year warranty covers all manufacturing defects,
+                                including clasp failures, loose gemstones, and plating issues throughout the warranty
+                                period. It differentiates us by ensuring your Aura remains timeless.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">What is NOT covered?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">The warranty does not cover lost items, normal wear and
+                                tear (like scratches), improper use or storage, and modifications done by third parties.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">How to claim warranty?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Simply contact our support team with your order number and
+                                a photo of the item. We will arrange a free repair or replacement within 7 business
+                                days.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products -->
+            <div class="reveal" style="margin-bottom: var(--space-10);">
+                <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6); color: var(--gold);">💎 Products &
+                    Quality</h2>
+                <div class="accordion-group">
+                    <div class="accordion-item">
+                        <button class="accordion-header">Are your products genuine?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Every Aura piece comes with an authenticity certificate.
+                                We use only premium materials — real gold plating, genuine leather, natural gemstones,
+                                and medical-grade titanium.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">How do I care for my accessories?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Store in a dry place away from moisture. Avoid contact
+                                with perfumes and chemicals. Use a soft cloth for cleaning. Each product comes with
+                                specific care instructions.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">How does the AI Design feature work?<span
+                                class="accordion-icon">▾</span></button>
+                        <div class="accordion-body">
+                            <div class="accordion-body-inner">Our AI Design Studio lets you describe your dream
+                                accessory or build one from components. Our AI generates a design preview, and once you
+                                approve, our artisans handcraft it for you. Custom pieces take 5-7 business days.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="glass-card reveal" style="text-align:center; margin-top: var(--space-12);">
+                <h3 style="margin-bottom: var(--space-3);">Still have questions?</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--space-6);">Our team is here to help. Reach
+                    out anytime!</p>
+                <div style="display:flex; gap: var(--space-3); justify-content:center; flex-wrap:wrap;">
+                    <a href="contact.html" class="btn btn-primary">Contact Us</a>
+                    <a href="https://wa.me/201000000000" class="btn btn-outline">WhatsApp 💬</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="nav-brand" style="margin-bottom: var(--space-4);"><img
+                            src="aura-accessories-logo.svg" alt="AURA" class="nav-logo"></a>
+                    <p data-i18n="footerText">Premium handcrafted accessories for men and women.</p>
+                    <div class="footer-social" style="margin-top: var(--space-4); display:flex; gap:var(--space-4);">
+                        <a href="#" style="transition:color var(--transition-fast);"
+                            onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color=''"
+                            aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" />
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                <path d="M17.5 6.5h.01" />
+                            </svg></a>
+                        <a href="#" style="transition:color var(--transition-fast);"
+                            onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color=''"
+                            aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                            </svg></a>
+                        <a href="#" style="transition:color var(--transition-fast);"
+                            onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color=''"
+                            aria-label="Twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+                            </svg></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="footer-heading" data-i18n="shop">Shop</h4>
+                    <ul class="footer-links">
+                        <li><a href="shop.html?gender=women" data-i18n="womenCollection">Women</a></li>
+                        <li><a href="shop.html?gender=men" data-i18n="menCollection">Men</a></li>
+                        <li><a href="shop.html" data-i18n="viewAll">All</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-heading" data-i18n="company">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="about.html" data-i18n="about">About</a></li>
+                        <li><a href="blog.html" data-i18n="journal">Journal</a></li>
+                        <li><a href="contact.html" data-i18n="contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-heading" data-i18n="legal">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="privacy.html" data-i18n="privacy">Privacy Policy</a></li>
+                        <li><a href="terms.html" data-i18n="terms">Terms of Use</a></li>
+                        <li><a href="faq.html" data-i18n="faq">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-i18n="rightsReserved">© 2026 Aura Accessories. All rights reserved.</p>
+                <div class="footer-payments"><span>VISA</span><span>MasterCard</span><span>Vodafone
+                        Cash</span><span>Fawry</span></div>
+            </div>
+        </div>
+    </footer>
+    <button class="back-to-top"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path d="m18 15-6-6-6 6" />
+        </svg></button>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
