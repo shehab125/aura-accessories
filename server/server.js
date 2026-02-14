@@ -608,7 +608,11 @@ app.get('/api/upload/signature', authMiddleware, adminMiddleware, (req, res) => 
 // ==========================================
 // Start Server
 // ==========================================
-app.listen(PORT, () => {
-    console.log(`\n✦ Aura Accessories Server running on http://localhost:${PORT}\n`);
-    initAdmin();
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`\n✦ Aura Accessories Server running on http://localhost:${PORT}\n`);
+        initAdmin();
+    });
+}
+
+module.exports = app;
