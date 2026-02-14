@@ -2,7 +2,8 @@
    AURA ACCESSORIES — Core JavaScript
    ============================================ */
 
-const API_BASE = ''; // Relative path for same-domain API
+var API_BASE = window.API_BASE || '/api';
+window.API_BASE = API_BASE;
 
 // ==========================================
 // Data Store (simulated product data)
