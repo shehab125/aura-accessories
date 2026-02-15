@@ -467,6 +467,33 @@
     </div>
 
     <script>
+        const API = window.location.origin; // base domain
+const TOKEN = localStorage.getItem('aura_token');
+const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN || ''}` };
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+  // 1) لازم يبقى فيه توكن
+  if (!TOKEN) {
+    window.location.href = 'account.html';
+    return; // هنا مسموح لأنه جوه function
+  }
+
+  // 2) تحقق إن اليوزر Admin فعلاً من السيرفر
+  try {
+    const r = await fetch(API + '/api/auth/me', { headers });
+    if (!r.ok) { window.location.href = 'account.html'; return; }
+    const user = await r.json();
+    if (user.role !== 'admin') { window.location.href = 'index.html'; return; }
+  } catch (e) {
+    window.location.href = 'account.html';
+    return;
+  }
+
+  // ✅ بعد ما نتأكد إنه Admin: شغّل الداشبورد
+  loadDashboard();
+});
+
         /**
          * Upload a file to Cloudinary and return its secure URL.
          * Fetches a secure signature from the server to avoid exposing the API Secret.
@@ -496,34 +523,23 @@
             }
             return data.secure_url;
         }
-        const TOKEN = localStorage.getItem('aura_token');
-        const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}` };
-
-        if (!TOKEN) { window.location.href = 'account.html'; return; }
-        // Protect admin: only admins can access. Check role from server (not from stale token).
-        (async function checkAdmin() {
-            try {
-                const r = await fetch(window.location.origin + '/api/auth/me', { headers });
-                if (!r.ok) { window.location.href = 'account.html'; return; }
-                const user = await r.json();
-                if (user.role !== 'admin') { window.location.href = 'index.html'; return; }
-            } catch (e) { window.location.href = 'account.html'; }
-        })();
 
         // Navigation
-        function showSection(name) {
-            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-            document.getElementById('sec-' + name)?.classList.add('active');
-            document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('active'));
-            event?.target?.classList.add('active');
-            if (name === 'dashboard') loadDashboard();
-            if (name === 'products') loadProducts();
-            if (name === 'orders') loadOrders();
-            if (name === 'blog') loadBlog();
-            if (name === 'chat') initAdminChat();
-            if (name === 'users') loadUsers();
-            if (name === 'settings') loadSettings();
-        }
+window.showSection = function(name, el) {
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + name)?.classList.add('active');
+
+  document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'products') loadProducts();
+  if (name === 'orders') loadOrders();
+  if (name === 'blog') loadBlog();
+  if (name === 'chat') initAdminChat();
+  if (name === 'users') loadUsers();
+  if (name === 'settings') loadSettings();
+}
 
         function initAdminChat() {
             const el = document.getElementById('admin-chat-messages');
@@ -748,8 +764,7 @@
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); }));
 
-        // Init
-        loadDashboard();
+       
     </script>
 </body>
 
