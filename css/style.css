@@ -1594,6 +1594,88 @@ textarea.form-input {
   .page-header h1 {
     font-size: var(--text-3xl) !important;
   }
+
+  /* ===== ALL inline 2-column grids → 1 column ===== */
+  [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+  /* 3-column grids → 1 column */
+  [style*="grid-template-columns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+  /* Instagram feed 6-col → 3-col on tablet */
+  [style*="grid-template-columns: repeat(6"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  /* Collection sections: stack image grids */
+  .collection-grid {
+    grid-template-columns: 1fr !important;
+  }
+  /* Category tabs: horizontal scroll */
+  .category-tabs,
+  [style*="display:flex"][style*="gap"] > .category-tab {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .category-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  /* Gap reduction for tighter mobile layouts */
+  [style*="gap: var(--space-16)"] {
+    gap: var(--space-6) !important;
+  }
+  [style*="gap: var(--space-12)"] {
+    gap: var(--space-6) !important;
+  }
+  /* Design studio steps grid */
+  .design-steps {
+    grid-template-columns: 1fr !important;
+  }
+  /* Blog grid */
+  .blog-grid {
+    grid-template-columns: 1fr !important;
+  }
+  /* Nav icons: hide wishlist on mobile to save space */
+  .nav-icons {
+    gap: var(--space-1);
+  }
+  .nav-icons .nav-icon-btn {
+    padding: var(--space-1);
+  }
+  /* Testimonial cards */
+  .testimonial-card {
+    min-width: 280px;
+  }
+  /* Hero title responsive */
+  .hero-title {
+    font-size: var(--text-5xl) !important;
+  }
+  /* Marquee text smaller */
+  .marquee-content span {
+    font-size: var(--text-xs);
+  }
+  /* Contact info cards */
+  .contact-info-grid {
+    grid-template-columns: 1fr !important;
+  }
+  /* About page values/stats */
+  .values-grid,
+  .stats-row {
+    grid-template-columns: 1fr !important;
+  }
+  /* FAQ accordion full width */
+  .faq-container {
+    max-width: 100%;
+  }
+  /* Checkout steps */
+  .checkout-steps {
+    gap: var(--space-2);
+  }
+  .checkout-steps .step-item {
+    font-size: var(--text-xs);
+  }
 }
 
 @media (max-width: 480px) {
@@ -1619,6 +1701,21 @@ textarea.form-input {
   .chat-window {
     width: calc(100vw - var(--space-8));
     right: calc(-1 * var(--space-4));
+  }
+
+  /* Instagram feed → 2 columns on small phones */
+  [style*="grid-template-columns: repeat(6"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Even smaller hero */
+  .hero {
+    min-height: 500px;
+  }
+
+  /* Stack form rows */
+  .form-row {
+    grid-template-columns: 1fr !important;
   }
 }
 

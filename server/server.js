@@ -32,13 +32,9 @@ app.use(express.static(path.join(__dirname, '..')));
 // ==========================================
 // Database Helpers
 // ==========================================
-function readDB() {
-    return JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
-}
-
-function writeDB(data) {
-    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
-}
+// ==========================================
+// Database Helpers (REMOVED - Use supabaseService)
+// ==========================================
 
 // ==========================================
 // Auth Middleware
@@ -67,26 +63,22 @@ app.post('/api/auth/register', async (req, res) => {
         const { name, email, password } = req.body;
         if (!name || !email || !password) return res.status(400).json({ error: 'All fields are required' });
 
-        const db = readDB();
-        if (db.users.find(u => u.email === email)) return res.status(400).json({ error: 'Email already exists' });
+        const existingUser = await supabaseService.getUserByEmail(email);
+        if (existingUser) return res.status(400).json({ error: 'Email already exists' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = {
-            id: Date.now(),
+        const user = await supabaseService.createUser({
             name,
             email,
             password: hashedPassword,
             role: 'customer',
-            ora_points: 0,
-            createdAt: new Date().toISOString()
-        };
-
-        db.users.push(user);
-        writeDB(db);
+            phone: req.body.phone || ''
+        });
 
         const token = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
         res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     } catch (e) {
+        console.error('Register error:', e);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -94,8 +86,7 @@ app.post('/api/auth/register', async (req, res) => {
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const db = readDB();
-        const user = db.users.find(u => u.email === email);
+        const user = await supabaseService.getUserByEmail(email);
         if (!user) return res.status(400).json({ error: 'Invalid credentials' });
 
         const valid = await bcrypt.compare(password, user.password);
@@ -104,15 +95,57 @@ app.post('/api/auth/login', async (req, res) => {
         const token = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
         res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     } catch (e) {
+        console.error('Login error:', e);
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-app.get('/api/auth/me', authMiddleware, (req, res) => {
-    const db = readDB();
-    const user = db.users.find(u => u.id === req.user.id);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json({ id: user.id, name: user.name, email: user.email, role: user.role });
+app.get('/api/auth/me', authMiddleware, async (req, res) => {
+    try {
+        const user = await supabaseService.getUserById(req.user.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json({ id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone });
+    } catch (e) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Update user profile
+app.put('/api/auth/profile', authMiddleware, async (req, res) => {
+    try {
+        const { name, phone } = req.body;
+        const updates = {};
+        if (name) updates.name = name;
+        if (phone !== undefined) updates.phone = phone;
+
+        const updatedUser = await supabaseService.updateUser(req.user.id, updates);
+        res.json({ user: { id: updatedUser.id, name: updatedUser.name, email: updatedUser.email, phone: updatedUser.phone, role: updatedUser.role } });
+    } catch (e) {
+        console.error('Profile update error:', e);
+        res.status(500).json({ error: 'Failed to update profile' });
+    }
+});
+
+// Change password
+app.put('/api/auth/password', authMiddleware, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Both passwords required' });
+
+        const user = await supabaseService.getUserById(req.user.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        const valid = await bcrypt.compare(currentPassword, user.password);
+        if (!valid) return res.status(400).json({ error: 'Current password is incorrect' });
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await supabaseService.updateUser(req.user.id, { password: hashedPassword });
+
+        res.json({ success: true });
+    } catch (e) {
+        console.error('Password change error:', e);
+        res.status(500).json({ error: 'Failed to update password' });
+    }
 });
 
 // ==========================================
@@ -221,13 +254,13 @@ app.put('/api/orders/:id', authMiddleware, adminMiddleware, async (req, res) => 
     try {
         const { status } = req.body;
         const order = await supabaseService.updateOrderStatus(req.params.id, status);
-        const db = readDB();
+
         if (status === 'delivered' && order.user_id) {
-            const u = db.users.find(u => String(u.id) === String(order.user_id));
-            if (u) {
+            const user = await supabaseService.getUserById(order.user_id);
+            if (user) {
                 const points = Math.floor((order.total || 0) / 10);
-                u.ora_points = (u.ora_points || 0) + points;
-                writeDB(db);
+                const currentPoints = user.ora_points || user.aura_points || 0;
+                await supabaseService.updateUser(user.id, { ora_points: currentPoints + points });
             }
         }
         res.json(order);
@@ -293,24 +326,34 @@ app.delete('/api/blog/:id', authMiddleware, adminMiddleware, async (req, res) =>
 // ==========================================
 // Settings Routes
 // ==========================================
-app.get('/api/settings', (req, res) => {
-    const db = readDB();
-    const settings = { ...db.settings };
-    // Don't expose API key to public
-    delete settings.openaiApiKey;
-    res.json(settings);
+app.get('/api/settings', async (req, res) => {
+    try {
+        const settings = await supabaseService.getSettings();
+        // Don't expose API key to public
+        delete settings.openaiApiKey;
+        delete settings.aimlApiKey;
+        res.json(settings);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to load settings' });
+    }
 });
 
-app.get('/api/settings/admin', authMiddleware, adminMiddleware, (req, res) => {
-    const db = readDB();
-    res.json(db.settings);
+app.get('/api/settings/admin', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const settings = await supabaseService.getSettings();
+        res.json(settings);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to load settings' });
+    }
 });
 
-app.put('/api/settings', authMiddleware, adminMiddleware, (req, res) => {
-    const db = readDB();
-    db.settings = { ...db.settings, ...req.body };
-    writeDB(db);
-    res.json(db.settings);
+app.put('/api/settings', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const settings = await supabaseService.updateSettings(req.body);
+        res.json(settings);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to save settings' });
+    }
 });
 
 // ==========================================
@@ -343,11 +386,11 @@ app.delete('/api/users/:id', authMiddleware, adminMiddleware, (req, res) => {
 // ==========================================
 app.post('/api/ai/design', async (req, res) => {
     try {
-        const db = readDB();
         const { prompt, gender, budget } = req.body;
+        const settings = await supabaseService.getSettings();
 
         // Prefer AIMLAPI (Gemini) if configured
-        const aimlKey = db.settings.aimlApiKey;
+        const aimlKey = settings.aimlApiKey;
         if (aimlKey && fetch) {
             const response = await fetch('https://api.aimlapi.com/v1/chat/completions', {
                 method: 'POST',
@@ -356,7 +399,7 @@ app.post('/api/ai/design', async (req, res) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: db.settings.aimlModel || 'google/gemini-3-pro-preview',
+                    model: settings.designModel || settings.aimlModel || 'google/gemini-2.0-flash-exp',
                     messages: [
                         {
                             role: 'system',
@@ -367,41 +410,76 @@ app.post('/api/ai/design', async (req, res) => {
                             content: `Design request: ${prompt}. Gender: ${gender || 'unisex'}. Budget: ${budget || 'any'}.`
                         }
                     ],
+                    max_tokens: 1000,
                     response_format: { type: 'json_object' }
                 })
             });
             const data = await response.json();
             if (!response.ok) {
                 console.error('AIMLAPI error:', data);
-                return res.status(500).json({ error: 'AI generation failed via AIMLAPI.' });
+                throw new Error('AI generation failed via AIMLAPI.');
             }
             const content = data.choices?.[0]?.message?.content || '{}';
             const design = JSON.parse(content);
+
+            // Image Generation (AIMLAPI)
+            if (settings.imageModel) {
+                try {
+                    const imgRes = await fetch('https://api.aimlapi.com/v1/images/generations', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${aimlKey}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model: settings.imageModel,
+                            prompt: `High-quality photorealistic studio shot of a ${design.material} ${design.style} ${design.name} jewelry piece. ${design.description}`,
+                            n: 1,
+                            size: '1024x1024'
+                        })
+                    });
+                    if (imgRes.ok) {
+                        const imgData = await imgRes.json();
+                        if (imgData.data && imgData.data[0]) design.image_url = imgData.data[0].url;
+                    }
+                } catch (e) { console.error('Image gen failed via AIMLAPI', e); }
+            }
             return res.json(design);
         }
 
         // Fallback to OpenAI if configured
-        const apiKey = db.settings.openaiApiKey;
+        const apiKey = settings.openaiApiKey;
         if (apiKey) {
             const { OpenAI } = require('openai');
             const openai = new OpenAI({ apiKey });
 
             const completion = await openai.chat.completions.create({
-                model: db.settings.openaiModel || 'gpt-4',
+                model: settings.designModel || settings.openaiModel || 'gpt-4o',
                 messages: [
                     {
                         role: 'system',
-                        content: `You are an expert jewelry designer for Aura Accessories, a premium Egyptian accessories brand. Generate a detailed accessory design based on the user's description. Respond in JSON format with these fields: name (English), nameAr (Arabic), description (English, 2-3 sentences), descriptionAr (Arabic), material, stone, estimatedPrice (number in EGP, range 200-5000), style, occasion.`
+                        content: `You are an expert jewelry designer for Aura Accessories, a premium Egyptian accessories brand. Generate a detailed accessory design based on the user's description. Respond in JSON format with these fields: name (English), nameAr (Arabic), description (English, 2-3 sentences), descriptionAr (Arabic, 2-3 sentences), material, stone, estimatedPrice (number in EGP, range 200-5000), style, occasion.`
                     },
                     {
                         role: 'user',
                         content: `Design request: ${prompt}. Gender: ${gender || 'unisex'}. Budget: ${budget || 'any'}.`
                     }
                 ],
+                max_tokens: 1000,
                 response_format: { type: 'json_object' }
             });
 
             const design = JSON.parse(completion.choices[0].message.content);
+
+            // Image Generation (OpenAI)
+            if (settings.imageModel) {
+                try {
+                    const imgRes = await openai.images.generate({
+                        model: settings.imageModel,
+                        prompt: `High-quality photorealistic studio shot of a ${design.material} ${design.style} ${design.name} jewelry piece. ${design.description}`,
+                        n: 1,
+                        size: '1024x1024'
+                    });
+                    if (imgRes.data && imgRes.data[0]) design.image_url = imgRes.data[0].url;
+                } catch (e) { console.error('Image gen failed via OpenAI', e); }
+            }
             return res.json(design);
         }
 
@@ -429,8 +507,87 @@ app.post('/api/ai/chat', async (req, res) => {
     try {
         const { message } = req.body;
         if (!message) return res.status(400).json({ error: 'Message is required' });
-        const db = readDB();
-        return res.json({ reply: `لقد استلمنا رسالتك: "${message}". فريق خدمة العملاء هيتواصل معاك قريباً.` });
+        const settings = await supabaseService.getSettings();
+
+        // Fetch products for context
+        let productList = [];
+        try { productList = await supabaseService.getProducts(true); } catch (_) { productList = []; }
+        const baseUrl = req.protocol + '://' + req.get('host');
+        const productContext = productList.slice(0, 50).map(p =>
+            `- ${p.name} (${p.name_ar || ''}) | ${p.category} | EGP ${p.price} | Link: ${baseUrl}/product.html?id=${p.id}`
+        ).join('\n');
+
+        const systemPrompt = `You are the official customer service agent for Aura Accessories, a premium Egyptian jewelry & accessories brand. You MUST answer in the SAME language the customer writes in (Arabic → Arabic, English → English). Be warm, helpful, concise, and professional.
+
+Use the product catalog below to recommend items and provide direct links. For order inquiries, direct them to their account page (${baseUrl}/account.html). For returns/exchanges, mention the 14-day return policy. For custom designs, mention the AI design studio at ${baseUrl}/design.html.
+
+Product Catalog:
+${productContext}
+
+Rules:
+- Always provide product links when recommending items
+- Keep responses under 150 words
+- Use emojis sparingly for warmth
+- Sign off as "Aura Support ✦"`;
+
+        // Try AIMLAPI first
+        const aimlKey = settings.aimlApiKey;
+        if (aimlKey && fetch) {
+            try {
+                const response = await fetch('https://api.aimlapi.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${aimlKey}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: settings.chatbotModel || settings.aimlModel || 'google/gemini-2.0-flash-exp',
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            { role: 'user', content: message.trim() }
+                        ],
+                        max_tokens: 400
+                    })
+                });
+                const data = await response.json();
+                const reply = data.choices?.[0]?.message?.content;
+                if (reply) return res.json({ reply });
+            } catch (aimlErr) { console.error('AIML chat error:', aimlErr.message); }
+        }
+
+        // Try OpenAI
+        const openaiKey = settings.openaiApiKey;
+        if (openaiKey) {
+            try {
+                const { default: OpenAI } = await import('openai');
+                const openai = new OpenAI({ apiKey: openaiKey });
+                const completion = await openai.chat.completions.create({
+                    model: settings.chatbotModel || 'gpt-3.5-turbo',
+                    messages: [
+                        { role: 'system', content: systemPrompt },
+                        { role: 'user', content: message.trim() }
+                    ],
+                    max_tokens: 400
+                });
+                const reply = completion.choices[0]?.message?.content;
+                if (reply) return res.json({ reply });
+            } catch (openaiErr) { console.error('OpenAI chat error:', openaiErr.message); }
+        }
+
+        // Fallback: keyword-based product matching
+        const lower = message.toLowerCase().trim();
+        const isAr = /[\u0600-\u06FF]/.test(message);
+        const matches = productList.filter(p =>
+            lower.includes((p.name || '').toLowerCase()) ||
+            (p.name_ar && message.includes(p.name_ar)) ||
+            (p.category && lower.includes(p.category))
+        );
+        if (matches.length > 0) {
+            const links = matches.slice(0, 3).map(p => `• ${p.name_ar || p.name}: ${baseUrl}/product.html?id=${p.id}`).join('\n');
+            const reply = isAr ? `أهلاً بيك! 💛 من المنتجات اللي تناسبك:\n${links}\n\n— Aura Support ✦` : `Hi there! 💛 Here are some products you might like:\n${links}\n\n— Aura Support ✦`;
+            return res.json({ reply });
+        }
+        const reply = isAr
+            ? 'أهلاً بيك في أورا! 💛 قول اسم المنتج أو القسم (سلاسل، خواتم، اساور...) وهساعدك تلاقي اللي يناسبك. لو عندك استفسار عن طلب، ممكن تشيك من حسابك.\n\n— Aura Support ✦'
+            : 'Welcome to Aura! 💛 Tell me what you\'re looking for (necklaces, rings, bracelets...) and I\'ll help you find the perfect piece. For order inquiries, check your account page.\n\n— Aura Support ✦';
+        return res.json({ reply });
     } catch (e) {
         console.error('Chat AI error:', e.message);
         return res.status(500).json({ error: 'AI chat failed. Please try again later.' });
@@ -453,16 +610,16 @@ app.post('/api/admin/chat', authMiddleware, adminMiddleware, async (req, res) =>
             price: p.price,
             description: (p.description || '').slice(0, 200)
         }));
-        const db = readDB();
-        const apiKey = db.settings?.openaiApiKey || db.settings?.aimlApiKey;
+        const settings = await supabaseService.getSettings();
+        const apiKey = settings.openaiApiKey || settings.aimlApiKey;
         const baseUrl = req.protocol + '://' + req.get('host');
         const productContext = productList.map(p => `- ${p.name} (${p.name_ar || ''}) | ${p.category} | EGP ${p.price} | Link: ${baseUrl}/product.html?id=${p.id}`).join('\n');
 
-        if (apiKey && db.settings?.openaiApiKey) {
+        if (apiKey && settings.openaiApiKey) {
             const { OpenAI } = require('openai');
-            const openai = new OpenAI({ apiKey: db.settings.openaiApiKey });
+            const openai = new OpenAI({ apiKey: settings.openaiApiKey });
             const completion = await openai.chat.completions.create({
-                model: db.settings.openaiModel || 'gpt-4',
+                model: settings.openaiModel || 'gpt-4',
                 messages: [
                     {
                         role: 'system',
@@ -476,12 +633,12 @@ app.post('/api/admin/chat', authMiddleware, adminMiddleware, async (req, res) =>
             return res.json({ reply });
         }
 
-        if (apiKey && db.settings?.aimlApiKey && fetch) {
+        if (apiKey && settings.aimlApiKey && fetch) {
             const response = await fetch('https://api.aimlapi.com/v1/chat/completions', {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${db.settings.aimlApiKey}`, 'Content-Type': 'application/json' },
+                headers: { 'Authorization': `Bearer ${settings.aimlApiKey}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    model: db.settings.aimlModel || 'google/gemini-2.0-flash-exp',
+                    model: settings.aimlModel || 'google/gemini-2.0-flash-exp',
                     messages: [
                         {
                             role: 'system',
@@ -523,14 +680,14 @@ app.post('/api/admin/chat', authMiddleware, adminMiddleware, async (req, res) =>
 // ==========================================
 app.get('/api/admin/stats', authMiddleware, adminMiddleware, async (req, res) => {
     try {
-        const db = readDB();
         const orders = await supabaseService.getOrders(null, true);
         const products = await supabaseService.getProducts(false);
+        const users = await supabaseService.getUsers();
         const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
         res.json({
             totalProducts: products.length,
             totalOrders: orders.length,
-            totalUsers: db.users.length,
+            totalUsers: users.length,
             totalRevenue,
             recentOrders: orders.slice(0, 5),
             pendingOrders: orders.filter(o => o.status === 'pending').length
@@ -572,15 +729,65 @@ app.post('/api/ratings', authMiddleware, async (req, res) => {
 });
 
 // ==========================================
+// User Admin Routes (Supabase)
+// ==========================================
+app.get('/api/users', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const users = await supabaseService.getUsers();
+        res.json(users);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to load users' });
+    }
+});
+
+app.put('/api/users/:id/role', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const { role } = req.body;
+        if (!['admin', 'customer'].includes(role)) return res.status(400).json({ error: 'Invalid role' });
+        const user = await supabaseService.updateUser(req.params.id, { role });
+        res.json(user);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to update user role' });
+    }
+});
+
+app.delete('/api/users/:id', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        await supabaseService.deleteUser(req.params.id);
+        res.json({ success: true });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to delete user' });
+    }
+});
+
+// ==========================================
+// Initialize Admin
+// ==========================================
+// ==========================================
 // Initialize Admin
 // ==========================================
 async function initAdmin() {
-    const db = readDB();
-    const admin = db.users.find(u => u.email === 'admin@aura.com');
-    if (admin && admin.password === '$2a$10$placeholder') {
-        admin.password = await bcrypt.hash('admin123', 10);
-        writeDB(db);
-        console.log('✦ Admin account initialized (admin@aura.com / admin123)');
+    try {
+        const admin = await supabaseService.getUserByEmail('admin@aura.com');
+        if (!admin) {
+            console.log('✦ Creating default admin account...');
+            const hashedPassword = await bcrypt.hash('admin123', 10);
+            await supabaseService.createUser({
+                email: 'admin@aura.com',
+                password: hashedPassword,
+                name: 'System Admin',
+                phone: '0000000000',
+                role: 'admin'
+            });
+            console.log('✦ Admin account created: admin@aura.com / admin123');
+        } else {
+            console.log('✦ Admin account exists (admin@aura.com)');
+        }
+    } catch (e) {
+        console.error('Failed to initialize admin:', e);
     }
 }
 
@@ -608,7 +815,9 @@ app.get('/api/upload/signature', authMiddleware, adminMiddleware, (req, res) => 
 // ==========================================
 // Start Server
 // ==========================================
-if (require.main === module) {
+if (process.env.VERCEL) {
+    module.exports = app;   // Vercel serverless
+} else if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`\n✦ Aura Accessories Server running on http://localhost:${PORT}\n`);
         initAdmin();

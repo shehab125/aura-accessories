@@ -335,10 +335,14 @@
                     <h1 style="font-size:var(--text-2xl);">Chat Bot (مربوط بالمنتجات)</h1>
                 </div>
                 <div class="admin-card">
-                    <p style="color:var(--text-secondary); margin-bottom: var(--space-4);">الشات ده بيرد بناءً على بيانات المنتجات من الداتابيز. لو اليوزر عايز منتج معين هيديله لينك المنتج.</p>
-                    <div id="admin-chat-messages" style="height:320px; overflow-y:auto; background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);"></div>
+                    <p style="color:var(--text-secondary); margin-bottom: var(--space-4);">الشات ده بيرد بناءً على
+                        بيانات المنتجات من الداتابيز. لو اليوزر عايز منتج معين هيديله لينك المنتج.</p>
+                    <div id="admin-chat-messages"
+                        style="height:320px; overflow-y:auto; background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);">
+                    </div>
                     <div style="display:flex; gap: var(--space-2);">
-                        <input type="text" id="admin-chat-input" class="form-input" placeholder="اكتب رسالة تجربة..." style="flex:1;" onkeypress="if(event.key==='Enter')sendAdminChat()">
+                        <input type="text" id="admin-chat-input" class="form-input" placeholder="اكتب رسالة تجربة..."
+                            style="flex:1;" onkeypress="if(event.key==='Enter')sendAdminChat()">
                         <button class="btn btn-primary btn-sm" onclick="sendAdminChat()">إرسال</button>
                     </div>
                 </div>
@@ -424,7 +428,8 @@
                 <div class="form-group"><label>Materials (comma-separated)</label><input name="materials"
                         placeholder="18K Gold, Sterling Silver"></div>
                 <!-- Images upload for product -->
-                <div class="form-group"><label>Images</label><input name="images" type="file" accept="image/*" multiple></div>
+                <div class="form-group"><label>Images</label><input name="images" type="file" accept="image/*" multiple>
+                </div>
                 <input type="hidden" name="editId" value="">
                 <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6);">
                     <button type="button" class="btn btn-outline btn-sm"
@@ -467,6 +472,33 @@
     </div>
 
     <script>
+        const API = window.location.origin; // base domain
+        const TOKEN = localStorage.getItem('aura_token');
+        const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN || ''}` };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+
+            // 1) لازم يبقى فيه توكن
+            if (!TOKEN) {
+                window.location.href = 'account.html';
+                return; // هنا مسموح لأنه جوه function
+            }
+
+            // 2) تحقق إن اليوزر Admin فعلاً من السيرفر
+            try {
+                const r = await fetch(API + '/api/auth/me', { headers });
+                if (!r.ok) { window.location.href = 'account.html'; return; }
+                const user = await r.json();
+                if (user.role !== 'admin') { window.location.href = 'index.html'; return; }
+            } catch (e) {
+                window.location.href = 'account.html';
+                return;
+            }
+
+            // ✅ بعد ما نتأكد إنه Admin: شغّل الداشبورد
+            loadDashboard();
+        });
+
         /**
          * Upload a file to Cloudinary and return its secure URL.
          * Fetches a secure signature from the server to avoid exposing the API Secret.
@@ -490,32 +522,21 @@
             const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
             const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
             const data = await res.json();
-            
+
             if (!data || !data.secure_url) {
                 throw new Error(data.error?.message || 'Cloudinary upload failed');
             }
             return data.secure_url;
         }
-        const TOKEN = localStorage.getItem('aura_token');
-        const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}` };
-
-        if (!TOKEN) { window.location.href = 'account.html'; return; }
-        // Protect admin: only admins can access. Check role from server (not from stale token).
-        (async function checkAdmin() {
-            try {
-                const r = await fetch(window.location.origin + '/api/auth/me', { headers });
-                if (!r.ok) { window.location.href = 'account.html'; return; }
-                const user = await r.json();
-                if (user.role !== 'admin') { window.location.href = 'index.html'; return; }
-            } catch (e) { window.location.href = 'account.html'; }
-        })();
 
         // Navigation
-        function showSection(name) {
+        window.showSection = function (name, el) {
             document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
             document.getElementById('sec-' + name)?.classList.add('active');
+
             document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('active'));
-            event?.target?.classList.add('active');
+            if (el) el.classList.add('active');
+
             if (name === 'dashboard') loadDashboard();
             if (name === 'products') loadProducts();
             if (name === 'orders') loadOrders();
@@ -730,6 +751,9 @@
             <div class="form-group"><label>OpenAI Model</label><select name="openaiModel"><option ${s.openaiModel === 'gpt-4' ? 'selected' : ''}>gpt-4</option><option ${s.openaiModel === 'gpt-4o' ? 'selected' : ''}>gpt-4o</option><option ${s.openaiModel === 'gpt-3.5-turbo' ? 'selected' : ''}>gpt-3.5-turbo</option></select></div>
             <div class="form-group"><label>AIMLAPI Key</label><input name="aimlApiKey" type="password" value="${s.aimlApiKey || ''}" placeholder="AIMLAPI key"></div>
             <div class="form-group"><label>AIMLAPI Model</label><input name="aimlModel" value="${s.aimlModel || 'google/gemini-3-pro-preview'}"></div>
+            <h4 style="color:var(--text-secondary);margin:var(--space-4) 0 var(--space-3);">Model Selection per Feature</h4>
+            <div class="form-row"><div class="form-group"><label>Design Model</label><input name="designModel" value="${s.designModel || ''}" placeholder="Leave blank to use default AIMLAPI/OpenAI model"></div><div class="form-group"><label>Chatbot Model</label><input name="chatbotModel" value="${s.chatbotModel || ''}" placeholder="Leave blank to use default model"></div></div>
+            <div class="form-group"><label>Image Generation Model</label><input name="imageModel" value="${s.imageModel || ''}" placeholder="e.g. dall-e-3 or flux/schnell"></div>
             <button type="submit" class="btn btn-primary" style="margin-top:var(--space-6);">Save Settings</button>`;
         }
 
@@ -748,8 +772,7 @@
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); }));
 
-        // Init
-        loadDashboard();
+
     </script>
 </body>
 

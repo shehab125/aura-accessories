@@ -2,7 +2,8 @@
    AURA ACCESSORIES — Core JavaScript
    ============================================ */
 
-const API_BASE = ''; // Relative path for same-domain API
+var API_BASE = window.API_BASE || '';
+window.API_BASE = API_BASE;
 
 // ==========================================
 // Data Store (simulated product data)
@@ -330,10 +331,18 @@ function initBackToTop() {
 function initPageLoader() {
   const loader = document.querySelector('.page-loader');
   if (!loader) return;
-  window.addEventListener('load', () => {
-    setTimeout(() => loader.classList.add('hidden'), 500);
-  });
+
+  const hide = () => loader.classList.add('hidden');
+
+  // طبيعي بعد تحميل الصفحة
+  window.addEventListener('load', () => setTimeout(hide, 500));
+
+  // Fail-safe: حتى لو حصل Error أو API علّق
+  setTimeout(hide, 2500);
+  window.addEventListener('error', hide);
+  window.addEventListener('unhandledrejection', hide);
 }
+
 
 // ==========================================
 // Accordion
@@ -1301,7 +1310,6 @@ function setLanguage(lang) {
 // ==========================================
 // Authentication
 // ==========================================
-const API_BASE = window.location.origin;
 
 function getToken() { return localStorage.getItem('aura_token'); }
 function getUser() { try { return JSON.parse(localStorage.getItem('aura_user')); } catch (e) { return null; } }

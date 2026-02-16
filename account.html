@@ -71,6 +71,44 @@
                 position: static;
             }
         }
+
+        .account-tab {
+            display: none;
+        }
+
+        .account-tab.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+
+        .form-group label {
+            display: block;
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: var(--space-3);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
     </style>
 </head>
 
@@ -89,31 +127,28 @@
                 <a href="#" class="nav-icon-btn" id="lang-toggle"
                     style="font-weight:700; font-size:var(--text-xs); width:auto; padding:0 var(--space-2);">EN</a>
                 <div class="theme-toggle" title="Toggle theme"></div>
-                <button class="nav-icon-btn" onclick="document.getElementById('search-modal').classList.toggle('active')"
-                    title="Search">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
+                <button class="nav-icon-btn"
+                    onclick="document.getElementById('search-modal').classList.toggle('active')" title="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8" />
                         <path d="m21 21-4.35-4.35" />
                     </svg>
                 </button>
                 <a href="account.html" class="nav-icon-btn" title="Account">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>
                 </a>
-                <a href="cart.html" class="nav-icon-btn" title="Cart" style="position:relative"><svg
-                        width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <a href="cart.html" class="nav-icon-btn" title="Cart" style="position:relative"><svg width="20"
+                        height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1" />
                         <circle cx="20" cy="21" r="1" />
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                     </svg><span class="badge cart-badge" style="display:none" data-i18n="cart">0</span></a>
                 <button class="nav-icon-btn" style="position:relative;" onclick="window.location.href='account.html'"
                     title="Wishlist">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path
                             d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
@@ -137,8 +172,7 @@
                 <h3 style="font-size: var(--text-2xl);">Search</h3>
                 <button class="nav-icon-btn"
                     onclick="document.getElementById('search-modal').classList.remove('active')">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 6 6 18M6 6l12 12" />
                     </svg>
                 </button>
@@ -146,10 +180,8 @@
             <div style="position:relative;">
                 <input type="text" id="search-input" class="form-input" placeholder="Search for accessories..."
                     style="padding-left: var(--space-10); font-size: var(--text-lg);">
-                <svg
-                    style="position:absolute; left:var(--space-3); top:50%; transform:translateY(-50%); color:var(--text-secondary);"
-                    width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2">
+                <svg style="position:absolute; left:var(--space-3); top:50%; transform:translateY(-50%); color:var(--text-secondary);"
+                    width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8" />
                     <path d="m21 21-4.35-4.35" />
                 </svg>
@@ -233,13 +265,13 @@
                                 Member</p>
                         </div>
                         <div class="sidebar-nav">
-                            <a href="#" class="active" data-i18n="dashboard">📊 Dashboard</a>
-                            <a href="#" data-i18n="myOrders">📦 My Orders</a>
-                            <a href="#" data-i18n="wishlist">❤️ Wishlist</a>
-                            <a href="#" data-i18n="myDesigns">🎨 My Designs</a>
-                            <a href="#" data-i18n="auraPoints">✦ Aura Points</a>
-                            <a href="#" data-i18n="addresses">📍 Addresses</a>
-                            <a href="#" data-i18n="settings">⚙️ Settings</a>
+                            <a href="#" class="active" data-tab="dashboard" data-i18n="dashboard">📊 Dashboard</a>
+                            <a href="#" data-tab="orders" data-i18n="myOrders">📦 My Orders</a>
+                            <a href="#" data-tab="wishlist" data-i18n="wishlist">❤️ Wishlist</a>
+                            <a href="#" data-tab="designs" data-i18n="myDesigns">🎨 My Designs</a>
+                            <a href="#" data-tab="points" data-i18n="auraPoints">✦ Aura Points</a>
+                            <a href="#" data-tab="addresses" data-i18n="addresses">📍 Addresses</a>
+                            <a href="#" data-tab="settings" data-i18n="settings">⚙️ Settings</a>
                             <a href="admin.html" class="admin-only" style="color: var(--gold);">🛡️ Admin Dashboard</a>
                             <a href="#" class="logout-btn" style="color: var(--danger);" data-i18n="logout">🚪
                                 Logout</a>
@@ -248,55 +280,218 @@
                 </aside>
                 <!-- Main Content -->
                 <div>
-                    <h1 style="font-size: var(--text-3xl); margin-bottom: var(--space-2);"><span
-                            data-i18n="welcomeBack">Welcome back,</span> <span
-                            class="text-gold user-name-display">User</span></h1>
-                    <p style="color: var(--text-secondary); margin-bottom: var(--space-8);" data-i18n="accountOverview">
-                        Here's an overview of your Aura account.</p>
-                    <!-- Stats -->
-                    <div
-                        style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-10);">
-                        <div class="stat-card">
-                            <div style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);">0</div>
-                            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-1);"
-                                data-i18n="totalOrders">Total Orders</div>
+                    <!-- ======= Dashboard Tab ======= -->
+                    <div class="account-tab active" id="tab-dashboard">
+                        <h1 style="font-size: var(--text-3xl); margin-bottom: var(--space-2);"><span
+                                data-i18n="welcomeBack">Welcome back,</span> <span
+                                class="text-gold user-name-display">User</span></h1>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-8);"
+                            data-i18n="accountOverview">
+                            Here's an overview of your Aura account.</p>
+                        <!-- Stats -->
+                        <div
+                            style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-10);">
+                            <div class="stat-card">
+                                <div style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);"
+                                    id="stat-orders">0</div>
+                                <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-1);"
+                                    data-i18n="totalOrders">Total Orders</div>
+                            </div>
+                            <div class="stat-card">
+                                <div style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);"
+                                    id="stat-wishlist">0</div>
+                                <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-1);"
+                                    data-i18n="wishlistItems">Wishlist Items</div>
+                            </div>
+                            <div class="stat-card">
+                                <div style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);"
+                                    id="stat-designs">0</div>
+                                <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-1);"
+                                    data-i18n="savedDesigns">Saved Designs</div>
+                            </div>
                         </div>
-                        <div class="stat-card">
-                            <div style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);">0</div>
-                            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-1);"
-                                data-i18n="wishlistItems">Wishlist Items</div>
+                        <!-- Aura Points -->
+                        <div class="glass-card"
+                            style="padding: var(--space-6); margin-bottom: var(--space-8); border: 1px solid var(--gold); background: rgba(212,175,55,0.03);">
+                            <h3 style="color: var(--gold); margin-bottom: var(--space-3);"
+                                data-i18n="auraPointsProgram">✦
+                                Aura Points Program</h3>
+                            <div style="display:flex; align-items:center; gap: var(--space-4);">
+                                <span style="font-size: var(--text-4xl); font-weight:700; color: var(--gold);"
+                                    id="user-points">0</span>
+                                <span style="color: var(--text-secondary);" data-i18n="pointsInfo">points — earn more by
+                                    shopping!</span>
+                            </div>
+                            <div
+                                style="margin-top: var(--space-4); background: var(--bg-card); border-radius: 100px; height: 8px; overflow:hidden;">
+                                <div id="points-bar"
+                                    style="width: 0%; height:100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 100px; transition: width 0.5s ease;">
+                                </div>
+                            </div>
                         </div>
-                        <div class="stat-card">
-                            <div style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);">0</div>
-                            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-1);"
-                                data-i18n="savedDesigns">Saved Designs</div>
+                        <!-- Recent Orders -->
+                        <h3 style="font-size: var(--text-xl); margin-bottom: var(--space-4);" data-i18n="recentOrders">
+                            Recent Orders</h3>
+                        <div class="glass-card" style="padding: var(--space-6); margin-bottom: var(--space-8);"
+                            id="dashboard-recent-orders">
+                            <p style="color: var(--text-secondary); text-align:center; padding: var(--space-6);">No
+                                orders
+                                yet. <a href="shop.html" style="color: var(--gold);" data-i18n="exploreShop">Explore
+                                    Shop</a></p>
                         </div>
                     </div>
-                    <!-- Aura Points -->
-                    <div class="glass-card"
-                        style="padding: var(--space-6); margin-bottom: var(--space-8); border: 1px solid var(--gold); background: rgba(212,175,55,0.03);">
-                        <h3 style="color: var(--gold); margin-bottom: var(--space-3);" data-i18n="auraPointsProgram">✦
-                            Aura Points Program</h3>
-                        <div style="display:flex; align-items:center; gap: var(--space-4);">
-                            <span style="font-size: var(--text-4xl); font-weight:700; color: var(--gold);">250</span>
-                            <span style="color: var(--text-secondary);" data-i18n="pointsInfo">points — only 50 more to
-                                unlock a EGP 100 discount!</span>
+
+                    <!-- ======= Orders Tab ======= -->
+                    <div class="account-tab" id="tab-orders">
+                        <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6);" data-i18n="myOrders">📦
+                            My Orders</h2>
+                        <div id="orders-list" class="glass-card" style="padding: var(--space-6);">
+                            <p style="color: var(--text-secondary); text-align:center; padding: var(--space-6);">Loading
+                                orders...</p>
                         </div>
-                        <div
-                            style="margin-top: var(--space-4); background: var(--bg-card); border-radius: 100px; height: 8px; overflow:hidden;">
+                    </div>
+
+                    <!-- ======= Wishlist Tab ======= -->
+                    <div class="account-tab" id="tab-wishlist">
+                        <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6);" data-i18n="wishlist">❤️
+                            Wishlist</h2>
+                        <div id="wishlist-grid" class="product-grid"></div>
+                        <div id="wishlist-empty" class="glass-card" style="padding: var(--space-6); display:none;">
+                            <p style="color: var(--text-secondary); text-align:center; padding: var(--space-6);">Your
+                                wishlist is empty. <a href="shop.html" style="color: var(--gold);"
+                                    data-i18n="exploreShop">Explore Shop</a></p>
+                        </div>
+                    </div>
+
+                    <!-- ======= Designs Tab ======= -->
+                    <div class="account-tab" id="tab-designs">
+                        <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6);" data-i18n="myDesigns">🎨
+                            My Designs</h2>
+                        <div id="designs-list" class="glass-card" style="padding: var(--space-6);">
+                            <p style="color: var(--text-secondary); text-align:center; padding: var(--space-6);">No
+                                saved designs yet. <a href="design.html" style="color: var(--gold);">Design Your Aura
+                                    →</a></p>
+                        </div>
+                    </div>
+
+                    <!-- ======= Points Tab ======= -->
+                    <div class="account-tab" id="tab-points">
+                        <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6);" data-i18n="auraPoints">✦
+                            Aura Points</h2>
+                        <div class="glass-card"
+                            style="padding: var(--space-8); border: 1px solid var(--gold); background: rgba(212,175,55,0.03); margin-bottom: var(--space-6);">
+                            <div style="text-align:center; margin-bottom: var(--space-6);">
+                                <div style="font-size: var(--text-6xl); font-weight:700; color: var(--gold);"
+                                    id="points-total">0</div>
+                                <p style="color: var(--text-secondary); margin-top: var(--space-2);">Total Aura Points
+                                </p>
+                            </div>
                             <div
-                                style="width: 83%; height:100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 100px;">
+                                style="background: var(--bg-card); border-radius: 100px; height: 12px; overflow:hidden; margin-bottom: var(--space-4);">
+                                <div id="points-bar-full"
+                                    style="width: 0%; height:100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 100px; transition: width 0.5s ease;">
+                                </div>
+                            </div>
+                            <p style="text-align:center; font-size: var(--text-sm); color: var(--text-secondary);"
+                                id="points-next-reward">Earn points with every purchase!</p>
+                        </div>
+                        <div class="glass-card" style="padding: var(--space-6);">
+                            <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-4); color: var(--gold);">
+                                How to Earn Points</h3>
+                            <div
+                                style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4);">
+                                <div class="stat-card">
+                                    <div style="font-size:2rem; margin-bottom: var(--space-2);">🛍️</div>
+                                    <div style="font-weight:600;">Every EGP 100 = 10 Points</div>
+                                    <div
+                                        style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-1);">
+                                        Earn points on all purchases</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div style="font-size:2rem; margin-bottom: var(--space-2);">⭐</div>
+                                    <div style="font-weight:600;">Review = 5 Points</div>
+                                    <div
+                                        style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-1);">
+                                        Rate a product you bought</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div style="font-size:2rem; margin-bottom: var(--space-2);">🎂</div>
+                                    <div style="font-weight:600;">Birthday = 50 Points</div>
+                                    <div
+                                        style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-1);">
+                                        Free points on your birthday</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Recent Orders -->
-                    <h3 style="font-size: var(--text-xl); margin-bottom: var(--space-4);" data-i18n="recentOrders">
-                        Recent Orders</h3>
-                    <div class="glass-card" style="padding: var(--space-6); margin-bottom: var(--space-8);">
-                        <p style="color: var(--text-secondary); text-align:center; padding: var(--space-6);">No orders
-                            yet. <a href="shop.html" style="color: var(--gold);" data-i18n="exploreShop">Explore
-                                Shop</a></p>
+
+                    <!-- ======= Addresses Tab ======= -->
+                    <div class="account-tab" id="tab-addresses">
+                        <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6);" data-i18n="addresses">📍
+                            Addresses</h2>
+                        <div id="addresses-list"></div>
+                        <button class="btn btn-primary" style="margin-top: var(--space-4);"
+                            onclick="document.getElementById('add-address-form').style.display = document.getElementById('add-address-form').style.display === 'none' ? 'block' : 'none'">+
+                            Add New Address</button>
+                        <div id="add-address-form" class="glass-card"
+                            style="padding: var(--space-6); margin-top: var(--space-4); display:none;">
+                            <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-4); color: var(--gold);">
+                                New Address</h3>
+                            <form id="address-form">
+                                <div class="form-group"><label>Label (e.g. Home, Work)</label><input name="label"
+                                        class="form-input" required></div>
+                                <div class="form-group"><label>Full Address</label><textarea name="address"
+                                        class="form-input" rows="3" required></textarea></div>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+                                    <div class="form-group"><label>City</label><input name="city" class="form-input"
+                                            required></div>
+                                    <div class="form-group"><label>Phone</label><input name="phone" class="form-input"
+                                            type="tel"></div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="margin-top: var(--space-4);">Save
+                                    Address</button>
+                            </form>
+                        </div>
                     </div>
+
+                    <!-- ======= Settings Tab ======= -->
+                    <div class="account-tab" id="tab-settings">
+                        <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6);" data-i18n="settings">⚙️
+                            Settings</h2>
+                        <div class="glass-card" style="padding: var(--space-6); margin-bottom: var(--space-6);">
+                            <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-4); color: var(--gold);">
+                                Profile Information</h3>
+                            <form id="profile-form">
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+                                    <div class="form-group"><label>Name</label><input name="name" class="form-input"
+                                            id="profile-name" required></div>
+                                    <div class="form-group"><label>Phone</label><input name="phone" class="form-input"
+                                            id="profile-phone" type="tel"></div>
+                                </div>
+                                <div class="form-group"><label>Email</label><input name="email" class="form-input"
+                                        id="profile-email" disabled style="opacity:0.6;"></div>
+                                <button type="submit" class="btn btn-primary" style="margin-top: var(--space-4);">Save
+                                    Changes</button>
+                            </form>
+                        </div>
+                        <div class="glass-card" style="padding: var(--space-6);">
+                            <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-4); color: var(--gold);">
+                                Change Password</h3>
+                            <form id="password-form">
+                                <div class="form-group"><label>Current Password</label><input name="currentPassword"
+                                        class="form-input" type="password" required></div>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+                                    <div class="form-group"><label>New Password</label><input name="newPassword"
+                                            class="form-input" type="password" required minlength="6"></div>
+                                    <div class="form-group"><label>Confirm Password</label><input name="confirmPassword"
+                                            class="form-input" type="password" required></div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="margin-top: var(--space-4);">Update
+                                    Password</button>
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

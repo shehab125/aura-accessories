@@ -2,6 +2,25 @@
 -- Run this in Supabase SQL Editor. Uses service_role from server; client uses anon for public read.
 -- No Supabase Auth: app uses Express JWT; user_id in orders/ratings is our app user id (text).
 
+-- Users Table (for credentials)
+create table if not exists users (
+    id uuid primary key default gen_random_uuid(),
+    email text unique not null,
+    password text not null,
+    name text,
+    phone text,
+    role text default 'customer',
+    ora_points int default 0,
+    created_at timestamp with time zone default now()
+);
+
+-- Settings Table (single row id=1, config jsonb)
+create table if not exists settings (
+    id int primary key,
+    config jsonb default '{}'::jsonb,
+    created_at timestamp with time zone default now()
+);
+
 -- Products (same as main schema)
 create table if not exists products (
     id uuid primary key default gen_random_uuid(),
