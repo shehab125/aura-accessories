@@ -7,11 +7,6 @@ const { createClient } = require('@supabase/supabase-js');
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-  console.error('FATAL: Missing Supabase credentials in .env');
-  process.exit(1);
-}
-
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // --- Products
@@ -194,76 +189,6 @@ async function addRating(rating) {
   return data;
 }
 
-// --- Settings (assuming 'settings' table with id=1, config jsonb)
-async function getSettings() {
-  const { data, error } = await supabase.from('settings').select('config').eq('id', 1).single();
-  if (error && error.code !== 'PGRST116') throw error;
-  if (!data) return {};
-  return data.config || {};
-}
-
-async function updateSettings(settings) {
-  // Try update first
-  const { data, error } = await supabase.from('settings').update({ config: settings }).eq('id', 1).select().single();
-  if (!error) return data.config;
-  // If update fails (e.g. no row), try insert
-  const { data: newData, error: insertError } = await supabase.from('settings').insert([{ id: 1, config: settings }]).select().single();
-  if (insertError) throw insertError;
-  return newData.config;
-}
-
-// Deprecated mapping functions, removed for JSONB simplification
-function mapSettingsFromDb(s) { return s; }
-function mapSettingsToDb(s) { return s; }
-
-// --- Users (custom 'users' table or auth.users wrapper)
-// We'll use a custom 'users' table to match key-value structure of db.json for now
-// Ideally this should migrate to Supabase Auth, but that requires frontend changes.
-async function getUsers() {
-  const { data, error } = await supabase.from('users').select('*').order('created_at', { ascending: false });
-  if (error) throw error;
-  return data;
-}
-
-async function getUserById(id) {
-  const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
-  if (error && error.code !== 'PGRST116') throw error;
-  return data;
-}
-
-async function getUserByEmail(email) {
-  const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
-  if (error && error.code !== 'PGRST116') {
-    // If error is "multiple rows", return first one?
-    if (error.code === 'PGRST116') return null; // No rows
-    throw error;
-  }
-  return data;
-}
-
-async function createUser(userData) {
-  const { data, error } = await supabase.from('users').insert([{
-    email: userData.email,
-    password: userData.password, // Hashed password
-    name: userData.name,
-    phone: userData.phone,
-    role: userData.role || 'customer'
-  }]).select().single();
-  if (error) throw error;
-  return data;
-}
-
-async function updateUser(id, updates) {
-  const { data, error } = await supabase.from('users').update(updates).eq('id', id).select().single();
-  if (error) throw error;
-  return data;
-}
-
-async function deleteUser(id) {
-  const { error } = await supabase.from('users').delete().eq('id', id);
-  if (error) throw error;
-}
-
 module.exports = {
   supabase,
   getProducts,
@@ -281,12 +206,5 @@ module.exports = {
   updateOrderStatus,
   getRatingsByProduct,
   addRating,
-  getSettings,
-  updateSettings,
-  getUsers,
-  getUserById,
-  getUserByEmail,
-  createUser,
-  updateUser,
-  deleteUser
 };
+
