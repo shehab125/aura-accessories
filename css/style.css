@@ -1567,30 +1567,36 @@ textarea.form-input {
   }
 
   /* Shop: sidebar + grid */
-  .section .container > div[style*="grid-template-columns: 260px"] {
+  .section .container>div[style*="grid-template-columns: 260px"] {
     grid-template-columns: 1fr !important;
   }
+
   #shop-sidebar {
     position: static !important;
   }
+
   /* Product detail: single column */
   .product-detail-grid {
     grid-template-columns: 1fr !important;
   }
+
   /* Cart/checkout: single column */
   .section div[style*="grid-template-columns: 1fr 380px"],
   .section div[style*="grid-template-columns: 1fr 400px"],
   .checkout-grid {
     grid-template-columns: 1fr !important;
   }
+
   #cart-summary,
   .checkout-grid .glass-card {
     position: static !important;
   }
+
   /* Reviews section: stack summary and list */
   .section-dark [style*="grid-template-columns: 300px 1fr"] {
     grid-template-columns: 1fr !important;
   }
+
   .page-header h1 {
     font-size: var(--text-3xl) !important;
   }
@@ -1793,4 +1799,290 @@ textarea.form-input {
 
 [dir="rtl"] .mobile-menu.active {
   transform: translateX(0);
+}
+
+/* ==========================================
+   RESPONSIVE — Tablet (≤992px)
+   ========================================== */
+@media (max-width: 992px) {
+  :root {
+    --text-7xl: 3rem;
+    --text-5xl: 2rem;
+    --text-4xl: 1.75rem;
+    --space-24: 4rem;
+    --space-20: 3rem;
+    --space-16: 2.5rem;
+  }
+
+  .container {
+    padding: 0 var(--space-4);
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-icons {
+    gap: var(--space-2);
+  }
+
+  .nav-logo {
+    height: 70px;
+  }
+
+  .hero {
+    min-height: 550px;
+  }
+
+  .hero-content h1 {
+    font-size: var(--text-5xl);
+  }
+
+  .hero-content p {
+    font-size: var(--text-base);
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  /* Collection sections — stack on tablet */
+  #women-section .container>div,
+  #men-section .container>div {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-8) !important;
+  }
+
+  /* Story section */
+  #story .container>div {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-8) !important;
+  }
+
+  /* Design CTA steps */
+  #design-cta .glass-card>div:nth-child(4) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Instagram feed */
+  #instagram .reveal {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Footer */
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+
+  /* Product detail page */
+  .product-detail-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-8) !important;
+  }
+
+  /* Newsletter */
+  .newsletter {
+    padding: var(--space-8);
+  }
+
+  /* Section */
+  .section {
+    padding: var(--space-16) 0;
+  }
+
+  .section-title {
+    font-size: var(--text-3xl);
+  }
+
+  .section-subtitle {
+    font-size: var(--text-base);
+  }
+}
+
+/* ==========================================
+   RESPONSIVE — Mobile (≤600px)
+   ========================================== */
+@media (max-width: 600px) {
+  :root {
+    --text-7xl: 2.2rem;
+    --text-5xl: 1.6rem;
+    --text-4xl: 1.4rem;
+    --text-3xl: 1.2rem;
+    --space-24: 3rem;
+    --space-20: 2.5rem;
+    --space-16: 2rem;
+    --space-12: 1.5rem;
+  }
+
+  .nav-logo {
+    height: 55px;
+  }
+
+  .hero {
+    min-height: 480px;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-6);
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-scroll {
+    display: none;
+  }
+
+  /* Product grid — single column on mobile */
+  .product-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  /* Collection sections */
+  #women-section .container>div,
+  #men-section .container>div,
+  #story .container>div {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-6) !important;
+  }
+
+  /* Reverse men's section so text comes first */
+  #men-section .container>div {
+    display: flex !important;
+    flex-direction: column-reverse !important;
+  }
+
+  /* Collection image grids */
+  #women-section .reveal-right,
+  #men-section .reveal-left {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Design CTA steps — stack */
+  #design-cta .glass-card>div:nth-child(4) {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-4) !important;
+  }
+
+  #design-cta .glass-card {
+    padding: var(--space-8) !important;
+  }
+
+  /* Instagram — 2 columns */
+  #instagram .reveal {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Footer — single column */
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    text-align: center;
+  }
+
+  .footer-brand {
+    text-align: center;
+  }
+
+  .footer-social {
+    justify-content: center;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-payments {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Newsletter */
+  .newsletter {
+    padding: var(--space-6);
+  }
+
+  .newsletter-form {
+    flex-direction: column;
+  }
+
+  .newsletter-form input,
+  .newsletter-form button {
+    width: 100%;
+  }
+
+  /* Cart items */
+  .cart-item {
+    flex-wrap: wrap !important;
+  }
+
+  .cart-item .qty-selector {
+    order: 4;
+  }
+
+  /* Category tabs - scroll horizontally */
+  .category-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: var(--space-2);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .category-tab {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Marquee */
+  .marquee-item {
+    font-size: var(--text-xs);
+  }
+
+  /* Section padding */
+  .section {
+    padding: var(--space-12) 0;
+  }
+
+  /* Testimonials */
+  .testimonial-card {
+    padding: var(--space-6);
+  }
+
+  /* Product detail */
+  .product-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Glass card */
+  .glass-card {
+    padding: var(--space-5);
+  }
+
+  /* Stats in story section */
+  #story [style*="display:flex"][style*="gap: var(--space-12)"] {
+    flex-wrap: wrap;
+    gap: var(--space-6) !important;
+  }
 }

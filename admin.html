@@ -335,10 +335,14 @@
                     <h1 style="font-size:var(--text-2xl);">Chat Bot (مربوط بالمنتجات)</h1>
                 </div>
                 <div class="admin-card">
-                    <p style="color:var(--text-secondary); margin-bottom: var(--space-4);">الشات ده بيرد بناءً على بيانات المنتجات من الداتابيز. لو اليوزر عايز منتج معين هيديله لينك المنتج.</p>
-                    <div id="admin-chat-messages" style="height:320px; overflow-y:auto; background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);"></div>
+                    <p style="color:var(--text-secondary); margin-bottom: var(--space-4);">الشات ده بيرد بناءً على
+                        بيانات المنتجات من الداتابيز. لو اليوزر عايز منتج معين هيديله لينك المنتج.</p>
+                    <div id="admin-chat-messages"
+                        style="height:320px; overflow-y:auto; background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);">
+                    </div>
                     <div style="display:flex; gap: var(--space-2);">
-                        <input type="text" id="admin-chat-input" class="form-input" placeholder="اكتب رسالة تجربة..." style="flex:1;" onkeypress="if(event.key==='Enter')sendAdminChat()">
+                        <input type="text" id="admin-chat-input" class="form-input" placeholder="اكتب رسالة تجربة..."
+                            style="flex:1;" onkeypress="if(event.key==='Enter')sendAdminChat()">
                         <button class="btn btn-primary btn-sm" onclick="sendAdminChat()">إرسال</button>
                     </div>
                 </div>
@@ -424,7 +428,8 @@
                 <div class="form-group"><label>Materials (comma-separated)</label><input name="materials"
                         placeholder="18K Gold, Sterling Silver"></div>
                 <!-- Images upload for product -->
-                <div class="form-group"><label>Images</label><input name="images" type="file" accept="image/*" multiple></div>
+                <div class="form-group"><label>Images</label><input name="images" type="file" accept="image/*" multiple>
+                </div>
                 <input type="hidden" name="editId" value="">
                 <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6);">
                     <button type="button" class="btn btn-outline btn-sm"
@@ -503,14 +508,16 @@
         const TOKEN = localStorage.getItem('aura_token');
         const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}` };
 
-        if (!TOKEN) { window.location.href = 'account.html'; return; }
-        // Protect admin: only admins can access. Check role from server (not from stale token).
-        (async function checkAdmin() {
+        // Auth check wrapped in IIFE so `return` is legal (not at top-level).
+        (async function initAdmin() {
+            if (!TOKEN) { window.location.href = 'account.html'; return; }
             try {
                 const r = await fetch(window.location.origin + '/api/auth/me', { headers });
                 if (!r.ok) { window.location.href = 'account.html'; return; }
                 const user = await r.json();
                 if (user.role !== 'admin') { window.location.href = 'index.html'; return; }
+                // Admin verified — load dashboard
+                loadDashboard();
             } catch (e) { window.location.href = 'account.html'; }
         })();
 
@@ -568,11 +575,21 @@
             } catch (e) { console.error(e); }
         }
 
+        // Helper for labels
+        const LABELS = {
+            ar: { necklaces: 'سلاسل', rings: 'خواتم', earrings: 'حلقان', bracelets: 'أساور', watches: 'ساعات', sets: 'أطقم', accessories: 'إكسسوارات', men: 'رجالي', women: 'حريمي', unisex: 'للجنسين', gold: 'ذهب', silver: 'فضة', titanium: 'تيتانيوم', leather: 'جلد' },
+            en: { necklaces: 'Necklaces', rings: 'Rings', earrings: 'Earrings', bracelets: 'Bracelets', watches: 'Watches', sets: 'Sets', accessories: 'Accessories', men: 'Men', women: 'Women', unisex: 'Unisex', gold: 'Gold', silver: 'Silver', titanium: 'Titanium', leather: 'Leather' }
+        };
+        function getLabel(key) {
+            const lang = document.documentElement.lang || 'en';
+            return LABELS[lang]?.[key?.toLowerCase()] || key;
+        }
+
         // Products
         async function loadProducts() {
             const res = await fetch(`${API}/api/products/all`, { headers });
             const products = await res.json();
-            document.getElementById('products-table').innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Badge</th><th>Actions</th></tr></thead><tbody>${products.map(p => `<tr><td>${p.id}</td><td>${p.images && p.images.length ? `<img src="${p.images[0]}" style="width:40px;height:40px;object-fit:cover;margin-right:8px;border-radius:4px;">` : ''}${p.name}<br><small style="color:var(--text-secondary)">${p.nameAr || ''}</small></td><td>${p.category}</td><td>EGP ${(p.price || 0).toLocaleString()}</td><td>${p.badge || '-'}</td><td><button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">Edit</button> <button class="btn-danger" onclick="deleteProduct('${p.id}')">Delete</button></td></tr>`).join('')}</tbody></table>`;
+            document.getElementById('products-table').innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Badge</th><th>Actions</th></tr></thead><tbody>${products.map(p => `<tr><td>${p.id}</td><td>${p.images && p.images.length ? `<img src="${p.images[0]}" style="width:40px;height:40px;object-fit:cover;margin-right:8px;border-radius:4px;">` : ''}${p.name}<br><small style="color:var(--text-secondary)">${p.nameAr || ''}</small></td><td>${getLabel(p.category)}</td><td>EGP ${(p.price || 0).toLocaleString()}</td><td>${p.badge || '-'}</td><td><button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">Edit</button> <button class="btn-danger" onclick="deleteProduct('${p.id}')">Delete</button></td></tr>`).join('')}</tbody></table>`;
         }
 
         function openProductModal(data) {
@@ -734,6 +751,55 @@
             <div class="form-group"><label>OpenAI Model</label><select name="openaiModel"><option ${s.openaiModel === 'gpt-4' ? 'selected' : ''}>gpt-4</option><option ${s.openaiModel === 'gpt-4o' ? 'selected' : ''}>gpt-4o</option><option ${s.openaiModel === 'gpt-3.5-turbo' ? 'selected' : ''}>gpt-3.5-turbo</option></select></div>
             <div class="form-group"><label>AIMLAPI Key</label><input name="aimlApiKey" type="password" value="${s.aimlApiKey || ''}" placeholder="AIMLAPI key"></div>
             <div class="form-group"><label>AIMLAPI Model</label><input name="aimlModel" value="${s.aimlModel || 'google/gemini-3-pro-preview'}"></div>
+            <h3 style="color:var(--gold);margin:var(--space-6) 0 var(--space-4);">🖼 Homepage Images</h3>
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin-bottom:var(--space-4);">Upload images to replace the ✦ placeholders on the homepage. Leave empty to keep current images.</p>
+            <div class="form-row">
+              <div class="form-group"><label>Women's Section — Image 1</label>
+                ${s.homepageImages?.women1 ? `<img src="${s.homepageImages.women1}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;">` : ''}
+                <input type="file" name="hp_women1" accept="image/*"></div>
+              <div class="form-group"><label>Women's Section — Image 2</label>
+                ${s.homepageImages?.women2 ? `<img src="${s.homepageImages.women2}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;">` : ''}
+                <input type="file" name="hp_women2" accept="image/*"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Men's Section — Image 1</label>
+                ${s.homepageImages?.men1 ? `<img src="${s.homepageImages.men1}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;">` : ''}
+                <input type="file" name="hp_men1" accept="image/*"></div>
+              <div class="form-group"><label>Men's Section — Image 2</label>
+                ${s.homepageImages?.men2 ? `<img src="${s.homepageImages.men2}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;">` : ''}
+                <input type="file" name="hp_men2" accept="image/*"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Story Section Image</label>
+                ${s.homepageImages?.story ? `<img src="${s.homepageImages.story}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;">` : ''}
+                <input type="file" name="hp_story" accept="image/*"></div>
+              <div class="form-group"></div>
+            </div>
+            <p style="color:var(--text-secondary);font-size:var(--text-xs);margin:var(--space-2) 0 var(--space-4);">Instagram Feed (6 images)</p>
+            <div class="form-row">
+              <div class="form-group"><label>Insta 1</label>
+                ${s.homepageImages?.insta1 ? `<img src="${s.homepageImages.insta1}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;">` : ''}
+                <input type="file" name="hp_insta1" accept="image/*"></div>
+              <div class="form-group"><label>Insta 2</label>
+                ${s.homepageImages?.insta2 ? `<img src="${s.homepageImages.insta2}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;">` : ''}
+                <input type="file" name="hp_insta2" accept="image/*"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Insta 3</label>
+                ${s.homepageImages?.insta3 ? `<img src="${s.homepageImages.insta3}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;">` : ''}
+                <input type="file" name="hp_insta3" accept="image/*"></div>
+              <div class="form-group"><label>Insta 4</label>
+                ${s.homepageImages?.insta4 ? `<img src="${s.homepageImages.insta4}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;">` : ''}
+                <input type="file" name="hp_insta4" accept="image/*"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Insta 5</label>
+                ${s.homepageImages?.insta5 ? `<img src="${s.homepageImages.insta5}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;">` : ''}
+                <input type="file" name="hp_insta5" accept="image/*"></div>
+              <div class="form-group"><label>Insta 6</label>
+                ${s.homepageImages?.insta6 ? `<img src="${s.homepageImages.insta6}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;">` : ''}
+                <input type="file" name="hp_insta6" accept="image/*"></div>
+            </div>
             <button type="submit" class="btn btn-primary" style="margin-top:var(--space-6);">Save Settings</button>`;
         }
 
@@ -745,15 +811,44 @@
             data.freeShippingThreshold = Number(data.freeShippingThreshold);
             data.socialLinks = { instagram: data.instagram, facebook: data.facebook, twitter: data.twitter, whatsapp: data.whatsapp };
             delete data.instagram; delete data.facebook; delete data.twitter; delete data.whatsapp;
+
+            // Handle homepage image uploads
+            const hpKeys = ['hp_women1', 'hp_women2', 'hp_men1', 'hp_men2', 'hp_story', 'hp_insta1', 'hp_insta2', 'hp_insta3', 'hp_insta4', 'hp_insta5', 'hp_insta6'];
+            const hpImages = {};
+            const btn = e.target.querySelector('button[type="submit"]');
+            if (btn) { btn.disabled = true; btn.textContent = 'Uploading...'; }
+            for (const key of hpKeys) {
+                const input = e.target.querySelector(`[name="${key}"]`);
+                if (input && input.files && input.files[0]) {
+                    try {
+                        const url = await uploadToCloudinary(input.files[0]);
+                        const cleanKey = key.replace('hp_', '');
+                        hpImages[cleanKey] = url;
+                    } catch (err) { console.error('Homepage image upload error for', key, err); }
+                }
+                delete data[key];
+            }
+            if (Object.keys(hpImages).length > 0) {
+                // Merge with existing homepageImages
+                try {
+                    const existingRes = await fetch(`${API}/api/settings/admin`, { headers });
+                    const existingData = await existingRes.json();
+                    data.homepageImages = { ...(existingData.homepageImages || {}), ...hpImages };
+                } catch (_) {
+                    data.homepageImages = hpImages;
+                }
+            }
+
             await fetch(`${API}/api/settings`, { method: 'PUT', headers, body: JSON.stringify(data) });
+            if (btn) { btn.disabled = false; btn.textContent = 'Save Settings'; }
             alert(document.documentElement.lang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
+            loadSettings();
         });
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); }));
 
-        // Init
-        loadDashboard();
+        // Init — loadDashboard() is called inside initAdmin() after admin verification
     </script>
 </body>
 

@@ -638,6 +638,29 @@ function initHomepage() {
 
   // Testimonial slider
   initTestimonialSlider();
+
+  // Load homepage images from settings
+  initHomepageImages();
+}
+
+// Load homepage images from admin settings
+async function initHomepageImages() {
+  try {
+    const res = await fetch(`${API_BASE}/api/settings`);
+    if (!res.ok) return;
+    const settings = await res.json();
+    const imgs = settings.homepageImages;
+    if (!imgs) return;
+    const slots = ['women1', 'women2', 'men1', 'men2', 'story', 'insta1', 'insta2', 'insta3', 'insta4', 'insta5', 'insta6'];
+    slots.forEach(key => {
+      if (imgs[key]) {
+        const el = document.getElementById('hp-' + key);
+        if (el) {
+          el.innerHTML = `<img src="${imgs[key]}" alt="" style="width:100%;height:100%;object-fit:cover;">`;
+        }
+      }
+    });
+  } catch (_) { /* settings not available */ }
 }
 
 function initTestimonialSlider() {
@@ -691,7 +714,7 @@ async function initProductPage() {
     try {
       const res = await fetch(`${API_BASE}/api/products/${idParam}`);
       if (res.ok) product = await res.json();
-    } catch (_) {}
+    } catch (_) { }
   }
   if (!product) product = PRODUCTS[0] || null;
   if (!product) { container.innerHTML = '<p class="text-center" style="padding:4rem;">Product not found.</p>'; return; }
@@ -718,7 +741,7 @@ async function initProductPage() {
   const badgeHtml = product.badge ? `<span class="product-card-badge" style="position:absolute;top:var(--space-4);left:var(--space-4);">${product.badge}</span>` : '';
   const thumbHtml = images.length
     ? images.map((src, i) => `<div style="flex:1; aspect-ratio:1; border-radius: var(--radius-md); border: 1px solid var(--border-color); overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center;" class="hover-lift" onclick="changeMainImage(${i})"><img src="${src}" alt="thumb" style="width:100%; height:100%; object-fit:cover;"></div>`).join('')
-    : [1,2,3,4].map(() => `<div style="flex:1; aspect-ratio:1; background: linear-gradient(135deg, #1a1a1a, #2a2a2a); border-radius: var(--radius-md); border: 1px solid var(--border-color); display:flex; align-items:center; justify-content:center; cursor:pointer;"><span style="color:var(--gold);">✦</span></div>`).join('');
+    : [1, 2, 3, 4].map(() => `<div style="flex:1; aspect-ratio:1; background: linear-gradient(135deg, #1a1a1a, #2a2a2a); border-radius: var(--radius-md); border: 1px solid var(--border-color); display:flex; align-items:center; justify-content:center; cursor:pointer;"><span style="color:var(--gold);">✦</span></div>`).join('');
   container.innerHTML = `
     <div class="product-detail-grid">
       <div class="product-gallery">
@@ -835,7 +858,7 @@ async function initProductPage() {
 
   // Store images globally for gallery switching
   window.currentProductImages = images;
-  window.changeMainImage = function(idx) {
+  window.changeMainImage = function (idx) {
     const imgContainer = document.getElementById('product-main-image');
     if (!imgContainer || !window.currentProductImages) return;
     const src = window.currentProductImages[idx];
@@ -911,7 +934,7 @@ async function loadProductRatings(productId) {
     summaryEl.innerHTML = `<div style="font-size: var(--text-6xl); font-weight:700; color: var(--gold);">${avg}</div><p style="color: var(--text-secondary); font-size: var(--text-sm);">${t.basedOnReviews || 'Based on'} ${count} ${lang === 'ar' ? 'تقييم' : 'reviews'}</p>`;
     listEl.innerHTML = ratings.length ? ratings.map(r => {
       const d = r.created_at ? new Date(r.created_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en') : '';
-      return `<div class="review-card" style="margin-bottom: var(--space-4);"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: var(--space-3);"><div style="display:flex; align-items:center; gap: var(--space-3);"><div style="width:40px;height:40px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--black);font-weight:700;">U</div><div><div style="font-weight:600; font-size: var(--text-sm);">${lang === 'ar' ? 'عميل' : 'Customer'}</div><div style="font-size: var(--text-xs); color: var(--text-secondary);">${d}</div></div></div><div class="stars">${[1,2,3,4,5].map(i => `<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:${i <= r.stars ? 'var(--gold)' : 'var(--gray-600)'}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`).join('')}</div></div><p style="color: var(--text-secondary); line-height:1.8; font-size: var(--text-sm);">${(r.comment || '').replace(/</g, '&lt;')}</p></div>`;
+      return `<div class="review-card" style="margin-bottom: var(--space-4);"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: var(--space-3);"><div style="display:flex; align-items:center; gap: var(--space-3);"><div style="width:40px;height:40px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--black);font-weight:700;">U</div><div><div style="font-weight:600; font-size: var(--text-sm);">${lang === 'ar' ? 'عميل' : 'Customer'}</div><div style="font-size: var(--text-xs); color: var(--text-secondary);">${d}</div></div></div><div class="stars">${[1, 2, 3, 4, 5].map(i => `<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:${i <= r.stars ? 'var(--gold)' : 'var(--gray-600)'}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`).join('')}</div></div><p style="color: var(--text-secondary); line-height:1.8; font-size: var(--text-sm);">${(r.comment || '').replace(/</g, '&lt;')}</p></div>`;
     }).join('') : (lang === 'ar' ? '<p style="color: var(--text-secondary);">مافيش تقييمات لسه. كن أول واحد يقيّم!</p>' : '<p style="color: var(--text-secondary);">No reviews yet. Be the first to rate!</p>');
   } catch (_) {
     summaryEl.innerHTML = `<div style="font-size: var(--text-6xl); font-weight:700; color: var(--gold);">0</div><p style="color: var(--text-secondary); font-size: var(--text-sm);">${t.basedOnReviews || 'Based on'} 0 ${lang === 'ar' ? 'تقييم' : 'reviews'}</p>`;
@@ -989,7 +1012,8 @@ function renderCartPage() {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
       </button>
     </div>
-  `; }).join('');
+  `;
+  }).join('');
 
   const total = getCartTotal();
   if (subtotalEl) subtotalEl.textContent = `EGP ${total.toLocaleString()}`;
