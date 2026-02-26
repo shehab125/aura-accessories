@@ -8,6 +8,15 @@
       "password": "$2a$10$xNglCIYz0W8ByMqKIuHxPOMBS7KH5do3JlEi9cRwe3KgkBFjguDaC",
       "role": "admin",
       "createdAt": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": 1772117431205,
+      "name": "shehab",
+      "email": "behf154@gmail.com",
+      "password": "$2a$10$ZYYfL8jDHVj1EB9tOdH0suNp8tH8by091BVnQ6xMRg45fYh3tDqOu",
+      "role": "customer",
+      "ora_points": 0,
+      "createdAt": "2026-02-26T14:50:31.205Z"
     }
   ],
   "products": [

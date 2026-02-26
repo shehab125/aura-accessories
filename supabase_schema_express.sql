@@ -105,3 +105,20 @@ create policy "orders_update_all" on orders for update using (true);
 create policy "order_items_all" on order_items for all using (true);
 create policy "ratings_select_all" on ratings for select using (true);
 create policy "ratings_insert_all" on ratings for insert with check (true);
+
+-- Users: stores user profiles, ora points, and passwords for Express auth
+create table if not exists users (
+    id uuid primary key default gen_random_uuid(),
+    name text not null,
+    email text unique not null,
+    password text not null,
+    role text default 'customer',
+    ora_points int default 0,
+    created_at timestamp with time zone default now()
+);
+
+alter table users enable row level security;
+create policy "users_select_self" on users for select using (true);
+create policy "users_insert_all" on users for insert with check (true);
+create policy "users_update_all" on users for update using (true);
+

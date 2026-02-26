@@ -60,26 +60,22 @@ app.post('/api/auth/register', async (req, res) => {
         const { name, email, password } = req.body;
         if (!name || !email || !password) return res.status(400).json({ error: 'All fields are required' });
 
-        const db = readDB();
-        if (db.users.find(u => u.email === email)) return res.status(400).json({ error: 'Email already exists' });
+        const existing = await supabaseService.getUserByEmail(email);
+        if (existing) return res.status(400).json({ error: 'Email already exists' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = {
-            id: Date.now(),
+        const user = await supabaseService.createUser({
             name,
             email,
             password: hashedPassword,
             role: 'customer',
-            ora_points: 0,
-            createdAt: new Date().toISOString()
-        };
-
-        db.users.push(user);
-        writeDB(db);
+            ora_points: 0
+        });
 
         const token = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
         res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     } catch (e) {
+        console.error('Register error:', e);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -87,8 +83,7 @@ app.post('/api/auth/register', async (req, res) => {
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const db = readDB();
-        const user = db.users.find(u => u.email === email);
+        const user = await supabaseService.getUserByEmail(email);
         if (!user) return res.status(400).json({ error: 'Invalid credentials' });
 
         const valid = await bcrypt.compare(password, user.password);
@@ -97,15 +92,19 @@ app.post('/api/auth/login', async (req, res) => {
         const token = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
         res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     } catch (e) {
+        console.error('Login error:', e);
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-app.get('/api/auth/me', authMiddleware, (req, res) => {
-    const db = readDB();
-    const user = db.users.find(u => u.id === req.user.id);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json({ id: user.id, name: user.name, email: user.email, role: user.role });
+app.get('/api/auth/me', authMiddleware, async (req, res) => {
+    try {
+        const user = await supabaseService.getUserById(req.user.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json({ id: user.id, name: user.name, email: user.email, role: user.role, ora_points: user.ora_points });
+    } catch (e) {
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // ==========================================
@@ -516,14 +515,14 @@ app.post('/api/admin/chat', authMiddleware, adminMiddleware, async (req, res) =>
 // ==========================================
 app.get('/api/admin/stats', authMiddleware, adminMiddleware, async (req, res) => {
     try {
-        const db = readDB();
         const orders = await supabaseService.getOrders(null, true);
         const products = await supabaseService.getProducts(false);
+        const users = await supabaseService.getUsers();
         const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
         res.json({
             totalProducts: products.length,
             totalOrders: orders.length,
-            totalUsers: db.users.length,
+            totalUsers: users.length,
             totalRevenue,
             recentOrders: orders.slice(0, 5),
             pendingOrders: orders.filter(o => o.status === 'pending').length
@@ -568,12 +567,21 @@ app.post('/api/ratings', authMiddleware, async (req, res) => {
 // Initialize Admin
 // ==========================================
 async function initAdmin() {
-    const db = readDB();
-    const admin = db.users.find(u => u.email === 'admin@aura.com');
-    if (admin && admin.password === '$2a$10$placeholder') {
-        admin.password = await bcrypt.hash('admin123', 10);
-        writeDB(db);
-        console.log('✦ Admin account initialized (admin@aura.com / admin123)');
+    try {
+        const admin = await supabaseService.getUserByEmail('admin@aura.com');
+        if (!admin) {
+            const hashedPassword = await bcrypt.hash('admin123', 10);
+            await supabaseService.createUser({
+                name: 'Admin',
+                email: 'admin@aura.com',
+                password: hashedPassword,
+                role: 'admin',
+                ora_points: 0
+            });
+            console.log('✦ Admin account initialized in Supabase (admin@aura.com / admin123)');
+        }
+    } catch (e) {
+        console.error('Init admin error:', e);
     }
 }
 

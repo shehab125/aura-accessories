@@ -189,6 +189,37 @@ async function addRating(rating) {
   return data;
 }
 
+// --- Users
+async function getUsers() {
+  const { data, error } = await supabase.from('users').select('*').order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+async function getUserByEmail(email) {
+  const { data, error } = await supabase.from('users').select('*').eq('email', email).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+async function getUserById(id) {
+  const { data, error } = await supabase.from('users').select('*').eq('id', id).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+async function createUser(userData) {
+  const { data, error } = await supabase.from('users').insert([userData]).select().single();
+  if (error) throw error;
+  return data;
+}
+
+async function updateUserPoints(userId, points) {
+  const { data, error } = await supabase.from('users').update({ ora_points: points }).eq('id', userId).select().single();
+  if (error) throw error;
+  return data;
+}
+
 module.exports = {
   supabase,
   getProducts,
@@ -206,5 +237,10 @@ module.exports = {
   updateOrderStatus,
   getRatingsByProduct,
   addRating,
+  getUsers,
+  getUserByEmail,
+  getUserById,
+  createUser,
+  updateUserPoints,
 };
 
