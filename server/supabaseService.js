@@ -1,11 +1,14 @@
 /**
  * Supabase server-side client (uses service key, bypasses RLS).
- * Set env SUPABASE_URL and SUPABASE_SERVICE_KEY or use defaults for dev.
  */
 const { createClient } = require('@supabase/supabase-js');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  console.warn('MISSING SUPABASE_URL or SUPABASE_SERVICE_KEY in .env');
+}
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
@@ -15,17 +18,18 @@ async function getProducts(activeOnly = true) {
   if (activeOnly) q = q.eq('is_active', true);
   const { data, error } = await q.order('created_at', { ascending: false });
   if (error) throw error;
-  return data || [];
+  return (data || []).map(mapProductFromDb);
 }
 
 async function getProductById(id) {
   const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
   if (error) throw error;
-  return data;
+  return mapProductFromDb(data);
 }
 
 async function createProduct(row) {
-  const { data, error } = await supabase.from('products').insert([mapProductToDb(row)]).select().single();
+  const dbRow = mapProductToDb(row);
+  const { data, error } = await supabase.from('products').insert([dbRow]).select().single();
   if (error) throw error;
   return data;
 }
@@ -46,12 +50,68 @@ async function deleteProduct(id) {
 }
 
 function mapProductToDb(p) {
-  const row = { ...p };
-  if (row.id && typeof row.id === 'number') delete row.id;
-  if (row.active !== undefined) { row.is_active = row.active; delete row.active; }
-  if (Array.isArray(row.images)) row.images = row.images;
-  else if (!row.images) row.images = [];
+  const row = {};
+  // Handle camelCase to snake_case and type conversion
+  if (p.name !== undefined) row.name = p.name;
+  if (p.nameAr !== undefined) row.name_ar = p.nameAr;
+  if (p.description !== undefined) row.description = p.description;
+  if (p.descriptionAr !== undefined) row.description_ar = p.descriptionAr;
+  if (p.price !== undefined) row.price = Number(p.price) || 0;
+  if (p.oldPrice !== undefined) row.old_price = p.oldPrice ? Number(p.oldPrice) : null;
+  if (p.priceGold !== undefined) row.price_gold = p.priceGold ? Number(p.priceGold) : null;
+  if (p.oldPriceGold !== undefined) row.old_price_gold = p.oldPriceGold ? Number(p.oldPriceGold) : null;
+  if (p.priceSilver !== undefined) row.price_silver = p.priceSilver ? Number(p.priceSilver) : null;
+  if (p.oldPriceSilver !== undefined) row.old_price_silver = p.oldPriceSilver ? Number(p.oldPriceSilver) : null;
+  if (p.gender !== undefined) row.gender = p.gender;
+  if (p.category !== undefined) row.category = p.category;
+  if (p.material !== undefined) row.material = p.material;
+  if (p.style !== undefined) row.style = p.style;
+  if (p.color !== undefined) row.color = p.color;
+  if (p.badge !== undefined) row.badge = p.badge;
+  if (p.rating !== undefined) row.rating = Number(p.rating) || 0;
+  if (p.reviews !== undefined) row.reviews = Number(p.reviews) || 0;
+  if (p.occasion !== undefined) row.occasion = p.occasion;
+  if (p.dimensions !== undefined) row.dimensions = p.dimensions;
+  if (p.weight !== undefined) row.weight = p.weight;
+  if (p.care !== undefined) row.care = p.care;
+  if (p.story !== undefined) row.story = p.story;
+  if (p.storyAr !== undefined) row.story_ar = p.storyAr;
+  
+  // Array fields
+  if (p.sizes !== undefined) row.sizes = Array.isArray(p.sizes) ? p.sizes : (typeof p.sizes === 'string' ? p.sizes.split(',').map(s => s.trim()) : []);
+  if (p.colors !== undefined) row.colors = Array.isArray(p.colors) ? p.colors : (typeof p.colors === 'string' ? p.colors.split(',').map(s => s.trim()) : []);
+  if (p.materials !== undefined) row.materials = Array.isArray(p.materials) ? p.materials : (typeof p.materials === 'string' ? p.materials.split(',').map(s => s.trim()) : []);
+  
+  // Image handling
+  if (p.images !== undefined) row.images = Array.isArray(p.images) ? p.images : (p.images ? [p.images] : []);
+  else if (p.image !== undefined) row.images = [p.image];
+
+  // Customization fields
+  if (p.hasCustomization !== undefined) row.has_customization = !!p.hasCustomization;
+  if (p.customizationType !== undefined) row.customization_type = p.customizationType;
+  if (p.customizationLimit !== undefined) row.customization_limit = Number(p.customizationLimit) || 1;
+  if (p.customQuestions !== undefined) row.custom_questions = p.customQuestions;
+
   return row;
+}
+
+function mapProductFromDb(r) {
+  if (!r) return r;
+  return {
+    ...r,
+    nameAr: r.name_ar,
+    descriptionAr: r.description_ar,
+    oldPrice: r.old_price,
+    priceGold: r.price_gold,
+    oldPriceGold: r.old_price_gold,
+    priceSilver: r.price_silver,
+    oldPriceSilver: r.old_price_silver,
+    storyAr: r.story_ar,
+    hasCustomization: r.has_customization,
+    customizationType: r.customization_type,
+    customizationLimit: r.customization_limit,
+    customQuestions: r.custom_questions,
+  };
 }
 
 // --- Blog
@@ -110,7 +170,7 @@ function mapBlogToDb(p) {
 
 // --- Orders
 async function getOrders(userId = null, isAdmin = false) {
-  let q = supabase.from('orders').select('*').order('created_at', { ascending: false });
+  let q = supabase.from('orders').select('*, order_items(*)').order('created_at', { ascending: false });
   if (!isAdmin && userId != null) q = q.eq('user_id', String(userId));
   const { data, error } = await q;
   if (error) throw error;
@@ -118,40 +178,67 @@ async function getOrders(userId = null, isAdmin = false) {
 }
 
 async function createOrder(orderData, items) {
+  // Ensure orderData fields are mapped from frontend names if necessary
+  const orderRow = {
+    user_id: orderData.userId ? String(orderData.userId) : (orderData.user_id ? String(orderData.user_id) : null),
+    customer_name: orderData.customerName || orderData.customer_name,
+    customer_phone: orderData.customerPhone || orderData.customer_phone,
+    customer_email: orderData.customerEmail || orderData.customer_email,
+    address: orderData.address,
+    notes: orderData.notes,
+    payment_method: orderData.payment_method || 'cod',
+    status: 'pending',
+    total: Number(orderData.total) || 0,
+  };
+
   const { data: order, error: orderError } = await supabase
     .from('orders')
-    .insert([{
-      user_id: orderData.userId != null ? String(orderData.userId) : null,
-      customer_name: orderData.customerName || orderData.customer_name,
-      customer_phone: orderData.customerPhone || orderData.customer_phone,
-      customer_email: orderData.customerEmail || orderData.customer_email,
-      address: orderData.address,
-      notes: orderData.notes,
-      payment_method: orderData.payment_method || 'cod',
-      status: 'pending',
-      total: orderData.total,
-    }])
+    .insert([orderRow])
     .select()
     .single();
-  if (orderError) throw orderError;
+
+  if (orderError) {
+    console.error('Supabase Order Insert Error:', orderError);
+    throw orderError;
+  }
 
   const orderItems = (items || []).map(i => ({
     order_id: order.id,
-    product_id: i.product_id || i.id,
-    qty: i.qty || 1,
-    price: i.price || 0,
+    product_id: String(i.product_id || i.id),
+    qty: Number(i.qty) || 1,
+    price: Number(i.price) || 0,
+    customization_value: i.customizationValue || i.customization_value || null,
+    custom_answers: i.customAnswers || i.custom_answers || [],
   }));
+
   const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
-  if (itemsError) throw itemsError;
+  if (itemsError) {
+    console.error('Supabase OrderItems Insert Error:', itemsError);
+    throw itemsError;
+  }
 
   return mapOrderFromDb(order);
 }
 
-async function updateOrderStatus(id, status) {
-  const { data, error } = await supabase.from('orders').update({ status }).eq('id', id).select().single();
-  if (error) throw error;
+async function updateOrder(id, dataRow) {
+  const status = dataRow.status;
+  const admin_note = dataRow.admin_note !== undefined ? dataRow.admin_note : dataRow.adminNote;
+  
+  const toUpdate = {};
+  if (status) toUpdate.status = status;
+  if (admin_note !== undefined) toUpdate.admin_note = admin_note;
+  
+  console.log('Sending to Supabase:', toUpdate, 'for ID:', id);
+
+  const { data, error } = await supabase.from('orders').update(toUpdate).eq('id', id).select().single();
+  if (error) {
+    console.error('Supabase Update Order Error:', error);
+    throw error;
+  }
   return mapOrderFromDb(data);
 }
+
+
 
 function mapOrderFromDb(r) {
   if (!r) return r;
@@ -171,7 +258,7 @@ async function getRatingsByProduct(productId) {
   const { data, error } = await supabase
     .from('ratings')
     .select('*')
-    .eq('product_id', productId)
+    .eq('product_id', String(productId))
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data || [];
@@ -179,9 +266,9 @@ async function getRatingsByProduct(productId) {
 
 async function addRating(rating) {
   const row = {
-    product_id: rating.product_id,
-    user_id: String(rating.user_id),
-    stars: rating.stars,
+    product_id: String(rating.product_id || rating.productId),
+    user_id: String(rating.user_id || rating.userId),
+    stars: Number(rating.stars),
     comment: rating.comment || null,
   };
   const { data, error } = await supabase.from('ratings').insert([row]).select().single();
@@ -189,35 +276,49 @@ async function addRating(rating) {
   return data;
 }
 
-// --- Users
+
+// --- Profiles (Standardized name for Supabase users table)
 async function getUsers() {
-  const { data, error } = await supabase.from('users').select('*').order('created_at', { ascending: false });
+  const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
   if (error) throw error;
   return data || [];
 }
 
 async function getUserByEmail(email) {
-  const { data, error } = await supabase.from('users').select('*').eq('email', email).maybeSingle();
+  const { data, error } = await supabase.from('profiles').select('*').eq('email', email).maybeSingle();
   if (error) throw error;
   return data;
 }
 
 async function getUserById(id) {
-  const { data, error } = await supabase.from('users').select('*').eq('id', id).maybeSingle();
+  const { data, error } = await supabase.from('profiles').select('*').eq('id', id).maybeSingle();
   if (error) throw error;
   return data;
 }
 
 async function createUser(userData) {
-  const { data, error } = await supabase.from('users').insert([userData]).select().single();
+  const { data, error } = await supabase.from('profiles').insert([userData]).select().single();
   if (error) throw error;
   return data;
 }
 
 async function updateUserPoints(userId, points) {
-  const { data, error } = await supabase.from('users').update({ ora_points: points }).eq('id', userId).select().single();
+  const { data, error } = await supabase.from('profiles').update({ ora_points: points }).eq('id', userId).select().single();
   if (error) throw error;
   return data;
+}
+
+// --- Settings (Global app configuration)
+async function getSettings() {
+    const { data, error } = await supabase.from('settings').select('data').eq('id', 'main').maybeSingle();
+    if (error) throw error;
+    return data?.data || {};
+}
+
+async function updateSettings(settingsData) {
+    const { data, error } = await supabase.from('settings').upsert({ id: 'main', data: settingsData, updated_at: new Date() }).select().single();
+    if (error) throw error;
+    return data.data;
 }
 
 module.exports = {
@@ -234,7 +335,7 @@ module.exports = {
   deleteBlogPost,
   getOrders,
   createOrder,
-  updateOrderStatus,
+  updateOrder,
   getRatingsByProduct,
   addRating,
   getUsers,
@@ -242,5 +343,6 @@ module.exports = {
   getUserById,
   createUser,
   updateUserPoints,
+  getSettings,
+  updateSettings,
 };
-

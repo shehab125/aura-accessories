@@ -141,6 +141,7 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* Added to prevent horizontal scroll */
 }
 
 body {
@@ -148,7 +149,7 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.7;
-  overflow-x: hidden;
+  overflow-x: hidden; /* Added to prevent horizontal scroll */
   transition: background-color var(--transition-slow), color var(--transition-slow);
 }
 
@@ -551,36 +552,132 @@ h6 {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
-/* Mobile Menu */
+/* Mobile Menu - Premium Redesign */
 .mobile-menu {
   position: fixed;
   top: 0;
   right: -100%;
   width: 100%;
   height: 100vh;
-  background: var(--bg-primary);
+  background: rgba(10, 10, 10, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   z-index: var(--z-overlay);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-8);
-  transition: right var(--transition-slow);
+  padding: var(--space-8) var(--space-6);
+  transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
 }
 
 .mobile-menu.active {
   right: 0;
 }
 
-.mobile-menu a {
-  font-family: var(--font-heading);
-  font-size: var(--text-2xl);
-  color: var(--text-primary);
-  transition: color var(--transition-fast);
+.mobile-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-12);
+  width: 100%;
 }
 
-.mobile-menu a:hover {
+.mobile-menu-close {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-base);
+}
+
+.mobile-menu-close:hover {
+  transform: rotate(90deg);
   color: var(--gold);
+}
+
+.mobile-menu-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  flex: 1;
+}
+
+.mobile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.mobile-menu-item:hover,
+.mobile-menu-item.active {
+  color: var(--gold);
+  padding-left: var(--space-6);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.mobile-menu-item svg {
+  color: var(--gold);
+  opacity: 0.8;
+  transition: transform var(--transition-base);
+}
+
+.mobile-menu-item:hover svg {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.mobile-menu-footer {
+  margin-top: auto;
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+}
+
+.mobile-menu-socials {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+  margin-top: var(--space-4);
+}
+
+.mobile-menu-socials a {
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  transition: color var(--transition-base), transform var(--transition-base);
+}
+
+.mobile-menu-socials a:hover {
+  color: var(--gold);
+  transform: translateY(-3px);
+}
+
+[dir="rtl"] .mobile-menu {
+  right: auto;
+  left: -100%;
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[dir="rtl"] .mobile-menu.active {
+  left: 0;
+  right: auto;
+}
+
+[dir="rtl"] .mobile-menu-item:hover,
+[dir="rtl"] .mobile-menu-item.active {
+  padding-left: var(--space-4);
+  padding-right: var(--space-6);
 }
 
 /* ---------- Hero Section ---------- */
@@ -696,6 +793,7 @@ h6 {
 .section {
   padding: var(--space-24) 0;
   position: relative;
+  overflow: hidden; /* Prevent horizontal scroll from reveal animations */
 }
 
 .section-dark {
@@ -848,6 +946,20 @@ h6 {
   text-decoration: line-through;
   margin-left: var(--space-2);
   font-weight: 400;
+  opacity: 0.7;
+}
+
+.discount-badge {
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff4757;
+  font-size: var(--text-xs);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  margin-left: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
 }
 
 .product-card-rating {
@@ -1609,6 +1721,19 @@ textarea.form-input {
     --text-5xl: 1.5rem;
   }
 
+  .about-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-8) !important;
+  }
+
+  .about-hero {
+    padding: var(--space-12) 0 !important;
+  }
+
+  .about-hero h1 {
+    font-size: var(--text-4xl) !important;
+  }
+
   .product-grid {
     grid-template-columns: 1fr;
   }
@@ -1799,6 +1924,53 @@ textarea.form-input {
 
 [dir="rtl"] .mobile-menu.active {
   transform: translateX(0);
+}
+
+[dir="rtl"] .navbar .container {
+  gap: var(--space-4);
+}
+
+[dir="rtl"] .nav-brand {
+  margin-left: auto;
+}
+
+[dir="rtl"] .nav-links {
+  margin-right: var(--space-2);
+  display: flex !important;
+}
+
+@media (max-width: 992px) {
+  [dir="rtl"] .nav-links {
+    display: none !important;
+  }
+  
+  .nav-icons {
+    gap: var(--space-2) !important;
+  }
+}
+
+/* Fix mobile overflow and clean up navbar */
+@media (max-width: 500px) {
+  .nav-logo {
+    height: 45px !important; /* Smaller logo for very small screens */
+  }
+  
+  /* Hide account and wishlist from top nav on mobile to prevent overflow */
+  /* They are already available in the side mobile menu */
+  .nav-icons a[title="Account"],
+  .nav-icons button[title="Wishlist"],
+  .nav-icons a[href="account.html"] {
+    display: none !important;
+  }
+  
+  .navbar .container {
+    padding: 0 var(--space-2) !important;
+  }
+  
+  .nav-icon-btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
 }
 
 /* ==========================================

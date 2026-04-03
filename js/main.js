@@ -3,29 +3,10 @@
    ============================================ */
 
 // ==========================================
-// Data Store (simulated product data)
+// Data Store (will be populated from database)
 // ==========================================
-const PRODUCTS = [
-  { id: 1, name: "Celestial Gold Necklace", nameAr: "قلادة سيليستيال الذهبية", category: "necklaces", gender: "women", price: 850, oldPrice: 1100, material: "gold", style: "classic", color: "gold", image: "images/product-1.jpg", rating: 4.8, reviews: 124, badge: "Best Seller", occasion: "evening", dimensions: "Chain: 45cm, Pendant: 2.5cm", weight: "12g", care: "Avoid contact with perfumes. Store in the provided Aura pouch. Clean with a soft dry cloth.", story: "Inspired by the celestial patterns seen in the Egyptian night sky, this pendant captures the golden warmth of starlight. Each link is hand-polished to achieve a mirror finish.", sizes: ["40cm", "45cm", "50cm"], colors: ["Gold", "Rose Gold"], materials: ["18K Gold", "14K Gold"] },
-  { id: 2, name: "Midnight Leather Bracelet", nameAr: "سوار جلد ميدنايت", category: "bracelets", gender: "men", price: 450, oldPrice: null, material: "leather", style: "modern", color: "black", image: "images/product-2.jpg", rating: 4.6, reviews: 89, badge: null, occasion: "casual", dimensions: "Width: 1.2cm, Adjustable: 18-22cm", weight: "18g", care: "Keep away from water. Apply leather conditioner monthly. Store flat in a cool, dry place.", story: "Crafted from Italian full-grain leather with a titanium clasp, the Midnight bracelet embodies understated masculine elegance.", sizes: ["S (16-18cm)", "M (18-20cm)", "L (20-22cm)"], colors: ["Black", "Brown", "Navy"], materials: ["Italian Leather"] },
-  { id: 3, name: "Rose Quartz Ring", nameAr: "خاتم الكوارتز الوردي", category: "rings", gender: "women", price: 650, oldPrice: 800, material: "silver", style: "bohemian", color: "pink", image: "images/product-3.jpg", rating: 4.9, reviews: 201, badge: "New", occasion: "daily", dimensions: "Band: 3mm, Stone: 8mm", weight: "5g", care: "Remove before washing hands. Avoid harsh chemicals. Polish with a silver cloth periodically.", story: "Featuring a natural rose quartz stone — the crystal of unconditional love — set in a delicate sterling silver band with bohemian-inspired filigree details.", sizes: ["5", "6", "7", "8", "9"], colors: ["Silver/Pink", "Gold/Pink"], materials: ["Sterling Silver", "14K Gold"] },
-  { id: 4, name: "Titanium Chain Bracelet", nameAr: "سوار سلسلة تيتانيوم", category: "bracelets", gender: "men", price: 550, oldPrice: null, material: "titanium", style: "modern", color: "silver", image: "images/product-4.jpg", rating: 4.7, reviews: 67, badge: null, occasion: "daily", dimensions: "Width: 0.8cm, Length: 20cm", weight: "22g", care: "Titanium is hypoallergenic and water-resistant. Wipe with a damp cloth. Extremely durable.", story: "Forged from aerospace-grade titanium, this chain bracelet combines industrial strength with refined design. Virtually indestructible yet featherlight.", sizes: ["18cm", "20cm", "22cm"], colors: ["Silver", "Black", "Gunmetal"], materials: ["Grade 5 Titanium"] },
-  { id: 5, name: "Pearl Drop Earrings", nameAr: "أقراط لؤلؤ متدلية", category: "earrings", gender: "women", price: 720, oldPrice: 950, material: "gold", style: "classic", color: "white", image: "images/product-5.jpg", rating: 4.8, reviews: 156, badge: "Best Seller", occasion: "evening", dimensions: "Drop: 3.5cm, Pearl: 10mm", weight: "6g (pair)", care: "Pearls are delicate — put on last, take off first. Store separately. Wipe with a soft damp cloth.", story: "Genuine freshwater pearls suspended from 18K gold hooks. The classic teardrop shape catches the light beautifully, making these perfect for special evenings.", sizes: ["One Size"], colors: ["White/Gold", "Cream/Gold", "White/Silver"], materials: ["18K Gold + Freshwater Pearl"] },
-  { id: 6, name: "Onyx Signet Ring", nameAr: "خاتم أونيكس سيجنت", category: "rings", gender: "men", price: 780, oldPrice: null, material: "silver", style: "classic", color: "black", image: "images/product-6.jpg", rating: 4.5, reviews: 45, badge: "New", occasion: "formal", dimensions: "Face: 14mm x 12mm, Band: 4mm", weight: "15g", care: "Clean with warm soapy water. Avoid abrasive cleaners. The onyx stone should be stored away from direct sunlight.", story: "A modern take on the traditional signet ring. The deep black onyx centerpiece is hand-set in brushed sterling silver, creating a bold yet sophisticated statement.", sizes: ["8", "9", "10", "11", "12"], colors: ["Silver/Black", "Gold/Black"], materials: ["Sterling Silver", "18K Gold"] },
-  { id: 7, name: "Diamond Aura Pendant", nameAr: "قلادة أورا الماسية", category: "necklaces", gender: "women", price: 1200, oldPrice: 1500, material: "gold", style: "luxury", color: "gold", image: "images/product-7.jpg", rating: 5.0, reviews: 312, badge: "Exclusive", occasion: "evening", dimensions: "Chain: 42cm, Pendant: 1.8cm", weight: "8g", care: "Clean with a professional jewelry cleaner. Store in the velvet box provided. Avoid impact.", story: "Our signature piece. A brilliant-cut diamond (0.25ct, VS clarity) is held in a custom Aura-designed setting that creates a halo of light around the stone.", sizes: ["40cm", "42cm", "45cm"], colors: ["Gold", "White Gold", "Rose Gold"], materials: ["18K Gold + Natural Diamond"] },
-  { id: 8, name: "Woven Steel Cuff", nameAr: "سوار فولاذ منسوج", category: "bracelets", gender: "men", price: 380, oldPrice: 500, material: "steel", style: "modern", color: "silver", image: "images/product-8.jpg", rating: 4.4, reviews: 33, badge: null, occasion: "casual", dimensions: "Width: 1.5cm, Inner diameter: 6.5cm", weight: "35g", care: "Stainless steel is low-maintenance. Wipe with a dry cloth. Water-safe for everyday wear.", story: "Intricately woven stainless steel cables create a textured surface that catches light from every angle. The magnetic clasp ensures easy on/off.", sizes: ["S", "M", "L"], colors: ["Silver", "Black", "Gold"], materials: ["316L Stainless Steel"] },
-  { id: 9, name: "Sapphire Halo Ring", nameAr: "خاتم هالو الياقوت", category: "rings", gender: "women", price: 1450, oldPrice: null, material: "gold", style: "luxury", color: "blue", image: "images/product-9.jpg", rating: 4.9, reviews: 178, badge: "Exclusive", occasion: "evening", dimensions: "Stone: 6mm, Band: 2mm, Halo: 10mm", weight: "4g", care: "Sapphires are durable. Clean with warm soapy water. Annual professional inspection recommended.", story: "A vivid blue Ceylon sapphire surrounded by a halo of micro-pavé diamonds, set in 18K gold. This ring is inspired by the deep blue of the Mediterranean.", sizes: ["5", "6", "7", "8"], colors: ["Gold/Blue", "White Gold/Blue"], materials: ["18K Gold + Ceylon Sapphire"] },
-  { id: 10, name: "Carbon Fiber Necklace", nameAr: "قلادة كربون فايبر", category: "necklaces", gender: "men", price: 620, oldPrice: 750, material: "carbon", style: "modern", color: "black", image: "images/product-10.jpg", rating: 4.6, reviews: 55, badge: null, occasion: "casual", dimensions: "Chain: 55cm, Pendant: 3cm x 2cm", weight: "14g", care: "Carbon fiber is extremely durable. Clean with a microfiber cloth. Avoid bending the pendant.", story: "A fusion of motorsport engineering and jewelry design. The carbon fiber pendant features a real woven carbon pattern with a stainless steel frame.", sizes: ["50cm", "55cm", "60cm"], colors: ["Black/Silver", "Black/Gold"], materials: ["Carbon Fiber + Stainless Steel"] },
-  { id: 11, name: "Crystal Aurora Earrings", nameAr: "أقراط كريستال أورورا", category: "earrings", gender: "women", price: 580, oldPrice: null, material: "crystal", style: "bohemian", color: "multicolor", image: "images/product-11.jpg", rating: 4.7, reviews: 92, badge: "New", occasion: "daily", dimensions: "Drop: 2.8cm, Crystal: 6mm", weight: "4g (pair)", care: "Crystals are fragile — handle with care. Store individually. Clean gently with a soft cloth.", story: "Swarovski crystals cut to catch and refract light like the Aurora Borealis. Each earring displays a mesmerizing rainbow effect as light hits the facets.", sizes: ["One Size"], colors: ["Aurora", "Clear", "Rose"], materials: ["Sterling Silver + Swarovski Crystal"] },
-  { id: 12, name: "Leather Wrap Bracelet", nameAr: "سوار جلدي ملفوف", category: "bracelets", gender: "men", price: 320, oldPrice: 400, material: "leather", style: "bohemian", color: "brown", image: "images/product-12.jpg", rating: 4.3, reviews: 28, badge: null, occasion: "casual", dimensions: "Width: 2cm, Wraps: 3x around wrist", weight: "20g", care: "Natural leather ages beautifully. Keep dry. Condition every 2-3 months with leather balm.", story: "Triple-wrapped vegetable-tanned leather with hand-stamped brass studs. This bracelet develops a unique patina over time, becoming truly yours.", sizes: ["S", "M", "L"], colors: ["Brown", "Tan", "Black"], materials: ["Vegetable-Tanned Leather"] },
-];
-
-const BLOG_POSTS = [
-  { id: 1, title: "Top 10 Accessory Trends for 2026", titleAr: "أبرز 10 صيحات إكسسوارات لعام 2026", category: "Trends", date: "Feb 10, 2026", image: "images/blog-1.jpg", excerpt: "Discover the hottest accessory trends that are defining this year's fashion landscape." },
-  { id: 2, title: "How to Care for Your Gold Jewelry", titleAr: "كيف تعتني بمجوهراتك الذهبية", category: "Care Guide", date: "Feb 5, 2026", image: "images/blog-2.jpg", excerpt: "Expert tips to keep your gold pieces looking brand new for years to come." },
-  { id: 3, title: "Men's Accessories: A Complete Guide", titleAr: "إكسسوارات الرجال: دليل شامل", category: "Men's Style", date: "Jan 28, 2026", image: "images/blog-3.jpg", excerpt: "Everything you need to know about choosing the right accessories for any occasion." },
-  { id: 4, title: "The Art of Layering Necklaces", titleAr: "فن تنسيق القلادات", category: "Style Tips", date: "Jan 20, 2026", image: "images/blog-4.jpg", excerpt: "Master the art of layering necklaces like a fashion pro with our easy guide." },
-];
+const PRODUCTS = [];
+const BLOG_POSTS = [];
 
 // ==========================================
 // Supabase initialization
@@ -36,21 +17,27 @@ const BLOG_POSTS = [
 // tag. The imported functions are attached to the global `window` object
 // once loaded, so other functions in this file can reference them.
 (function initSupabaseClient() {
-  if (typeof window !== 'undefined' && !window.supabase) {
-    import('./supabaseClient.js').then((module) => {
-      // Expose Supabase client and helpers to the global scope
-      window.supabase = module.supabase;
-      window.fetchProductsFromDb = module.fetchProducts;
-      window.createProductInDb = module.createProduct;
-      window.updateProductInDb = module.updateProduct;
-      window.deleteProductInDb = module.deleteProduct;
-      window.fetchBlogPostsFromDb = module.fetchBlogPosts;
-      window.createBlogPostInDb = module.createBlogPost;
-      window.submitOrderToDb = module.submitOrder;
-    }).catch((err) => {
-      console.warn('Supabase client failed to load:', err);
-    });
-  }
+  window.__supabasePromise = new Promise((resolve) => {
+    if (typeof window !== 'undefined' && !window.supabase) {
+      import('./supabaseClient.js').then((module) => {
+        // Expose Supabase client and helpers to the global scope
+        window.supabase = module.supabase;
+        window.fetchProductsFromDb = module.fetchProducts;
+        window.createProductInDb = module.createProduct;
+        window.updateProductInDb = module.updateProduct;
+        window.deleteProductInDb = module.deleteProduct;
+        window.fetchBlogPostsFromDb = module.fetchBlogPosts;
+        window.createBlogPostInDb = module.createBlogPost;
+        window.submitOrderToDb = module.submitOrder;
+        resolve();
+      }).catch((err) => {
+        console.warn('Supabase client failed to load:', err);
+        resolve();
+      });
+    } else {
+      resolve();
+    }
+  });
 })();
 
 // ==========================================
@@ -109,28 +96,78 @@ function addToCart(productId, qty = 1, productData = null) {
 
   const id = product.id;
   const name = product.name || product.name_ar || product.nameAr;
-  const price = product.price;
+  
+  // Requirement: Use price based on selected material variant
+  const matEl = document.querySelector('.material-option.active');
+  const materialKey = matEl?.dataset.material || 'silver';
+  const price = materialKey === 'gold' ? (product.price_gold || product.price) : (product.price_silver || product.price);
+  const materialName = matEl?.textContent || product.material || 'Silver';
+  
   const image = (product.images && product.images[0]) || product.image;
 
-  const existing = cart.find(item => item.id === id || String(item.id) === String(id));
+  // Customization data
+  let customizationValue = null;
+  let customAnswers = []; // Initializing as array for better order handling
+
+  if (product.has_customization) {
+    const valInput = document.getElementById('customization-value');
+    if (valInput) {
+      customizationValue = valInput.value.trim();
+      if (!customizationValue) {
+        showToast(translations[document.documentElement.lang]?.requiredField || 'Customization value is required', 'error');
+        valInput.focus();
+        return;
+      }
+    }
+
+    const questionInputs = document.querySelectorAll('.custom-question-input');
+    if (questionInputs.length > 0) {
+      customAnswers = [];
+      for (const input of questionInputs) {
+        const question = input.dataset.question;
+        const answer = input.value.trim();
+        if (!answer) {
+          showToast(translations[document.documentElement.lang]?.requiredField || 'All questions are required', 'error');
+          input.focus();
+          return;
+        }
+        customAnswers.push({ question, answer });
+      }
+    }
+  }
+
+  // Create unique key for cart items with different material and customization
+  const cartId = `${id}_${materialKey}_${customizationValue || ''}_${JSON.stringify(customAnswers)}`;
+
+  const existing = cart.find(item => item.cartId === cartId);
   if (existing) {
-    existing.qty += qty;
+    existing.qty += Number(qty);
   } else {
-    cart.push({ id, name, price, image, qty });
+    cart.push({ 
+      cartId, 
+      id, 
+      name, 
+      price, 
+      image, 
+      qty: Number(qty), 
+      material: materialName,
+      customizationValue, 
+      customAnswers 
+    });
   }
   saveCart();
   const msg = document.documentElement.lang === 'ar' ? 'تمت الإضافة للسلة!' : `${name} added to cart!`;
   showToast(msg, 'success');
 }
 
-function removeFromCart(productId) {
-  cart = cart.filter(item => String(item.id) !== String(productId));
+function removeFromCart(cartId) {
+  cart = cart.filter(item => item.cartId !== cartId && String(item.id) !== String(cartId));
   saveCart();
   renderCartPage && renderCartPage();
 }
 
-function updateCartQty(productId, qty) {
-  const item = cart.find(i => String(i.id) === String(productId));
+function updateCartQty(cartId, qty) {
+  const item = cart.find(i => i.cartId === cartId || (String(i.id) === String(cartId) && !i.cartId));
   if (item) {
     item.qty = Math.max(1, qty);
     saveCart();
@@ -223,19 +260,39 @@ function initNavigation() {
 
   // Mobile menu toggle
   if (hamburger && mobileMenu) {
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
-      mobileMenu.classList.toggle('active');
-      document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+    const closeBtn = document.getElementById('mobile-menu-close');
+    
+    const toggleMenu = (forceClose = false) => {
+      const isActive = forceClose ? false : !mobileMenu.classList.contains('active');
+      hamburger.classList.toggle('active', isActive);
+      mobileMenu.classList.toggle('active', isActive);
+      document.body.style.overflow = isActive ? 'hidden' : '';
+    };
+
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
     });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu(true);
+      });
+    }
 
     // Close mobile menu on link click
     mobileMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        mobileMenu.classList.remove('active');
-        document.body.style.overflow = '';
+        toggleMenu(true);
       });
+    });
+
+    // Close on click outside links but inside menu (optional, but good for UX)
+    mobileMenu.addEventListener('click', (e) => {
+      if (e.target === mobileMenu) {
+        toggleMenu(true);
+      }
     });
   }
 
@@ -360,6 +417,7 @@ function initChatWidget() {
   const chatBtn = document.querySelector('.chat-btn');
   const chatWindow = document.querySelector('.chat-window');
   const chatClose = document.querySelector('.chat-close');
+  const chatHistory = [];
 
   if (chatBtn && chatWindow) {
     chatBtn.addEventListener('click', () => {
@@ -382,35 +440,65 @@ function initChatWidget() {
       const appendMessage = (text, isUser = false) => {
         const wrapper = document.createElement('div');
         wrapper.style.marginBottom = 'var(--space-4)';
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = isUser ? 'row-reverse' : 'row';
+        
+        const bubble = document.createElement('div');
+        bubble.style.padding = 'var(--space-3) var(--space-4)';
+        bubble.style.borderRadius = 'var(--radius-md)';
+        bubble.style.maxWidth = '85%';
+        bubble.style.fontSize = 'var(--text-sm)';
+        bubble.style.lineHeight = '1.6';
+
         if (isUser) {
-          wrapper.innerHTML = `<div style="background: var(--bg-secondary); border-radius: var(--radius-md); padding: var(--space-4); margin-left:auto; max-width:80%;"><p style="font-size: var(--text-sm); color: var(--text-primary);">${text}</p></div>`;
+          bubble.style.background = 'var(--gold)';
+          bubble.style.color = 'var(--black)';
+          bubble.style.fontWeight = '500';
+          bubble.style.borderBottomRightRadius = '2px';
+          bubble.textContent = text;
         } else {
-          wrapper.innerHTML = `<div style="background: rgba(212,175,55,0.1); border-left:3px solid var(--gold); border-radius: var(--radius-md); padding: var(--space-4); max-width:80%;"><p style="font-size: var(--text-sm); color: var(--text-primary);">${text}</p></div>`;
+          bubble.style.background = 'rgba(255,255,255,0.05)';
+          bubble.style.border = '1px solid var(--border-color)';
+          bubble.style.color = 'var(--text-primary)';
+          bubble.style.borderBottomLeftRadius = '2px';
+          // Simple formatter
+          bubble.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         }
+        
+        wrapper.appendChild(bubble);
         messages.appendChild(wrapper);
         messages.scrollTop = messages.scrollHeight;
-        return wrapper;
+        return bubble;
       };
 
       async function sendMessage() {
         const text = input.value.trim();
         if (!text) return;
-        // append user message
+        
         appendMessage(text, true);
         input.value = '';
-        // append placeholder for bot reply
-        const botWrapper = appendMessage('...');
+        
+        const botBubble = appendMessage('...', false);
+        botBubble.classList.add('typing-animation');
+
         try {
           const res = await fetch(`${API_BASE}/api/ai/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: text })
+            body: JSON.stringify({ message: text, history: chatHistory })
           });
           const data = await res.json();
           const reply = data.reply || data.response || '...';
-          botWrapper.innerHTML = `<div style="background: rgba(212,175,55,0.1); border-left:3px solid var(--gold); border-radius: var(--radius-md); padding: var(--space-4); max-width:80%;"><p style="font-size: var(--text-sm); color: var(--text-primary);">${reply}</p></div>`;
+          
+          botBubble.classList.remove('typing-animation');
+          botBubble.innerHTML = reply.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+          chatHistory.push({ role: 'user', parts: [{ text: text }] });
+          chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+          if (chatHistory.length > 10) chatHistory.splice(0, 2);
         } catch (err) {
-          botWrapper.innerHTML = `<div style="background: rgba(212,175,55,0.1); border-left:3px solid var(--gold); border-radius: var(--radius-md); padding: var(--space-4); max-width:80%;"><p style="font-size: var(--text-sm); color: var(--text-primary);">Sorry, something went wrong.</p></div>`;
+          botBubble.classList.remove('typing-animation');
+          botBubble.textContent = lang === 'ar' ? 'عذراً، حصل خطأ.' : 'Sorry, something went wrong.';
         }
       }
       sendBtn.addEventListener('click', sendMessage);
@@ -418,6 +506,7 @@ function initChatWidget() {
     }
   }
 }
+
 
 // ==========================================
 // Product Card Rendering
@@ -429,7 +518,10 @@ function createProductCard(product) {
   const imgStyle = `background: linear-gradient(135deg, #1a1a1a, #2a2a2a); display:flex; align-items:center; justify-content:center; color: var(--gold); font-size: 3rem;`;
 
   const lang = document.documentElement.lang || 'en';
-  const name = lang === 'ar' ? product.nameAr : product.name;
+  // Fallback chain: nameAr → name_ar → name (handles both local data and Supabase format)
+  const name = lang === 'ar'
+    ? (product.nameAr || product.name_ar || product.name || '')
+    : (product.name || product.name_ar || product.nameAr || '');
   const addToCartText = translations[lang].addToCart;
   const viewText = translations[lang].view;
 
@@ -439,16 +531,19 @@ function createProductCard(product) {
     ? `<img src="${imgSrc}" alt="${name}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius: inherit;">`
     : `<div style="${imgStyle} width:100%; aspect-ratio:1;">✦</div>`;
 
+  // Normalize badge: handle both 'badge' and 'label' field names (local vs Supabase)
+  const productBadge = product.badge || product.label || null;
+
   return `
-    <div class="product-card reveal" data-product-id="${product.id}" data-gender="${product.gender}" data-category="${product.category}" data-material="${product.material}" data-style="${product.style}" data-price="${product.price}">
+    <div class="product-card reveal" data-product-id="${product.id}" data-gender="${product.gender || ''}" data-category="${product.category || ''}" data-material="${product.material || ''}" data-style="${product.style || ''}" data-price="${product.price || 0}">
       <div class="product-card-image">
         ${imgHtml}
-        ${product.badge ? `<span class="product-card-badge">${product.badge}</span>` : ''}
-        <button class="product-wishlist ${isWished ? 'active' : ''}" data-id="${product.id}" onclick="event.stopPropagation(); toggleWishlist(${product.id})">
+        ${productBadge ? `<span class="product-card-badge">${productBadge}</span>` : ''}
+        <button class="product-wishlist ${isWished ? 'active' : ''}" data-id="${product.id}" onclick="event.stopPropagation(); toggleWishlist('${product.id}')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="${isWished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
         </button>
         <div class="product-card-overlay">
-          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart(${product.id})">${addToCartText}</button>
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart('${product.id}')">${addToCartText}</button>
           <a href="product.html?id=${product.id}" class="btn btn-outline btn-sm">${viewText}</a>
         </div>
       </div>
@@ -456,8 +551,11 @@ function createProductCard(product) {
         <span class="product-card-category">${getLabel(product.category)}</span>
         <h4 class="product-card-name">${name}</h4>
         <div class="product-card-price">
-          EGP ${product.price.toLocaleString()}
-          ${product.oldPrice ? `<span class="old-price">EGP ${product.oldPrice.toLocaleString()}</span>` : ''}
+          EGP ${(product.price_silver || product.price || 0).toLocaleString()}
+          ${(product.old_price_silver || product.oldPrice) ? `<span class="old-price">EGP ${(product.old_price_silver || product.oldPrice).toLocaleString()}</span>` : ''}
+          ${(product.old_price_silver || product.oldPrice) && (product.old_price_silver || product.oldPrice) > (product.price_silver || product.price) 
+            ? `<span class="discount-badge">-${Math.round((1 - (product.price_silver || product.price) / (product.old_price_silver || product.oldPrice)) * 100)}%</span>` 
+            : ''}
         </div>
         <div class="product-card-rating">
           ${stars}
@@ -484,7 +582,6 @@ function initShopFilters() {
   const grid = document.getElementById('product-grid');
   if (!grid) return;
 
-  const filterGender = document.querySelectorAll('[data-filter-gender]');
   const filterCategory = document.querySelectorAll('[data-filter-category]');
   const filterMaterial = document.querySelectorAll('[data-filter-material]');
   const sortSelect = document.getElementById('sort-select');
@@ -494,40 +591,16 @@ function initShopFilters() {
   function applyFilters() {
     let filtered = [...PRODUCTS];
 
-    // Gender filter
-    const activeGender = document.querySelector('[data-filter-gender].active');
-    if (activeGender && activeGender.dataset.filterGender !== 'all') {
-      filtered = filtered.filter(p => p.gender === activeGender.dataset.filterGender);
-    }
-
     // Category filter
     const activeCategory = document.querySelector('[data-filter-category].active');
     if (activeCategory && activeCategory.dataset.filterCategory !== 'all') {
       filtered = filtered.filter(p => p.category === activeCategory.dataset.filterCategory);
     }
 
-    // Material filter
+    // Material filter (gold / silver)
     const checkedMaterials = [...document.querySelectorAll('[data-filter-material]:checked')].map(el => el.dataset.filterMaterial);
     if (checkedMaterials.length > 0) {
       filtered = filtered.filter(p => checkedMaterials.includes(p.material));
-    }
-
-    // Color filter
-    const checkedColors = [...document.querySelectorAll('[data-filter-color]:checked')].map(el => el.dataset.filterColor);
-    if (checkedColors.length > 0) {
-      filtered = filtered.filter(p => checkedColors.includes(p.color));
-    }
-
-    // Style filter
-    const checkedStyles = [...document.querySelectorAll('[data-filter-style]:checked')].map(el => el.dataset.filterStyle);
-    if (checkedStyles.length > 0) {
-      filtered = filtered.filter(p => checkedStyles.includes(p.style));
-    }
-
-    // Occasion filter
-    const checkedOccasions = [...document.querySelectorAll('[data-filter-occasion]:checked')].map(el => el.dataset.filterOccasion);
-    if (checkedOccasions.length > 0) {
-      filtered = filtered.filter(p => checkedOccasions.includes(p.occasion));
     }
 
     // Price range
@@ -559,22 +632,19 @@ function initShopFilters() {
       }
     }
 
+    const lang = document.documentElement.lang || 'en';
+    const t = translations[lang];
     grid.innerHTML = filtered.length
       ? filtered.map(createProductCard).join('')
-      : '<div class="text-center" style="grid-column:1/-1; padding: 4rem;"><h3 style="color:var(--gold);">No products found</h3><p style="color:var(--text-secondary); margin-top:1rem;">Try adjusting your filters</p></div>';
+      : `<div class="text-center" style="grid-column:1/-1; padding: 4rem;"><h3 style="color:var(--gold);">${t.noProductsFound || 'No products found'}</h3><p style="color:var(--text-secondary); margin-top:1rem;">${t.tryAdjusting || 'Try adjusting your filters'}</p></div>`;
 
     initScrollReveal();
   }
 
-  // Tab-style filters
-  filterGender.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterGender.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      applyFilters();
-    });
-  });
+  // Expose globally for reset button
+  window.__shopApplyFilters = applyFilters;
 
+  // Category tabs
   filterCategory.forEach(btn => {
     btn.addEventListener('click', () => {
       filterCategory.forEach(b => b.classList.remove('active'));
@@ -583,10 +653,8 @@ function initShopFilters() {
     });
   });
 
-  // Checkbox filters (material, color, style, occasion)
-  document.querySelectorAll('[data-filter-material], [data-filter-color], [data-filter-style], [data-filter-occasion]').forEach(cb => {
-    cb.addEventListener('change', applyFilters);
-  });
+  // Material checkboxes
+  filterMaterial.forEach(cb => cb.addEventListener('change', applyFilters));
 
   if (sortSelect) sortSelect.addEventListener('change', applyFilters);
   if (priceMin) priceMin.addEventListener('input', debounce(applyFilters, 300));
@@ -615,21 +683,82 @@ function getUrlParam(key) {
 // Homepage specific
 // ==========================================
 function initHomepage() {
-  // Featured products
+  // Featured products grid on homepage
   const featuredGrid = document.getElementById('featured-products');
   if (featuredGrid) {
-    const featured = PRODUCTS.filter(p => p.badge).slice(0, 4);
-    featuredGrid.innerHTML = featured.map(createProductCard).join('');
+    const renderFeatured = (gender = 'all') => {
+      // Sort by created_at or fallback to name to handle UUIDs gracefully
+      const sorted = [...PRODUCTS].sort((a, b) => {
+        const dateA = new Date(a.created_at || a.createdAt || 0);
+        const dateB = new Date(b.created_at || b.createdAt || 0);
+        if (dateB - dateA !== 0) return dateB - dateA;
+        return (a.name || '').localeCompare(b.name || '');
+      });
+
+      let filtered = sorted;
+      
+      if (gender !== 'all') {
+        const target = gender.toLowerCase();
+        filtered = sorted.filter(p => {
+          const g = (p.gender || '').toLowerCase();
+          return g === target || (target === 'unisex' && g === 'unisex');
+        });
+      }
+      
+      // Prioritize items with badges, then fill the remaining spots (total 4)
+      const badged = filtered.filter(p => p.badge || p.label);
+      const remaining = filtered.filter(p => !p.badge && !p.label);
+      const results = [...badged, ...remaining].slice(0, 4);
+      
+      const lang = document.documentElement.lang || 'en';
+      const noProdText = (translations[lang] && translations[lang].noProductsFound) || 'No products found';
+      
+      featuredGrid.innerHTML = results.length 
+        ? results.map(p => {
+            try { return createProductCard(p); } catch(e) { console.error('Card failed', e); return ''; }
+          }).join('') 
+        : `<div style="grid-column: 1/-1; text-align:center; padding: 3rem; color: var(--text-secondary);">${noProdText}</div>`;
+      
+      // Ensure visibility even if ScrollReveal is slow/fails
+      const cards = featuredGrid.querySelectorAll('.product-card');
+      cards.forEach(c => c.style.opacity = '1');
+
+      // Trigger reveal animation
+      if (typeof ScrollReveal !== 'undefined') {
+        ScrollReveal().reveal('.product-card', { 
+            distance: '30px', 
+            origin: 'bottom', 
+            opacity: 0, 
+            duration: 800, 
+            interval: 100, 
+            cleanup: true 
+        });
+      }
+    };
+
+    // Initial render
+    renderFeatured('all');
+
+    // Homepage tabs listener (All, Women, Men, Unisex)
+    const tabs = document.querySelectorAll('.category-tabs .category-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const gender = tab.getAttribute('data-filter-gender') || 'all';
+        renderFeatured(gender);
+      });
+    });
   }
 
-  // Collection women
+  // Home Page: Collection women
   const womenGrid = document.getElementById('women-products');
   if (womenGrid) {
     const women = PRODUCTS.filter(p => p.gender === 'women').slice(0, 4);
     womenGrid.innerHTML = women.map(createProductCard).join('');
   }
 
-  // Collection men
+  // Home Page: Collection men
   const menGrid = document.getElementById('men-products');
   if (menGrid) {
     const men = PRODUCTS.filter(p => p.gender === 'men').slice(0, 4);
@@ -724,11 +853,47 @@ async function initProductPage() {
   const t = translations[lang];
   const name = lang === 'ar' ? (product.name_ar || product.nameAr || product.name) : (product.name || product.name_ar);
 
+  if (typeof updateSEO === 'function') updateSEO(product, lang);
   document.title = `${name} — Aura Accessories`;
 
   const sizeOptions = (product.sizes || []).map((s, i) => `<button class="size-option ${i === 0 ? 'active' : ''}" onclick="document.querySelectorAll('.size-option').forEach(b=>b.classList.remove('active'));this.classList.add('active')">${s}</button>`).join('');
   const colorOptions = (product.colors || []).map((c, i) => `<button class="color-option ${i === 0 ? 'active' : ''}" onclick="document.querySelectorAll('.color-option').forEach(b=>b.classList.remove('active'));this.classList.add('active')">${c}</button>`).join('');
-  const matOptions = (product.materials || []).map((m, i) => `<button class="material-option category-tab ${i === 0 ? 'active' : ''}" style="font-size:var(--text-xs);" onclick="document.querySelectorAll('.material-option').forEach(b=>b.classList.remove('active'));this.classList.add('active')">${m}</button>`).join('');
+  let materials = (product.materials || []).filter(m => m);
+  if (materials.length === 0) {
+    if (product.priceGold > 0) materials.push(lang === 'ar' ? 'ذهب' : 'Gold');
+    if (product.priceSilver > 0) materials.push(lang === 'ar' ? 'فضة' : 'Silver');
+  }
+
+  const matOptions = materials.map((m, i) => {
+    const isGold = m.toLowerCase().includes('gold') || m.toLowerCase().includes('ذهب');
+    const materialKey = isGold ? 'gold' : 'silver';
+    // Requirement: Default to Silver if it exists, else Gold
+    const hasSilver = materials.some(val => val.toLowerCase().includes('silver') || val.toLowerCase().includes('فضة'));
+    const isActive = hasSilver ? materialKey === 'silver' : materialKey === 'gold'; 
+    return `<button class="material-option category-tab ${isActive ? 'active' : ''}" data-material="${materialKey}" style="font-size:var(--text-xs);" onclick="updateProductVariant('${materialKey}', this)">${m}</button>`;
+  }).join('');
+
+  // Define global update function for variants
+  window.updateProductVariant = function(materialKey, btn) {
+    const p = window.__currentProduct;
+    if (!p) return;
+    
+    document.querySelectorAll('.material-option').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const priceEl = document.getElementById('variant-price-display');
+    if (priceEl) {
+      const sale = materialKey === 'gold' ? (p.price_gold || p.price) : (p.price_silver || p.price);
+      const original = materialKey === 'gold' ? (p.old_price_gold || p.oldPrice) : (p.old_price_silver || p.oldPrice);
+      
+      let html = `<span style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);">EGP ${sale.toLocaleString()}</span>`;
+      if (original && original > sale) {
+        html += `<span class="old-price" style="font-size: var(--text-xl); margin-left: var(--space-2);">EGP ${original.toLocaleString()}</span>`;
+        html += `<span class="discount-badge">-${Math.round((1 - sale / original) * 100)}% OFF</span>`;
+      }
+      priceEl.innerHTML = html;
+    }
+  };
 
   const shareUrl = encodeURIComponent(window.location.href);
   const shareText = encodeURIComponent(`Check out ${name} from Aura Accessories!`);
@@ -742,6 +907,16 @@ async function initProductPage() {
   const thumbHtml = images.length
     ? images.map((src, i) => `<div style="flex:1; aspect-ratio:1; border-radius: var(--radius-md); border: 1px solid var(--border-color); overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center;" class="hover-lift" onclick="changeMainImage(${i})"><img src="${src}" alt="thumb" style="width:100%; height:100%; object-fit:cover;"></div>`).join('')
     : [1, 2, 3, 4].map(() => `<div style="flex:1; aspect-ratio:1; background: linear-gradient(135deg, #1a1a1a, #2a2a2a); border-radius: var(--radius-md); border: 1px solid var(--border-color); display:flex; align-items:center; justify-content:center; cursor:pointer;"><span style="color:var(--gold);">✦</span></div>`).join('');
+  
+  // Initial price calculation (default Silver)
+  const initialSale = product.price_silver || product.price || 0;
+  const initialOriginal = product.old_price_silver || product.oldPrice || null;
+  const initialPriceHtml = `
+    <span style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);">EGP ${initialSale.toLocaleString()}</span>
+    ${initialOriginal && initialOriginal > initialSale ? `<span class="old-price" style="font-size: var(--text-xl); margin-left: var(--space-2);">EGP ${initialOriginal.toLocaleString()}</span>` : ''}
+    ${initialOriginal && initialOriginal > initialSale ? `<span class="discount-badge">-${Math.round((1 - initialSale / initialOriginal) * 100)}% OFF</span>` : ''}
+  `;
+
   container.innerHTML = `
     <div class="product-detail-grid">
       <div class="product-gallery">
@@ -754,10 +929,10 @@ async function initProductPage() {
         </div>
         <!-- Lifestyle Section -->
         <div style="margin-top: var(--space-8);">
-          <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-4);">Lifestyle Gallery</h3>
+          <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-4);">${t.lifestyleGallery}</h3>
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
-            <div style="aspect-ratio:16/10; background: linear-gradient(135deg, rgba(212,175,55,0.08), #1a1a1a); border-radius:var(--radius-md); border:1px solid var(--border-color); display:flex; align-items:center; justify-content:center; position:relative;"><span style="color:var(--gold);font-size:2rem;">✦</span><span style="position:absolute;bottom:var(--space-2);left:var(--space-3);font-size:var(--text-xs);color:var(--text-secondary);">Styled Look</span></div>
-            <div style="aspect-ratio:16/10; background: linear-gradient(135deg, rgba(183,110,121,0.08), #1a1a1a); border-radius:var(--radius-md); border:1px solid var(--border-color); display:flex; align-items:center; justify-content:center; position:relative;"><span style="color:var(--rose-gold);font-size:2rem;">✦</span><span style="position:absolute;bottom:var(--space-2);left:var(--space-3);font-size:var(--text-xs);color:var(--text-secondary);">Detail Shot</span></div>
+            <div style="aspect-ratio:16/10; background: linear-gradient(135deg, rgba(212,175,55,0.08), #1a1a1a); border-radius:var(--radius-md); border:1px solid var(--border-color); display:flex; align-items:center; justify-content:center; position:relative;"><span style="color:var(--gold);font-size:2rem;">✦</span><span style="position:absolute;bottom:var(--space-2);left:var(--space-3);font-size:var(--text-xs);color:var(--text-secondary);">${t.styledLook}</span></div>
+            <div style="aspect-ratio:16/10; background: linear-gradient(135deg, rgba(183,110,121,0.08), #1a1a1a); border-radius:var(--radius-md); border:1px solid var(--border-color); display:flex; align-items:center; justify-content:center; position:relative;"><span style="color:var(--rose-gold);font-size:2rem;">✦</span><span style="position:absolute;bottom:var(--space-2);left:var(--space-3);font-size:var(--text-xs);color:var(--text-secondary);">${t.detailShot}</span></div>
           </div>
         </div>
       </div>
@@ -765,22 +940,22 @@ async function initProductPage() {
         <div>
           <span class="product-card-category">${getLabel(product.category)} · ${product.gender === 'women' ? t.womenCollection : t.menCollection}</span>
           <h1 style="font-size: var(--text-4xl); margin-top: var(--space-2);">${name}</h1>
-          <p style="font-family: var(--font-arabic); color: var(--text-secondary); font-size: var(--text-lg);">${product.nameAr}</p>
+          <p style="font-family: var(--font-arabic); color: var(--text-secondary); font-size: var(--text-lg);">${product.nameAr || ''}</p>
         </div>
         <div class="product-card-rating" style="font-size: var(--text-base);">
           ${renderStars(product.rating)}
           <span style="color: var(--text-secondary); margin-left: 8px;">${product.rating} (${product.reviews} reviews)</span>
         </div>
-        <div style="display:flex; align-items:baseline; gap: var(--space-4);">
-          <span style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);">EGP ${product.price.toLocaleString()}</span>
-          ${product.oldPrice ? `<span style="font-size: var(--text-xl); color: var(--text-secondary); text-decoration: line-through;">EGP ${product.oldPrice.toLocaleString()}</span>` : ''}
-          ${product.oldPrice ? `<span class="tag tag-gold">${Math.round((1 - product.price / product.oldPrice) * 100)}% OFF</span>` : ''}
+
+        <!-- Dynamic Price Display -->
+        <div id="variant-price-display" style="display:flex; align-items:baseline; gap: var(--space-4);">
+          ${initialPriceHtml}
         </div>
 
         <!-- Product Story -->
         <div class="glass-card" style="padding: var(--space-5); border-left: 3px solid var(--gold);">
-          <h4 style="font-size:var(--text-sm); color:var(--gold); margin-bottom:var(--space-2);">✦ The Story</h4>
-          <p style="color: var(--text-secondary); line-height:1.8; font-size:var(--text-sm);">${product.story || ''}</p>
+          <h4 style="font-size:var(--text-sm); color:var(--gold); margin-bottom:var(--space-2);">${t.theStory}</h4>
+          <p style="color: var(--text-secondary); line-height:1.8; font-size:var(--text-sm);">${lang === 'ar' ? (product.story_ar || product.storyAr || product.story || '') : (product.story || '')}</p>
         </div>
 
         <!-- Size Selector -->
@@ -800,6 +975,30 @@ async function initProductPage() {
           <label class="form-label">${t.material}</label>
           <div style="display:flex; gap: var(--space-2); flex-wrap:wrap;">${matOptions}</div>
         </div>` : ''}
+
+        <!-- Customization -->
+        ${product.has_customization ? `
+        <div class="glass-card" style="padding: var(--space-5); border: 1px solid var(--gold); background: rgba(212,175,55,0.05);">
+          <h4 style="font-size:var(--text-base); color:var(--gold); margin-bottom:var(--space-4);">✨ ${t.customization}</h4>
+          
+          <div class="form-group">
+            <label class="form-label">${t.customText} (${product.customization_type === 'letters' ? t.letters : t.names})</label>
+            <input type="text" id="customization-value" class="form-input" 
+                   maxlength="${product.customization_limit || (product.customization_type === 'letters' ? 1 : 10)}"
+                   placeholder="${t.enterValue}" required>
+            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">
+              ${t.charLimit}: ${product.customization_limit || (product.customization_type === 'letters' ? 1 : 10)}
+            </div>
+          </div>
+
+          ${(product.custom_questions || []).map(q => `
+            <div class="form-group" style="margin-top: var(--space-4);">
+              <label class="form-label">${q}</label>
+              <input type="text" class="custom-question-input form-input" data-question="${q}" placeholder="${t.enterValue}" required>
+            </div>
+          `).join('')}
+        </div>
+        ` : ''}
 
         <div>
           <label class="form-label">${t.quantity}</label>
@@ -998,17 +1197,19 @@ function renderCartPage() {
       <div style="width:80px; height:80px; background: linear-gradient(135deg, #1a1a1a, #2a2a2a); border-radius: var(--radius-md); display:flex; align-items:center; justify-content:center; overflow:hidden;">${imgHtml}</div>
       <div style="flex:1;">
         <h4 style="font-family: var(--font-heading); font-size: var(--text-base);">${displayName}</h4>
+        ${item.customizationValue ? `<p style="font-size: var(--text-xs); color: var(--gold); margin-top: 4px;"><strong>${t.customization}:</strong> ${item.customizationValue}</p>` : ''}
+        ${item.customAnswers ? Object.entries(item.customAnswers).map(([q, a]) => `<p style="font-size: var(--text-xs); color: var(--text-secondary);"><strong>${q}:</strong> ${a}</p>`).join('') : ''}
         <p style="color: var(--gold); font-weight:600; margin-top: var(--space-1);">EGP ${item.price.toLocaleString()}</p>
       </div>
       <div class="qty-selector">
-        <button onclick="updateCartQty('${item.id}', ${item.qty - 1})">−</button>
+        <button onclick="updateCartQty('${item.cartId || item.id}', ${item.qty - 1})">−</button>
         <input type="number" value="${item.qty}" readonly>
-        <button onclick="updateCartQty('${item.id}', ${item.qty + 1})">+</button>
+        <button onclick="updateCartQty('${item.cartId || item.id}', ${item.qty + 1})">+</button>
       </div>
       <div style="min-width:100px; text-align:right;">
         <strong style="color: var(--gold);">EGP ${(item.price * item.qty).toLocaleString()}</strong>
       </div>
-      <button class="nav-icon-btn" onclick="removeFromCart('${item.id}')" title="${t.remove}">
+      <button class="nav-icon-btn" onclick="removeFromCart('${item.cartId || item.id}')" title="${t.remove}">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
       </button>
     </div>
@@ -1142,11 +1343,11 @@ document.addEventListener('DOMContentLoaded', () => {
 /* Translation System */
 const translations = {
   en: {
-    home: "Home", shop: "Shop", design: "Design Your Aura", journal: "Journal", about: "About", contact: "Contact", cart: "Cart", login: "Account", heroTitle: "Discover Your", heroHighlight: "Aura", heroSubtitle: "Handcrafted luxury accessories that define your unique style.", exploreShop: "Explore Shop", designYourOwn: "Design Your Own", featuredCollections: "Featured Collections", curatedForYou: "Curated For You", featuredSubtitle: "Our most coveted pieces, handpicked by our style experts — for both men and women.", necklaces: "Necklaces", necklacesCount: "128 Products", rings: "Rings", ringsCount: "96 Products", earrings: "Earrings", earringsCount: "152 Products", bracelets: "Bracelets", braceletsCount: "110 Products", womenCollection: "Women", menCollection: "Men", shopWomen: "Shop Women", shopMen: "Shop Men", viewAll: "All", viewAllCollections: "View All Collections →",
+    home: "Home", shop: "Shop", design: "Design Your Aura", journal: "Journal", about: "About", contact: "Contact", cart: "Cart", login: "Account", heroTitle: "Discover Your", heroHighlight: "Aura", heroSubtitle: "Handcrafted luxury accessories that define your unique style.", exploreShop: "Explore Shop", designYourOwn: "Design Your Own", featuredCollections: "Featured Collections", curatedForYou: "Curated For You", featuredSubtitle: "Our most coveted pieces, handpicked by our style experts — for everyone.", necklaces: "Necklaces", necklacesCount: "128 Products", rings: "Rings", ringsCount: "96 Products", earrings: "Earrings", earringsCount: "152 Products", bracelets: "Bracelets", braceletsCount: "110 Products", womenCollection: "Women", menCollection: "Men", unisexCollection: "Unisex", shopWomen: "Shop Women", shopMen: "Shop Men", viewAll: "All", viewAllCollections: "View All Collections →",
     // Shop page
     shopHeaderLabel: "Our Collection",
     shopTitle: "Shop Accessories",
-    shopSubtitle: "Explore our curated collection of premium accessories for men and women.",
+    shopSubtitle: "Explore our curated collection of premium accessories for everyone.",
     filters: "Filters",
     genderLabel: "Gender",
     categoryLabel: "Category",
@@ -1202,6 +1403,56 @@ const translations = {
     brandName: "Aura",
     // About page
     aboutTitle: "About Aura", aboutSubtitle: "The story behind the brand.", ourMission: "Our Mission", ourVision: "Our Vision", ourValues: "Our Values",
+    // New About Page Keys
+    aboutLabel: "Our Story",
+    aboutSubtitle: "We started with a simple idea — and built it with true passion ❤️",
+    storyLabel: "The Beginning",
+    storyTitle: "It Started with a Question",
+    storyText1: "Why can't you have an accessory with your name or the name of someone you love?",
+    storyText2: "From here, we began crafting custom pieces with real quality and chic designs — making you always stand out.",
+    storyText3: "Our goal isn't just to sell … our goal is for every piece to have a meaning ❤️",
+    materialsLabel: "Ethically Sourced",
+    materialsTitle: "Materials of Integrity",
+    materialsText: "We believe that true luxury begins with responsibility. That's why every gemstone, metal, and material we use is ethically sourced and certified.",
+    goldSilver: "Recycled Gold & Silver:",
+    goldSilverText: "Reducing environmental impact without compromising quality.",
+    conflictFree: "Conflict-Free Gemstones:",
+    conflictFreeText: "Sourced directly from certified mines.",
+    veganLeather: "Premium Vegan Leather:",
+    veganLeatherText: "Cruelty-free alternatives that look and feel luxurious.",
+    valuesLabel: "What We Believe",
+    valuesTitle: "Our Values",
+    qualityFirst: "Quality First",
+    qualityText: "Every piece undergoes rigorous quality checks. We use only premium materials sourced responsibly.",
+    innovation: "Innovation",
+    innovationText: "Our AI design studio pushes the boundaries of what's possible in custom accessories.",
+    sustainability: "Sustainability",
+    sustainabilityText: "Eco-friendly packaging and ethically sourced materials are at our core.",
+    community: "Community",
+    communityText: "We nurture our community through content, events, and genuine connections.",
+    teamLabel: "The People",
+    teamTitle: "Our Team",
+    teamName1: "Myrna", teamRole1: "Founder & Creative Director", teamBio1: "Visionary behind the Aura concept, bringing luxury and innovation together.",
+    teamName2: "Sara", teamRole2: "Head of Design", teamBio2: "Master artisan with 10+ years of jewelry design experience.",
+    teamName3: "Ahmed", teamRole3: "Technology Lead", teamBio3: "The mind behind our AI design studio and technology platform.",
+    happyCustomers: "Happy Customers", uniqueDesigns: "Unique Designs", citiesServed: "Cities Served", satisfactionRate: "Satisfaction Rate",
+    // Home Page Additions
+    heroTitle1: "Turn Your Name", heroTitle2: "Into a Masterpiece 💎", heroSubtitle2: "Necklaces, bracelets, and rings with your name or your loved one's name", heroBenefit: "Premium Materials • Rust-Free • 6-Month Guarantee",
+    orderNow: "Order Now", rustFree: "Rust-free for one year", material925: "925 Silver or 21K Gold", guarantee6m: "6-Month Guarantee", freeGift: "🎁 Free Premium Gift Box",
+    mCustomName: "✦ Custom Name Accessories 💎", mRustFree: "✦ Rust-Free & Color Fast ✔", mGuarantee: "✦ 6-Month Guarantee 🛡", mFreeShipping: "✦ Free Shipping Over EGP 500 🚚", mFreeGift: "✦ Free Premium Gift Box 🎁", mNameLang: "✦ Name in Arabic or English ✍️", mPerfectGift: "✦ Perfect Gift for Every Occasion ❤️",
+    aiTag: "AI-Powered", ctaDesignTitlePart1: "Design Your Own", ctaDesignTitlePart2: "Accessory", ctaDesignSubtitle: "Very simple — in 3 steps and we execute it with high quality 💎",
+    step1Title: "Enter Name", step1Desc: "Arabic, English or two names", step2Title: "Choose Shape", step2Desc: "Necklace, bracelet or ring", step3Title: "See Design Instantly", step3Desc: "And we'll make it for you 💎", startDesignNow: "✦ Start Designing Now",
+    whyAuraTag: "Why Choose Aura?", whyAuraTitle1: "Not Just", whyAuraTitle2: "Looking Good", whyAuraTitle3: "Real Quality",
+    realMaterials: "Real Materials", realMaterialsDesc: "925 Italian Silver or High Quality 21K Gold Plating — not just ordinary plating",
+    guarantee6mTitle: "6-Month Guarantee", guarantee6mDesc: "Any manufacturing defect? We replace it immediately without argument — that's our promise",
+    nameAnyLang: "Name in Any Language", nameAnyLangDesc: "Arabic, English, two names together — each piece is made specifically for you",
+    perfectGiftTitle: "Perfect Gift", perfectGiftDesc: "Birthday, engagement, or marriage — free premium gift box with every order",
+    fastDeliveryTitle: "Fast Delivery", fastDeliveryDesc: "Delivery to all Egypt governorates — free shipping over 500 EGP",
+    neverChanges: "Never Changes", neverChangesDesc: "Rust-free and color fast — wear it every day as much as you like all year",
+    storyTag: "Our Story", storyTitleH1: "Simple", storyTitleH2: "Idea", storyTitleH3: "Real Beginning",
+    indexStoryP1: "Aura started from a simple question: Why can't you have an accessory with your name or the name of someone you love?",
+    indexStoryP2: "From here we began crafting custom pieces with real quality and chic designs. Our goal isn't just to sell — our goal is for every piece to have a meaning ❤️",
+    happyUsers: "Happy Customers", diffDesigns: "Different Designs", productGuarantee: "Product Guarantee", readMoreAbout: "Learn More About Us →",
     // Blog
     readMore: "Read More →", blogTitle: "The Aura Journal", blogSubtitle: "Style tips, trends, and behind the scenes.",
     // Messages (success/error)
@@ -1218,14 +1469,22 @@ const translations = {
     passwordsDontMatch: "Passwords do not match.",
     saveSuccess: "Saved successfully.",
     saveError: "Something went wrong.",
-    productNotFound: "Product not found."
+    productNotFound: "Product not found.",
+    customization: "Customization",
+    customText: "Name or Letter",
+    charLimit: "Character Limit",
+    customQuestions: "Additional Information",
+    enterValue: "Enter value...",
+    requiredField: "This field is required",
+    letters: "Letters",
+    names: "Names"
   },
   ar: {
-    home: "الرئيسية", shop: "المحل", design: "صمّم اكسسوارك", journal: "المدونة", about: "عنّا", contact: "كلمنا", cart: "عربة التسوق", login: "حسابي", heroTitle: "إكتشف", heroHighlight: "هالتك", heroSubtitle: "اكسسوارات فاخرة ومصنوعة بإيدينا بتبرز ستايلك المميز.", exploreShop: "خد لك لفة فى المحل", designYourOwn: "صمّم على ذوقك", featuredCollections: "مجموعات مميزة", curatedForYou: "مخصوصة ليك", featuredSubtitle: "أحلى قطع عندنا، مختارة بعناية من خبراء الشياكة - للرجالة والستات.", necklaces: "سلاسل", necklacesCount: "١٢٨ قطعة", rings: "خواتم", ringsCount: "٩٦ قطعة", earrings: "حلقان", earringsCount: "١٥٢ قطعة", bracelets: "اساور", braceletsCount: "١١٠ قطعة", womenCollection: "حريمي", menCollection: "رجالي", shopWomen: "تسوق حريمي", shopMen: "تسوق رجالي", viewAll: "الكل", viewAllCollections: "شوف كل المجموعات →",
+    home: "الرئيسية", shop: "المحل", design: "صمّم اكسسوارك", journal: "المدونة", about: "عنّا", contact: "كلمنا", cart: "عربة التسوق", login: "حسابي", heroTitle: "إكتشف", heroHighlight: "هالتك", heroSubtitle: "اكسسوارات فاخرة ومصنوعة بإيدينا بتبرز ستايلك المميز.", exploreShop: "خد لك لفة فى المحل", designYourOwn: "صمّم على ذوقك", featuredCollections: "مجموعات مميزة", curatedForYou: "مخصوصة ليك", featuredSubtitle: "أحلى قطع عندنا، مختارة بعناية من خبراء الشياكة - تناسب الجميع.", necklaces: "سلاسل", necklacesCount: "١٢٨ قطعة", rings: "خواتم", ringsCount: "٩٦ قطعة", earrings: "حلقان", earringsCount: "١٥٢ قطعة", bracelets: "اساور", braceletsCount: "١١٠ قطعة", womenCollection: "حريمي", menCollection: "رجالي", unisexCollection: "للجنسين", shopWomen: "تسوق حريمي", shopMen: "تسوق رجالي", viewAll: "الكل", viewAllCollections: "شوف كل المجموعات →",
     // Shop page
     shopHeaderLabel: "تشكيلتنا",
     shopTitle: "تسوق اكسسوارات",
-    shopSubtitle: "استكشف تشكيلتنا المختارة من اكسسوارات فاخرة للرجالة والستات.",
+    shopSubtitle: "استكشف تشكيلتنا المختارة من اكسسوارات فاخرة تناسب الجميع.",
     filters: "الفلاتر",
     genderLabel: "النوع",
     categoryLabel: "القسم",
@@ -1260,6 +1519,56 @@ const translations = {
     // Brand name (used in headings like "فلسفة أورا")
     brandName: "أورا",
     aboutTitle: "عن أورا", aboutSubtitle: "حكاية البراند بتاعنا.", ourMission: "مهمتنا", ourVision: "رؤيتنا", ourValues: "قيمنا",
+    // New About Page Keys
+    aboutLabel: "قصتنا",
+    aboutSubtitle: "بدأنا من فكرة بسيطة — وشلنا عليها بجدوه حقيقية ❤️",
+    storyLabel: "البداية",
+    storyTitle: "بدأت من سؤال",
+    storyText1: "ليه ميبقاش عندك إكسسوار باسمك أو اسم أغلى حد عندك؟",
+    storyText2: "من هنا بدأنا نعمل قطع مخصصة بجودة حقيقية وشكل شيك — تخليك دايماً مميز.",
+    storyText3: "هدفنا مش نبيع بس … هدفنا كل قطعة تبقى ليها معنى ❤️",
+    materialsLabel: "مصادر أخلاقية",
+    materialsTitle: "خامات بكل نزاهة",
+    materialsText: "نؤمن أن الفخامة الحقيقية تبدأ بالمسؤولية. لذلك كل حجر كريم ومعدن نستخدمه مصدره أخلاقي ومعتمد.",
+    goldSilver: "ذهب وفضة معاد تدويرها:",
+    goldSilverText: "تقليل التأثير البيئي بدون التنازل عن الجودة.",
+    conflictFree: "أحجار كريمة خالية من النزاعات:",
+    conflictFreeText: "يتم الحصول عليها مباشرة من مناجم معتمدة.",
+    veganLeather: "جلد نباتي فاخر:",
+    veganLeatherText: "بدائل خالية من القسوة تبدو وتشعر بالفخامة.",
+    valuesLabel: "ما نؤمن به",
+    valuesTitle: "قيمنا",
+    qualityFirst: "الجودة أولاً",
+    qualityText: "تخضع كل قطعة لفحوصات جودة صارمة. نستخدم فقط الخامات الممتازة المصدرة بمسؤولية.",
+    innovation: "الابتكار",
+    innovationText: "يدفع استوديو التصميم بالذكاء الاصطناعي حدود الممكن في الإكسسوارات المخصصة.",
+    sustainability: "الاستدامة",
+    sustainabilityText: "التغليف الصديق للبيئة والخامات المستدامة في صميم عملنا.",
+    community: "المجتمع",
+    communityText: "نحن نرعى مجتمعنا من خلال المحتوى والفعاليات والروابط الحقيقية.",
+    teamLabel: "فريق العمل",
+    teamTitle: "عائلة أورا",
+    teamName1: "ميرنا", teamRole1: "المؤسس والمدير الإبداعي", teamBio1: "الرؤية وراء مفهوم أورا، تجمع بين الفخامة والابتكار.",
+    teamName2: "سارة", teamRole2: "رئيسة التصميم", teamBio2: "حرفية ماهرة مع أكثر من ١٠ سنوات من الخبرة في تصميم المجوهرات.",
+    teamName3: "أحمد", teamRole3: "المسؤول التقني", teamBio3: "العقل وراء استوديو التصميم بالذكاء الاصطناعي والمنصة التقنية.",
+    happyCustomers: "عملاء مبسوطين", uniqueDesigns: "تصميمات مميزة", citiesServed: "مدن نخدمها", satisfactionRate: "نسبة الرضا",
+    // Home Page Additions
+    heroTitle1: "حوّل اسمك", heroTitle2: "لقطعة مميزة 💎", heroSubtitle2: "سلاسل، إساور، وخواتم باسمك أو اسم أغلى حد عندك", heroBenefit: "خامات فاخرة • ضد الصدأ • ضمان 6 شهور",
+    orderNow: "اطلب دلوقتي", rustFree: "ضد الصدأ لمدة سنة", material925: "فضة 925 أو دهب 21", guarantee6m: "ضمان 6 شهور", freeGift: "🎁 هدية علبة فاخرة مجاناً",
+    mCustomName: "✦ إكسسوارات مخصصة بالاسم 💎", mRustFree: "✦ ضد الصدأ وتغير اللون ✔", mGuarantee: "✦ ضمان 6 شهور 🛡", mFreeShipping: "✦ شحن مجاني فوق ٥٠٠ جنيه 🚚", mFreeGift: "✦ هدية علبة فاخرة مجاناً 🎁", mNameLang: "✦ الاسم بالعربي أو الإنجليزي ✍️", mPerfectGift: "✦ هدية مثالية لكل مناسبة ❤️",
+    aiTag: "بالذكاء الاصطناعي", ctaDesignTitlePart1: "صمّم إكسسوارك", ctaDesignTitlePart2: "بنفسك", ctaDesignSubtitle: "بسيط جداً — في ٣ خطوات وإحنا ننفذه ليك بجودة عالية 💎",
+    step1Title: "اكتب الاسم", step1Desc: "بالعربي أو الإنجليزي أو اسمين", step2Title: "اختار الشكل", step2Desc: "سلسلة، إسوارة، أو خاتم", step3Title: "شوف التصميم فوراً", step3Desc: "وإحنا ننفذه ليك 💎", startDesignNow: "✦ ابدأ تصميمك دلوقتي",
+    whyAuraTag: "ليه تختار أورا؟", whyAuraTitle1: "مش بس", whyAuraTitle2: "شكله حلو", whyAuraTitle3: "جودة حقيقية",
+    realMaterials: "خامات حقيقية", realMaterialsDesc: "فضة إيطالي 925 أو طلاء دهب 21 عالي الجودة — مش مجرد طلاء عادي",
+    guarantee6mTitle: "ضمان 6 شهور", guarantee6mDesc: "أي عيب صناعة؟ بنبدل فورًا بدون نقاش — ده وعدنا ليك",
+    nameAnyLang: "اسمك بأي لغة", nameAnyLangDesc: "عربي، إنجليزي، اسمين مع بعض — كل قطعة بتتعمل خصيصاً ليك",
+    perfectGiftTitle: "هدية مثالية", perfectGiftDesc: "عيد ميلاد، خطوبة، أو جواز — علبة هدية فاخرة مجاناً مع كل طلب",
+    fastDeliveryTitle: "توصيل سريع", fastDeliveryDesc: "توصيل لكل محافظات مصر — شحن مجاني فوق ٥٠٠ جنيه",
+    neverChanges: "لا بتتغيرش", neverChangesDesc: "ضد الصدأ وتغير اللون — تلبسه كل يوم براحتك طول السنة",
+    storyTag: "قصتنا", storyTitleH1: "فكرة", storyTitleH2: "بسيطة", storyTitleH3: "وبداية حقيقية",
+    indexStoryP1: "أورا بدأت من سؤال بسيط: ليه ميبقاش عندك إكسسوار باسمك أو اسم أغلى حد عندك؟",
+    indexStoryP2: "من هنا بدأنا نعمل قطع مخصصة بجودة حقيقية وشكل شيك. هدفنا مش نبيع بس — هدفنا كل قطعة تبقى ليها معنى ❤️",
+    happyUsers: "عميل سعيد", diffDesigns: "تصميم مختلف", productGuarantee: "ضمان المنتج", readMoreAbout: "اعرف أكتر عنّا →",
     readMore: "اقرأ أكتر →", blogTitle: "مدونة أورا", blogSubtitle: "نصايح شياكة، صيحات، وكواليس.",
     orderSuccess: "تم تأكيد الطلب بنجاح!",
     orderError: "فشل إنشاء الطلب.",
@@ -1274,7 +1583,15 @@ const translations = {
     passwordsDontMatch: "كلمة السر والتأكيد مش متطابقين.",
     saveSuccess: "تم الحفظ بنجاح.",
     saveError: "حصل خطأ.",
-    productNotFound: "المنتج غير موجود."
+    productNotFound: "المنتج غير موجود.",
+    customization: "تخصيص",
+    customText: "الاسم أو الحرف",
+    charLimit: "أقصى عدد حروف",
+    customQuestions: "معلومات إضافية",
+    enterValue: "ادخل البيانات...",
+    requiredField: "هذا الحقل مطلوب",
+    letters: "حروف",
+    names: "أسماء"
   }
 };
 
@@ -1432,10 +1749,14 @@ function initAuthPage() {
 // API Data Loading
 // ==========================================
 async function loadProducts() {
+  // Wait for Supabase to be ready
+  if (window.__supabasePromise) await window.__supabasePromise;
+
   // If Supabase client is available, load products from the database.
   if (typeof window !== 'undefined' && window.fetchProductsFromDb) {
     try {
       const data = await window.fetchProductsFromDb();
+      console.log('PRODUCTS LOADED:', data?.length); 
       if (Array.isArray(data)) {
         PRODUCTS.length = 0;
         data.forEach(p => PRODUCTS.push(p));

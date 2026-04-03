@@ -388,12 +388,22 @@
                     <div class="form-group"><label>Gender</label><select name="gender">
                             <option>women</option>
                             <option>men</option>
+                            <option>unisex</option>
                         </select></div>
                 </div>
+                <div class="form-header-small" style="margin-top: var(--space-4); font-weight: 700; color: var(--gold); border-bottom: 1px solid var(--border-color); margin-bottom: var(--space-2); padding-bottom: 2px;">Silver Variant (Base / default)</div>
                 <div class="form-row">
-                    <div class="form-group"><label>Price (EGP)</label><input name="price" type="number" required></div>
-                    <div class="form-group"><label>Old Price</label><input name="oldPrice" type="number"></div>
+                    <div class="form-group"><label>Silver Sale Price (EGP)</label><input type="number" name="priceSilver" required></div>
+                    <div class="form-group"><label>Silver Original Price (EGP)</label><input type="number" name="oldPriceSilver"></div>
                 </div>
+                <div class="form-header-small" style="margin-top: var(--space-2); font-weight: 700; color: var(--gold); border-bottom: 1px solid var(--border-color); margin-bottom: var(--space-2); padding-bottom: 2px;">Gold Variant</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Gold Sale Price (EGP)</label><input type="number" name="priceGold"></div>
+                    <div class="form-group"><label>Gold Original Price (EGP)</label><input type="number" name="oldPriceGold"></div>
+                </div>
+                <!-- Legacy hidden fields to prevent breakage -->
+                <input type="hidden" name="price" value="0">
+                <input type="hidden" name="oldPrice" value="">
                 <div class="form-row">
                     <div class="form-group"><label>Material</label><input name="material"></div>
                     <div class="form-group"><label>Style</label><select name="style">
@@ -427,8 +437,47 @@
                         placeholder="Gold, Silver"></div>
                 <div class="form-group"><label>Materials (comma-separated)</label><input name="materials"
                         placeholder="18K Gold, Sterling Silver"></div>
-                <!-- Images upload for product -->
-                <div class="form-group"><label>Images</label><input name="images" type="file" accept="image/*" multiple>
+                <!-- Customization Settings -->
+                <div style="margin: var(--space-6) 0; padding: var(--space-4); border: 1px dashed var(--gold); border-radius: var(--radius-md);">
+                    <h4 style="color:var(--gold); margin-bottom: var(--space-3); font-size: var(--text-sm);">Product Customization</h4>
+                    <div class="form-group">
+                        <label style="display:flex; align-items:center; gap:var(--space-2); cursor:pointer;">
+                            <input type="checkbox" name="hasCustomization" style="width:auto;"> Enable Customization (Letters/Names)
+                        </label>
+                    </div>
+                    <div id="custom-settings" style="display:none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Customization Type</label>
+                                <select name="customizationType">
+                                    <option value="letters">Letters (e.g. A, B, C)</option>
+                                    <option value="names">Names (Full Text)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Character Limit</label>
+                                <input name="customizationLimit" type="number" value="1" min="1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Custom Questions (one per line)</label>
+                            <textarea name="customQuestionsRaw" rows="3" placeholder="e.g. What color box would you like?"></textarea>
+                            <small style="color:var(--text-secondary)">Add questions for the user to answer during checkout.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-header-small" style="margin-top: var(--space-4); font-weight: 700; color: var(--gold); border-bottom: 1px solid var(--border-color); margin-bottom: var(--space-2); padding-bottom: 2px;">Media (Images)</div>
+                <div class="form-group">
+                    <label>Upload New Images</label>
+                    <input name="imageFiles" type="file" accept="image/*" multiple style="margin-bottom: var(--space-2);">
+                </div>
+                <div class="form-group">
+                    <label>Image URLs (One per line)</label>
+                    <textarea name="imageUrls" rows="3" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" style="font-size: var(--text-xs);"></textarea>
+                </div>
+                <div id="product-images-preview" style="display:flex; flex-wrap:wrap; gap:var(--space-2); margin-top:var(--space-2); min-height: 40px; border: 1px dashed rgba(212,175,55,0.2); padding: 8px; border-radius: var(--radius-md);">
+                    <small style="color:var(--text-secondary); width:100%; text-align:center;">Current images will appear here when editing.</small>
                 </div>
                 <input type="hidden" name="editId" value="">
                 <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6);">
@@ -440,7 +489,37 @@
         </div>
     </div>
 
+    <!-- Order Details Modal -->
+    <div class="modal-overlay" id="order-modal">
+        <div class="modal" style="max-width: 600px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: var(--space-6);">
+                <h3>Order Details <span id="ord-id-display" style="color:var(--gold); margin-left:var(--space-2);"></span></h3>
+                <button class="nav-icon-btn" onclick="closeModal('order-modal')">✕</button>
+            </div>
+            <div id="order-details-content" style="font-size: var(--text-sm);">
+                <!-- Dynamic content -->
+            </div>
+            <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-color);">
+                <div class="form-group">
+                    <label>Internal/Customer Note</label>
+                    <textarea id="ord-admin-note" class="form-input" rows="3" placeholder="Add a note for the customer..."></textarea>
+                </div>
+                <div style="display:flex; gap: var(--space-3); align-items:center; margin-top:var(--space-4);">
+                    <select id="ord-status-select" class="form-input" style="width: auto;">
+                        <option value="pending">pending</option>
+                        <option value="processing">processing</option>
+                        <option value="shipped">shipped</option>
+                        <option value="delivered">delivered</option>
+                        <option value="cancelled">cancelled</option>
+                    </select>
+                    <button class="btn btn-primary btn-sm" onclick="saveOrderChange()">Update Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Blog Modal -->
+
     <div class="modal-overlay" id="blog-modal">
         <div class="modal">
             <h3 id="blog-modal-title">Add Blog Post</h3>
@@ -505,21 +584,35 @@
             }
             return data.secure_url;
         }
-        const TOKEN = localStorage.getItem('aura_token');
-        const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}` };
+        const getHeaders = () => ({ 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${localStorage.getItem('aura_token')}` 
+        });
+
 
         // Auth check wrapped in IIFE so `return` is legal (not at top-level).
         (async function initAdmin() {
-            if (!TOKEN) { window.location.href = 'account.html'; return; }
+            const token = localStorage.getItem('aura_token');
+            if (!token) { window.location.href = 'account.html'; return; }
             try {
-                const r = await fetch(window.location.origin + '/api/auth/me', { headers });
+                const r = await fetch(window.location.origin + '/api/auth/me', { headers: getHeaders() });
+
                 if (!r.ok) { window.location.href = 'account.html'; return; }
-                const user = await r.json();
-                if (user.role !== 'admin') { window.location.href = 'index.html'; return; }
+                const data = await r.json();
+                const user = data.user;
+                if (!user || user.role !== 'admin') { 
+                    console.warn('Access denied: user is not an admin', user);
+                    window.location.href = 'index.html'; 
+                    return; 
+                }
                 // Admin verified — load dashboard
                 loadDashboard();
-            } catch (e) { window.location.href = 'account.html'; }
+            } catch (e) { 
+                console.error('Admin init error:', e);
+                window.location.href = 'account.html'; 
+            }
         })();
+
 
         // Navigation
         function showSection(name) {
@@ -551,7 +644,8 @@
             input.value = '';
             messages.scrollTop = messages.scrollHeight;
             try {
-                const r = await fetch(API + '/api/admin/chat', { method: 'POST', headers, body: JSON.stringify({ message: msg }) });
+                const r = await fetch(API + '/api/admin/chat', { method: 'POST', headers: getHeaders(), body: JSON.stringify({ message: msg }) });
+
                 const data = await r.json();
                 const reply = data.reply || data.error || 'لا رد';
                 messages.innerHTML += '<div style="margin-bottom:8px; padding:8px; background: rgba(212,175,55,0.1); border-radius:8px; text-align:left;"><strong>البوت:</strong> ' + reply.replace(/\n/g, '<br>') + '</div>';
@@ -564,7 +658,8 @@
         // Dashboard
         async function loadDashboard() {
             try {
-                const res = await fetch(`${API}/api/admin/stats`, { headers });
+                const res = await fetch(`${API}/api/admin/stats`, { headers: getHeaders() });
+
                 const s = await res.json();
                 document.getElementById('stats-grid').innerHTML = `
                 <div class="stat-box"><div class="number">${s.totalProducts}</div><div class="label">Products</div></div>
@@ -587,33 +682,97 @@
 
         // Products
         async function loadProducts() {
-            const res = await fetch(`${API}/api/products/all`, { headers });
-            const products = await res.json();
-            document.getElementById('products-table').innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Badge</th><th>Actions</th></tr></thead><tbody>${products.map(p => `<tr><td>${p.id}</td><td>${p.images && p.images.length ? `<img src="${p.images[0]}" style="width:40px;height:40px;object-fit:cover;margin-right:8px;border-radius:4px;">` : ''}${p.name}<br><small style="color:var(--text-secondary)">${p.nameAr || ''}</small></td><td>${getLabel(p.category)}</td><td>EGP ${(p.price || 0).toLocaleString()}</td><td>${p.badge || '-'}</td><td><button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">Edit</button> <button class="btn-danger" onclick="deleteProduct('${p.id}')">Delete</button></td></tr>`).join('')}</tbody></table>`;
+            try {
+                const res = await fetch(`${API}/api/products?admin=true`, { headers: getHeaders() });
+                const products = await res.json();
+                
+                if (!Array.isArray(products)) {
+                    document.getElementById('products-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary)">No products found or error loading products.</p>';
+                    return;
+                }
+
+                document.getElementById('products-table').innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Badge</th><th>Actions</th></tr></thead><tbody>${products.map(p => `<tr><td>${p.id}</td><td>${p.images && p.images.length ? `<img src="${p.images[0]}" style="width:40px;height:40px;object-fit:cover;margin-right:8px;border-radius:4px;">` : ''}${p.name}<br><small style="color:var(--text-secondary)">${p.nameAr || ''}</small></td><td>${getLabel(p.category)}</td><td>EGP ${(p.price || 0).toLocaleString()}</td><td>${p.badge || '-'}</td><td><button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">Edit</button> <button class="btn-danger" onclick="deleteProduct('${p.id}')">Delete</button></td></tr>`).join('')}</tbody></table>`;
+            } catch (e) {
+                console.error('Load products error:', e);
+                document.getElementById('products-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--accent)">Error connecting to server.</p>';
+            }
         }
 
-        function openProductModal(data) {
+        function openProductModal(data = null) {
             const form = document.getElementById('product-form');
             form.reset();
-            form.querySelector('[name="editId"]').value = '';
             document.getElementById('product-modal-title').textContent = 'Add Product';
+            form.querySelector('[name="editId"]').value = '';
+            
+            document.getElementById('product-modal').classList.add('active');
+            
+            // Toggle custom settings visibility
+            const hasCustCheckbox = form.querySelector('[name="hasCustomization"]');
+            const customSettingsDiv = document.getElementById('custom-settings');
+            const updateCustVisibility = () => {
+                customSettingsDiv.style.display = hasCustCheckbox.checked ? 'block' : 'none';
+            };
+            hasCustCheckbox.onchange = updateCustVisibility;
+            
+            const previewCon = document.getElementById('product-images-preview');
+            previewCon.innerHTML = '';
+
             if (data) {
                 document.getElementById('product-modal-title').textContent = 'Edit Product';
-                Object.keys(data).forEach(k => { const el = form.querySelector(`[name="${k}"]`); if (el) el.value = Array.isArray(data[k]) ? data[k].join(', ') : (data[k] ?? ''); });
+                
+                const currentImages = Array.isArray(data.images) ? data.images : (data.image ? [data.image] : []);
+                if (currentImages.length) {
+                    previewCon.innerHTML = currentImages.map(src => `<div style="position:relative; width:45px; height:45px; border-radius:4px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);"><img src="${src}" style="width:100%; height:100%; object-fit:cover;"></div>`).join('');
+                } else {
+                    previewCon.innerHTML = '<small style="color:var(--text-secondary); width:100%; text-align:center;">No images found.</small>';
+                }
+                
+                // Populate URLs textarea
+                form.querySelector('[name="imageUrls"]').value = currentImages.join('\n');
+
+                Object.keys(data).forEach(k => { 
+                    const el = form.querySelector(`[name="${k}"]`); 
+                    if (el) {
+                        if (el.type === 'checkbox') el.checked = !!data[k];
+                        else el.value = Array.isArray(data[k]) ? data[k].join(', ') : (data[k] ?? ''); 
+                    }
+                });
+                
+                // Special mapping for database names
+                if (data.has_customization !== undefined) hasCustCheckbox.checked = !!data.has_customization;
+                if (data.customization_type !== undefined) form.querySelector('[name="customizationType"]').value = data.customization_type;
+                if (data.customization_limit !== undefined) form.querySelector('[name="customizationLimit"]').value = data.customization_limit;
+                
+                if (data.custom_questions && Array.isArray(data.custom_questions)) {
+                    form.querySelector('[name="customQuestionsRaw"]').value = data.custom_questions.map(q => typeof q === 'string' ? q : q.question).join('\n');
+                }
+                
                 form.querySelector('[name="editId"]').value = data.id;
             }
-            document.getElementById('product-modal').classList.add('active');
+            updateCustVisibility();
         }
 
         async function editProduct(id) {
-            const res = await fetch(`${API}/api/products/${id}`, { headers });
+            const res = await fetch(`${API}/api/products/${id}`, { headers: getHeaders() });
+
             const p = await res.json();
-            openProductModal({ ...p, nameAr: p.name_ar || p.nameAr, storyAr: p.story_ar || p.storyAr, description: p.description, descriptionAr: p.description_ar || p.descriptionAr });
+            openProductModal({ 
+                ...p, 
+                nameAr: p.name_ar || p.nameAr, 
+                storyAr: p.story_ar || p.storyAr, 
+                description: p.description, 
+                descriptionAr: p.description_ar || p.descriptionAr,
+                priceSilver: p.price_silver || p.price,
+                oldPriceSilver: p.old_price_silver || p.old_price,
+                priceGold: p.price_gold,
+                oldPriceGold: p.old_price_gold
+            });
         }
 
         async function deleteProduct(id) {
             if (!confirm(document.documentElement.lang === 'ar' ? 'حذف هذا المنتج؟' : 'Delete this product?')) return;
-            const r = await fetch(`${API}/api/products/${id}`, { method: 'DELETE', headers });
+            const r = await fetch(`${API}/api/products/${id}`, { method: 'DELETE', headers: getHeaders() });
+
             if (r.ok) loadProducts(); else alert((await r.json()).error || 'Failed');
         }
 
@@ -621,28 +780,54 @@
             e.preventDefault();
             const fd = new FormData(e.target);
             const data = Object.fromEntries(fd);
-            // Handle image uploads via Cloudinary
-            const imageInput = e.target.querySelector('[name="images"]');
-            if (imageInput && imageInput.files && imageInput.files.length > 0) {
-                data.images = [];
-                for (const file of imageInput.files) {
+            // Handle image sources (URLs + Uploads)
+            let finalImages = data.imageUrls ? data.imageUrls.split('\n').map(u => u.trim()).filter(u => u) : [];
+            delete data.imageUrls;
+
+            const fileInput = e.target.querySelector('[name="imageFiles"]');
+            if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                for (const file of fileInput.files) {
                     try {
                         const url = await uploadToCloudinary(file);
-                        data.images.push(url);
+                        finalImages.push(url);
                     } catch (err) {
                         console.error('Image upload error', err);
                     }
                 }
             }
-            data.price = Number(data.price);
-            data.oldPrice = data.oldPrice ? Number(data.oldPrice) : null;
+            data.images = finalImages;
+            if (finalImages.length > 0) data.image = finalImages[0];
+            data.priceSilver = data.priceSilver ? Number(data.priceSilver) : 0;
+            data.oldPriceSilver = data.oldPriceSilver ? Number(data.oldPriceSilver) : null;
+            data.priceGold = data.priceGold ? Number(data.priceGold) : null;
+            data.oldPriceGold = data.oldPriceGold ? Number(data.oldPriceGold) : null;
+            
+            // Legacy / Base support
+            data.price = data.priceSilver || Number(data.price) || 0;
+            data.oldPrice = data.oldPriceSilver || (data.oldPrice ? Number(data.oldPrice) : null);
             data.rating = Number(data.rating);
             data.reviews = Number(data.reviews);
-            data.sizes = data.sizes ? data.sizes.split(',').map(s => s.trim()) : [];
-            data.colors = data.colors ? data.colors.split(',').map(s => s.trim()) : [];
-            data.materials = data.materials ? data.materials.split(',').map(s => s.trim()) : [];
+            data.sizes = data.sizes ? String(data.sizes).split(',').map(s => s.trim()) : [];
+            data.colors = data.colors ? String(data.colors).split(',').map(s => s.trim()) : [];
+            data.materials = data.materials ? String(data.materials).split(',').map(s => s.trim()).filter(s => s) : [];
+            
+            // Auto-add Gold/Silver to materials if prices are set
+            if (data.priceGold > 0 && !data.materials.some(m => m.toLowerCase().includes('gold') || m.toLowerCase().includes('ذهب'))) {
+                data.materials.push(document.documentElement.lang === 'ar' ? 'ذهب' : 'Gold');
+            }
+            if (data.priceSilver > 0 && !data.materials.some(m => m.toLowerCase().includes('silver') || m.toLowerCase().includes('فضة'))) {
+                data.materials.push(document.documentElement.lang === 'ar' ? 'فضة' : 'Silver');
+            }
+            
+            // Customization
+            data.hasCustomization = fd.get('hasCustomization') === 'on';
+            data.customizationType = data.customizationType;
+            data.customizationLimit = Number(data.customizationLimit) || 1;
+            data.customQuestions = data.customQuestionsRaw ? data.customQuestionsRaw.split('\n').map(q => q.trim()).filter(q => q) : [];
+            delete data.customQuestionsRaw;
+
             const editId = data.editId; delete data.editId;
-            const r = editId ? await fetch(`${API}/api/products/${editId}`, { method: 'PUT', headers, body: JSON.stringify(data) }) : await fetch(`${API}/api/products`, { method: 'POST', headers, body: JSON.stringify(data) });
+            const r = editId ? await fetch(`${API}/api/products/${editId}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(data) }) : await fetch(`${API}/api/products`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) });
             if (!r.ok) alert((await r.json()).error || (document.documentElement.lang === 'ar' ? 'فشل الحفظ' : 'Save failed'));
             else alert(document.documentElement.lang === 'ar' ? 'تم حفظ المنتج بنجاح!' : 'Product saved!');
             closeModal('product-modal');
@@ -650,22 +835,140 @@
         });
 
         // Orders
+        let currentEditingOrder = null;
         async function loadOrders() {
-            const res = await fetch(`${API}/api/orders`, { headers });
+            const res = await fetch(`${API}/api/orders`, { headers: getHeaders() });
+
             const orders = await res.json();
-            document.getElementById('orders-table').innerHTML = orders.length ? `<table class="admin-table"><thead><tr><th>Order #</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>${orders.map(o => `<tr><td>${o.order_number != null ? o.order_number : (o.orderNumber || o.id)}</td><td>${o.customer_name || o.customerName || 'Guest'}</td><td>EGP ${(o.total || 0).toLocaleString()}</td><td><select onchange="updateOrderStatus('${o.id}',this.value)" style="background:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-primary);padding:4px 8px;border-radius:4px;font-size:var(--text-xs);"><option ${o.status === 'pending' ? 'selected' : ''}>pending</option><option ${o.status === 'processing' ? 'selected' : ''}>processing</option><option ${o.status === 'shipped' ? 'selected' : ''}>shipped</option><option ${o.status === 'delivered' ? 'selected' : ''}>delivered</option><option ${o.status === 'cancelled' ? 'selected' : ''}>cancelled</option></select></td><td>${new Date(o.created_at || o.createdAt).toLocaleDateString()}</td><td></td></tr>`).join('')}</tbody></table>` : '<p style="color:var(--text-secondary);text-align:center;padding:var(--space-6);">No orders yet</p>';
+            document.getElementById('orders-table').innerHTML = orders.length ? `
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${orders.map(o => `
+                        <tr>
+                            <td>${o.order_number || o.orderNumber || 'N/A'}</td>
+                            <td>${o.customer_name || o.customerName || 'Guest'}</td>
+                            <td>EGP ${(o.total || 0).toLocaleString()}</td>
+                            <td><span class="badge ${o.status === 'delivered' ? 'badge-success' : (o.status === 'pending' ? 'badge-warning' : '')}">${o.status}</span></td>
+                            <td>${new Date(o.createdAt || o.created_at).toLocaleDateString()}</td>
+                            <td>
+                                <button class="btn btn-outline btn-sm" onclick="viewOrderDetails('${o.id}')">View Details</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>` : '<p style="color:var(--text-secondary);text-align:center;padding:var(--space-6);">No orders yet</p>';
         }
 
-        async function updateOrderStatus(id, status) {
-            const r = await fetch(`${API}/api/orders/${id}`, { method: 'PUT', headers, body: JSON.stringify({ status }) });
-            if (r.ok) loadOrders(); else alert((await r.json()).error || 'Failed');
+        async function viewOrderDetails(id) {
+            const res = await fetch(`${API}/api/orders`, { headers: getHeaders() });
+
+            const orders = await res.json();
+            const o = orders.find(ord => ord.id === id);
+            if (!o) return;
+            currentEditingOrder = id;
+            document.getElementById('ord-id-display').textContent = '#' + (o.order_number || o.orderNumber || o.id.slice(0, 8));
+            document.getElementById('order-details-content').innerHTML = `
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4);">
+                    <div>
+                        <strong style="color:var(--gold);">Customer Info:</strong><br>
+                        ${o.customer_name || o.customerName || 'N/A'}<br>
+                        ${o.customer_email || o.customerEmail || 'N/A'}<br>
+                        ${o.customer_phone || o.customerPhone || 'N/A'}
+                    </div>
+                    <div>
+                        <strong style="color:var(--gold);">Shipping Address:</strong><br>
+                        ${o.address || 'N/A'}
+                    </div>
+                </div>
+                <div style="margin-bottom:var(--space-4);">
+                    <strong style="color:var(--gold);">User Notes:</strong><br>
+                    ${o.notes || 'None'}
+                </div>
+                <div style="margin-bottom:var(--space-4);">
+                    <strong style="color:var(--gold);">Items:</strong><br>
+                    <div style="display:flex; flex-direction:column; gap: var(--space-3); margin-top: var(--space-2);">
+                    ${o.order_items ? o.order_items.map(item => `
+                        <div style="padding: var(--space-3); background: rgba(255,255,255,0.03); border-radius: var(--radius-md); border-left: 3px solid var(--gold);">
+                            <div style="display:flex; justify-content:space-between; margin-bottom: var(--space-1);">
+                                <strong>${item.name || 'Product ID: ' + item.product_id}</strong>
+                                <span>${item.qty}x — EGP ${item.price}</span>
+                            </div>
+                            ${item.customization_value ? `<div><span style="color:var(--gold);">Custom Text:</span> ${item.customization_value}</div>` : ''}
+                            ${item.custom_answers && Array.isArray(item.custom_answers) && item.custom_answers.length ? `
+                                <div style="margin-top: 4px; font-size: var(--text-xs); color: var(--text-secondary);">
+                                    <span style="color:var(--gold);">Custom Answers:</span><br>
+                                    ${item.custom_answers.map(ans => `Q: ${ans.question}<br>A: <strong>${ans.answer}</strong>`).join('<br>')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('') : 'Details not available'}
+                    </div>
+                </div>
+                <div style="font-size: var(--text-lg); font-weight:700;">Total: EGP ${(o.total || 0).toLocaleString()}</div>
+            `;
+            document.getElementById('ord-admin-note').value = o.admin_note || '';
+            document.getElementById('ord-status-select').value = o.status;
+            document.getElementById('order-modal').classList.add('active');
         }
+
+        async function saveOrderChange() {
+            if (!currentEditingOrder) return;
+            const status = document.getElementById('ord-status-select').value;
+            const admin_note = document.getElementById('ord-admin-note').value;
+            
+            console.log('Sending update for order:', currentEditingOrder, { status, admin_note });
+            
+            try {
+                const r = await fetch(`${API}/api/orders/${currentEditingOrder}`, { 
+                    method: 'PUT', 
+                    headers: getHeaders(), 
+                    body: JSON.stringify({ status, admin_note }) 
+                });
+                
+                const result = await r.json();
+                
+                if (r.ok) {
+                    alert('Order updated successfully!');
+                    closeModal('order-modal');
+                    loadOrders();
+                } else {
+                    console.error('Update failed:', result);
+                    alert(result.error || 'Failed to update order');
+                }
+            } catch (err) {
+                console.error('Network error during update:', err);
+                alert('Connection error. Please check if the server is running.');
+            }
+        }
+
+
 
         // Blog
         async function loadBlog() {
-            const res = await fetch(`${API}/api/blog/all`, { headers });
-            const posts = await res.json();
-            document.getElementById('blog-table').innerHTML = `<table class="admin-table"><thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead><tbody>${posts.map(p => `<tr><td>${p.image_url || p.image ? `<img src="${p.image_url || p.image}" style="width:40px;height:40px;object-fit:cover;margin-right:8px;border-radius:4px;">` : ''}${p.title}<br><small style="color:var(--text-secondary)">${p.title_ar || p.titleAr || ''}</small></td><td>${p.category}</td><td>${p.published_at ? new Date(p.published_at).toLocaleDateString() : (p.date || '')}</td><td><button class="btn btn-outline btn-sm" onclick="editBlog('${p.id}')">Edit</button> <button class="btn-danger" onclick="deleteBlog('${p.id}')">Delete</button></td></tr>`).join('')}</tbody></table>`;
+            try {
+                const res = await fetch(`${API}/api/blog?admin=true`, { headers: getHeaders() });
+                const posts = await res.json();
+                
+                if (!Array.isArray(posts)) {
+                    document.getElementById('blog-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary)">No blog posts found.</p>';
+                    return;
+                }
+
+                document.getElementById('blog-table').innerHTML = `<table class="admin-table"><thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead><tbody>${posts.map(p => `<tr><td>${p.image_url || p.image ? `<img src="${p.image_url || p.image}" style="width:40px;height:40px;object-fit:cover;margin-right:8px;border-radius:4px;">` : ''}${p.title}<br><small style="color:var(--text-secondary)">${p.title_ar || p.titleAr || ''}</small></td><td>${p.category}</td><td>${p.published_at ? new Date(p.published_at).toLocaleDateString() : (p.date || '')}</td><td><button class="btn btn-outline btn-sm" onclick="editBlog('${p.id}')">Edit</button> <button class="btn-danger" onclick="deleteBlog('${p.id}')">Delete</button></td></tr>`).join('')}</tbody></table>`;
+            } catch (e) {
+                console.error('Load blog error:', e);
+                document.getElementById('blog-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--accent)">Error loading blog.</p>';
+            }
         }
 
         function openBlogModal(data) {
@@ -682,15 +985,18 @@
         }
 
         async function editBlog(id) {
-            const res = await fetch(`${API}/api/blog/all`, { headers });
-            const posts = await res.json();
-            const post = posts.find(p => p.id === id || String(p.id) === String(id));
-            if (post) openBlogModal({ ...post, image: post.image_url || post.image, titleAr: post.title_ar || post.titleAr, excerptAr: post.excerpt_ar, contentAr: post.content_ar });
+            try {
+                const res = await fetch(`${API}/api/blog?admin=true`, { headers: getHeaders() });
+                const posts = await res.json();
+                const post = posts.find(p => p.id === id || String(p.id) === String(id));
+                if (post) openBlogModal({ ...post, image: post.image_url || post.image, titleAr: post.title_ar || post.titleAr, excerptAr: post.excerpt_ar, contentAr: post.content_ar });
+            } catch (e) { console.error('Edit blog error:', e); }
         }
-
+        
         async function deleteBlog(id) {
             if (!confirm(document.documentElement.lang === 'ar' ? 'حذف هذا المقال؟' : 'Delete this post?')) return;
-            const r = await fetch(`${API}/api/blog/${id}`, { method: 'DELETE', headers });
+            const r = await fetch(`${API}/api/blog/${id}`, { method: 'DELETE', headers: getHeaders() });
+
             if (r.ok) loadBlog(); else alert((await r.json()).error || 'Failed');
         }
 
@@ -710,7 +1016,7 @@
             }
             const editId = data.editId; delete data.editId;
             const payload = { ...data, image_url: data.image, titleAr: data.titleAr, excerptAr: data.excerptAr, contentAr: data.contentAr };
-            const r = editId ? await fetch(`${API}/api/blog/${editId}`, { method: 'PUT', headers, body: JSON.stringify(payload) }) : await fetch(`${API}/api/blog`, { method: 'POST', headers, body: JSON.stringify(payload) });
+            const r = editId ? await fetch(`${API}/api/blog/${editId}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(payload) }) : await fetch(`${API}/api/blog`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(payload) });
             if (!r.ok) alert((await r.json()).error || (document.documentElement.lang === 'ar' ? 'فشل الحفظ' : 'Save failed'));
             else alert(document.documentElement.lang === 'ar' ? 'تم حفظ المقال بنجاح!' : 'Post saved!');
             closeModal('blog-modal');
@@ -719,21 +1025,32 @@
 
         // Users
         async function loadUsers() {
-            const res = await fetch(`${API}/api/users`, { headers });
-            const users = await res.json();
-            document.getElementById('users-table').innerHTML = `<table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td><select onchange="changeRole(${u.id},this.value)" style="background:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-primary);padding:4px 8px;border-radius:4px;font-size:var(--text-xs);"><option ${u.role === 'customer' ? 'selected' : ''}>customer</option><option ${u.role === 'admin' ? 'selected' : ''}>admin</option></select></td><td>${new Date(u.createdAt).toLocaleDateString()}</td><td><button class="btn-danger" onclick="deleteUser(${u.id})">Delete</button></td></tr>`).join('')}</tbody></table>`;
+            try {
+                const res = await fetch(`${API}/api/users`, { headers: getHeaders() });
+                const users = await res.json();
+                
+                if (!Array.isArray(users)) {
+                    document.getElementById('users-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary)">No users found.</p>';
+                    return;
+                }
+
+                document.getElementById('users-table').innerHTML = `<table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Points</th><th>Joined</th></tr></thead><tbody>${users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td><span class="badge ${u.role === 'admin' ? 'badge-primary' : ''}">${u.role}</span></td><td>${u.ora_points || 0}</td><td>${u.created_at ? new Date(u.created_at).toLocaleDateString() : '-'}</td></tr>`).join('')}</tbody></table>`;
+            } catch (e) {
+                console.error('Load users error:', e);
+                document.getElementById('users-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--accent)">Error loading users.</p>';
+            }
         }
 
-        async function changeRole(id, role) { await fetch(`${API}/api/users/${id}/role`, { method: 'PUT', headers, body: JSON.stringify({ role }) }); }
+        async function changeRole(id, role) { await fetch(`${API}/api/users/${id}/role`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({ role }) }); }
         async function deleteUser(id) {
             if (!confirm(document.documentElement.lang === 'ar' ? 'حذف هذا المستخدم؟' : 'Delete this user?')) return;
-            const r = await fetch(`${API}/api/users/${id}`, { method: 'DELETE', headers });
+            const r = await fetch(`${API}/api/users/${id}`, { method: 'DELETE', headers: getHeaders() });
             if (r.ok) loadUsers(); else alert((await r.json()).error || 'Failed');
         }
 
         // Settings
         async function loadSettings() {
-            const res = await fetch(`${API}/api/settings/admin`, { headers });
+            const res = await fetch(`${API}/api/settings/admin`, { headers: getHeaders() });
             const s = await res.json();
             document.getElementById('settings-form').innerHTML = `
             <div class="form-row"><div class="form-group"><label>Site Name (EN)</label><input name="siteName" value="${s.siteName || ''}"></div><div class="form-group"><label>Site Name (AR)</label><input name="siteNameAr" value="${s.siteNameAr || ''}" dir="rtl"></div></div>
@@ -831,7 +1148,7 @@
             if (Object.keys(hpImages).length > 0) {
                 // Merge with existing homepageImages
                 try {
-                    const existingRes = await fetch(`${API}/api/settings/admin`, { headers });
+                    const existingRes = await fetch(`${API}/api/settings/admin`, { headers: getHeaders() });
                     const existingData = await existingRes.json();
                     data.homepageImages = { ...(existingData.homepageImages || {}), ...hpImages };
                 } catch (_) {
@@ -839,10 +1156,15 @@
                 }
             }
 
-            await fetch(`${API}/api/settings`, { method: 'PUT', headers, body: JSON.stringify(data) });
+            const r_settings = await fetch(`${API}/api/settings`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(data) });
             if (btn) { btn.disabled = false; btn.textContent = 'Save Settings'; }
-            alert(document.documentElement.lang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
-            loadSettings();
+            if (r_settings.ok) {
+                alert(document.documentElement.lang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
+                loadSettings();
+            } else {
+                const errData = await r_settings.json().catch(() => ({ error: 'Update failed' }));
+                alert(errData.error || 'Failed to save settings');
+            }
         });
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
