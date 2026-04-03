@@ -1,28 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="ar" dir="rtl" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard — Aura Accessories</title>
+    <title>لوحة التحكم — أورا للإكسسوارات</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
     <style>
+        * { font-family: 'Cairo', sans-serif; }
+
         .admin-layout {
             display: grid;
-            grid-template-columns: 240px 1fr;
+            grid-template-columns: 260px 1fr;
             min-height: 100vh;
         }
 
         .admin-sidebar {
             background: var(--bg-card);
-            border-right: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
             padding: var(--space-6);
             position: sticky;
             top: 0;
             height: 100vh;
             overflow-y: auto;
+            z-index: 100;
         }
 
         .admin-sidebar .brand {
@@ -34,20 +39,9 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .admin-sidebar .brand span {
-            font-size: 1.5rem;
-            color: var(--gold);
-        }
-
-        .admin-sidebar .brand h2 {
-            font-size: var(--text-base);
-            color: var(--text-primary);
-        }
-
-        .admin-sidebar .brand small {
-            font-size: var(--text-xs);
-            color: var(--text-secondary);
-        }
+        .admin-sidebar .brand span { font-size: 1.5rem; color: var(--gold); }
+        .admin-sidebar .brand h2 { font-size: var(--text-base); color: var(--text-primary); }
+        .admin-sidebar .brand small { font-size: var(--text-xs); color: var(--text-secondary); }
 
         .admin-nav a {
             display: flex;
@@ -60,118 +54,91 @@
             margin-bottom: var(--space-1);
             transition: all var(--transition-fast);
             cursor: pointer;
+            text-decoration: none;
         }
 
-        .admin-nav a:hover,
-        .admin-nav a.active {
+        .admin-nav a:hover, .admin-nav a.active {
             background: rgba(212, 175, 55, 0.08);
             color: var(--gold);
         }
 
-        .admin-main {
-            padding: var(--space-8);
-            overflow-y: auto;
-        }
+        .admin-main { padding: var(--space-6); overflow-y: auto; }
 
         .admin-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: var(--space-8);
+            margin-bottom: var(--space-6);
+            flex-wrap: wrap;
+            gap: var(--space-3);
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: var(--space-4);
-            margin-bottom: var(--space-8);
+            margin-bottom: var(--space-6);
         }
 
         .stat-box {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: var(--space-6);
+            padding: var(--space-5);
             transition: all var(--transition-base);
         }
+        .stat-box:hover { border-color: var(--gold); }
+        .stat-box .number { font-size: var(--text-3xl); font-weight: 700; color: var(--gold); }
+        .stat-box .label { font-size: var(--text-xs); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
 
-        .stat-box:hover {
-            border-color: var(--gold);
-        }
-
-        .stat-box .number {
-            font-size: var(--text-3xl);
-            font-weight: 700;
-            color: var(--gold);
-        }
-
-        .stat-box .label {
-            font-size: var(--text-xs);
-            color: var(--text-secondary);
-            margin-top: var(--space-1);
-        }
+        /* Image Management */
+        .image-management-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: var(--space-3); margin-top: var(--space-3); }
+        .image-card { position: relative; aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-color); transition: all 0.2s; }
+        .image-card img { width: 100%; height: 100%; object-fit: cover; }
+        .image-card .actions { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 4px; padding: 4px; opacity: 0; transition: opacity 0.2s; justify-content: center; align-items: center; }
+        .image-card:hover .actions { opacity: 1; }
+        .image-card.is-main { border: 2px solid var(--gold); box-shadow: 0 0 10px rgba(181, 149, 81, 0.3); }
+        .image-card .badge-main { position: absolute; top: 4px; right: 4px; background: var(--gold); color: black; font-size: 8px; padding: 2px 4px; border-radius: 2px; font-weight: bold; z-index: 2; }
+        .img-btn { background: white; color: black; border: none; border-radius: 4px; font-size: 10px; padding: 2px 6px; cursor: pointer; transition: 0.2s; width: 100%; }
+        .img-btn:hover { background: var(--gold); }
+        .img-btn-danger { background: #e74c3c; color: white; }
+        .img-btn-danger:hover { background: #ff4d4d; }
 
         .admin-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: var(--space-6);
-            margin-bottom: var(--space-6);
+            padding: var(--space-5);
+            margin-bottom: var(--space-5);
+            overflow: hidden;
         }
+        .admin-card h3 { font-size: var(--text-lg); margin-bottom: var(--space-4); color: var(--gold); }
 
-        .admin-card h3 {
-            font-size: var(--text-lg);
-            margin-bottom: var(--space-4);
-            color: var(--gold);
-        }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: var(--text-sm);
-        }
-
-        .admin-table th,
-        .admin-table td {
+        .admin-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+        .admin-table th, .admin-table td {
             padding: var(--space-3) var(--space-4);
-            text-align: left;
+            text-align: right;
             border-bottom: 1px solid var(--border-color);
         }
-
         .admin-table th {
             color: var(--text-secondary);
-            font-weight: 500;
+            font-weight: 600;
             font-size: var(--text-xs);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            white-space: nowrap;
         }
+        .admin-table tr:hover td { background: rgba(212, 175, 55, 0.03); }
 
-        .admin-table tr:hover td {
-            background: rgba(212, 175, 55, 0.03);
-        }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
 
-        .admin-section {
-            display: none;
-        }
-
-        .admin-section.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: var(--space-4);
-        }
-
+        .form-group { margin-bottom: var(--space-4); }
         .form-group label {
             display: block;
             font-size: var(--text-sm);
             color: var(--text-secondary);
             margin-bottom: var(--space-2);
         }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: var(--space-3);
             background: var(--bg-tertiary);
@@ -179,190 +146,252 @@
             border-radius: var(--radius-md);
             color: var(--text-primary);
             font-size: var(--text-sm);
-            font-family: inherit;
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
         }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             border-color: var(--gold);
             outline: none;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-4);
-        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
 
-        .btn-sm {
-            padding: var(--space-1) var(--space-3);
-            font-size: var(--text-xs);
-            border-radius: var(--radius-sm);
-        }
+        .btn-sm { padding: var(--space-1) var(--space-3); font-size: var(--text-xs); border-radius: var(--radius-sm); }
 
         .btn-danger {
-            background: rgba(231, 76, 60, 0.15);
+            background: rgba(231,76,60,0.15);
             color: #e74c3c;
-            border: 1px solid rgba(231, 76, 60, 0.3);
+            border: 1px solid rgba(231,76,60,0.3);
             cursor: pointer;
             padding: var(--space-1) var(--space-3);
             border-radius: var(--radius-sm);
             font-size: var(--text-xs);
         }
-
-        .btn-danger:hover {
-            background: rgba(231, 76, 60, 0.25);
-        }
+        .btn-danger:hover { background: rgba(231,76,60,0.25); }
 
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
+            background: rgba(0,0,0,0.7);
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            display: none;
         }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
+        .modal-overlay.active { display: flex; }
         .modal {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: var(--space-8);
+            padding: var(--space-6);
             max-width: 600px;
-            width: 90%;
-            max-height: 85vh;
+            width: 95%;
+            max-height: 90vh;
             overflow-y: auto;
+            direction: rtl;
+        }
+        .modal h3 { color: var(--gold); margin-bottom: var(--space-5); }
+
+        /* ===== MOBILE TOP BAR ===== */
+        .admin-topbar {
+            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--space-3) var(--space-4);
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-3);
+        }
+        .admin-topbar .brand-name { color: var(--gold); font-weight: 700; font-size: var(--text-base); }
+        .hamburger-admin {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-2) var(--space-3);
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
         }
 
-        .modal h3 {
-            color: var(--gold);
-            margin-bottom: var(--space-6);
+        /* ===== MOBILE DRAWER ===== */
+        .admin-drawer-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 150;
         }
+        .admin-drawer-overlay.open { display: block; }
 
-        @media(max-width:768px) {
-            .admin-layout {
-                grid-template-columns: 1fr;
-            }
+        .admin-drawer {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 260px;
+            height: 100vh;
+            background: var(--bg-card);
+            border-left: 1px solid var(--border-color);
+            padding: var(--space-6);
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 160;
+        }
+        .admin-drawer.open { right: 0; }
 
-            .admin-sidebar {
-                display: none;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+        /* ===== RESPONSIVE ===== */
+        @media(max-width: 900px) {
+            .admin-layout { grid-template-columns: 1fr; }
+            .admin-sidebar { display: none; }
+            .admin-topbar { display: flex; }
+            .admin-main { padding: var(--space-4); }
+            .form-row { grid-template-columns: 1fr; gap: var(--space-2); }
+            .admin-table { font-size: 0.8rem; }
+            .admin-table th, .admin-table td { padding: var(--space-3) var(--space-2); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+        }
+        @media(max-width: 600px) {
+            .modal { padding: var(--space-4); width: 98%; border-radius: 0; max-height: 100vh; height: 100%; border: none; }
+            .admin-header { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+            .admin-header .btn { width: 100%; margin-top: var(--space-2); }
+            .stats-grid { grid-template-columns: 1fr; }
+            .stat-box { padding: var(--space-4); }
+        }
+        @media(max-width: 480px) {
+            .admin-table { font-size: 0.75rem; }
+            .admin-topbar .brand-name { font-size: var(--text-sm); }
         }
     </style>
 </head>
 
-<body>
+<body style="font-family:'Cairo',sans-serif;">
+
+    <!-- Mobile Top Bar -->
+    <div class="admin-topbar">
+        <button class="hamburger-admin" onclick="openAdminDrawer()">☰</button>
+        <span class="brand-name">✦ أورا — الإدارة</span>
+        <a href="index.html" style="font-size:var(--text-xs);color:var(--text-secondary);">← الموقع</a>
+    </div>
+
+    <!-- Mobile Drawer Overlay -->
+    <div class="admin-drawer-overlay" id="admin-drawer-overlay" onclick="closeAdminDrawer()"></div>
+
+    <!-- Mobile Drawer -->
+    <div class="admin-drawer" id="admin-drawer">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-6);padding-bottom:var(--space-4);border-bottom:1px solid var(--border-color);">
+            <span style="color:var(--gold);font-weight:700;">✦ أورا للإدارة</span>
+            <button onclick="closeAdminDrawer()" style="background:none;border:none;color:var(--text-secondary);font-size:1.3rem;cursor:pointer;">✕</button>
+        </div>
+        <nav class="admin-nav">
+            <a onclick="showSection('dashboard');closeAdminDrawer()">📊 الرئيسية</a>
+            <a onclick="showSection('products');closeAdminDrawer()">📦 المنتجات</a>
+            <a onclick="showSection('orders');closeAdminDrawer()">🛒 الطلبات</a>
+            <a onclick="showSection('blog');closeAdminDrawer()">📝 المدونة</a>
+            <a onclick="showSection('chat');closeAdminDrawer()">💬 الشات بوت</a>
+            <a onclick="showSection('users');closeAdminDrawer()">👥 المستخدمين</a>
+            <a onclick="showSection('settings');closeAdminDrawer()">⚙️ الإعدادات</a>
+            <a href="index.html" style="margin-top:var(--space-6);border-top:1px solid var(--border-color);padding-top:var(--space-4);">← العودة للموقع</a>
+            <a href="account.html">👤 حسابي</a>
+        </nav>
+    </div>
+
     <div class="admin-layout">
-        <!-- Sidebar -->
+        <!-- Sidebar Desktop -->
         <aside class="admin-sidebar">
             <div class="brand">
                 <span>✦</span>
                 <div>
-                    <h2>Aura Admin</h2><small>Management Dashboard</small>
+                    <h2>أورا — الإدارة</h2><small>لوحة التحكم</small>
                 </div>
             </div>
             <nav class="admin-nav">
-                <a class="active" onclick="showSection('dashboard')">📊 Dashboard</a>
-                <a onclick="showSection('products')">📦 Products</a>
-                <a onclick="showSection('orders')">🛒 Orders</a>
-                <a onclick="showSection('blog')">📝 Blog</a>
-                <a onclick="showSection('chat')">💬 Chat Bot</a>
-                <a onclick="showSection('users')">👥 Users</a>
-                <a onclick="showSection('settings')">⚙️ Settings</a>
-                <a href="index.html"
-                    style="margin-top:var(--space-6);border-top:1px solid var(--border-color);padding-top:var(--space-4);">←
-                    Back to Website</a>
-                <a href="account.html">👤 My Account</a>
+                <a class="active" onclick="showSection('dashboard')">📊 الرئيسية</a>
+                <a onclick="showSection('products')">📦 المنتجات</a>
+                <a onclick="showSection('orders')">🛒 الطلبات</a>
+                <a onclick="showSection('blog')">📝 المدونة</a>
+                <a onclick="showSection('chat')">💬 الشات بوت</a>
+                <a onclick="showSection('users')">👥 المستخدمين</a>
+                <a onclick="showSection('settings')">⚙️ الإعدادات</a>
+                <a href="index.html" style="margin-top:var(--space-6);border-top:1px solid var(--border-color);padding-top:var(--space-4);">← العودة للموقع</a>
+                <a href="account.html">👤 حسابي</a>
             </nav>
         </aside>
         <!-- Main -->
         <main class="admin-main">
-            <!-- Dashboard Section -->
+            <!-- Dashboard -->
             <div id="sec-dashboard" class="admin-section active">
                 <div class="admin-header">
-                    <h1 style="font-size:var(--text-2xl);">Dashboard</h1>
-                    <span style="color:var(--text-secondary);font-size:var(--text-sm);">Welcome, Admin</span>
+                    <h1 style="font-size:var(--text-2xl);">📊 الرئيسية</h1>
+                    <span style="color:var(--text-secondary);font-size:var(--text-sm);">أهلاً, الأدمن ✦</span>
                 </div>
                 <div class="stats-grid" id="stats-grid"></div>
                 <div class="admin-card">
-                    <h3>Recent Orders</h3>
+                    <h3>آخر الطلبات</h3>
                     <div id="recent-orders-table" style="overflow-x:auto;"></div>
                 </div>
             </div>
-            <!-- Products Section -->
+            <!-- Products -->
             <div id="sec-products" class="admin-section">
                 <div class="admin-header">
-                    <h1 style="font-size:var(--text-2xl);">Products</h1>
-                    <button class="btn btn-primary btn-sm" onclick="openProductModal()">+ Add Product</button>
+                    <h1 style="font-size:var(--text-2xl);">📦 المنتجات</h1>
+                    <button class="btn btn-primary btn-sm" onclick="openProductModal()">+ إضافة منتج</button>
                 </div>
                 <div class="admin-card">
                     <div id="products-table" style="overflow-x:auto;"></div>
                 </div>
             </div>
-            <!-- Orders Section -->
+            <!-- Orders -->
             <div id="sec-orders" class="admin-section">
                 <div class="admin-header">
-                    <h1 style="font-size:var(--text-2xl);">Orders</h1>
+                    <h1 style="font-size:var(--text-2xl);">🛒 الطلبات</h1>
                 </div>
                 <div class="admin-card">
                     <div id="orders-table" style="overflow-x:auto;"></div>
                 </div>
             </div>
-            <!-- Blog Section -->
+            <!-- Blog -->
             <div id="sec-blog" class="admin-section">
                 <div class="admin-header">
-                    <h1 style="font-size:var(--text-2xl);">Blog Posts</h1>
-                    <button class="btn btn-primary btn-sm" onclick="openBlogModal()">+ Add Post</button>
+                    <h1 style="font-size:var(--text-2xl);">📝 المدونة</h1>
+                    <button class="btn btn-primary btn-sm" onclick="openBlogModal()">+ إضافة مقال</button>
                 </div>
                 <div class="admin-card">
                     <div id="blog-table" style="overflow-x:auto;"></div>
                 </div>
             </div>
-            <!-- Chat Section -->
+            <!-- Chat -->
             <div id="sec-chat" class="admin-section">
                 <div class="admin-header">
-                    <h1 style="font-size:var(--text-2xl);">Chat Bot (مربوط بالمنتجات)</h1>
+                    <h1 style="font-size:var(--text-2xl);">💬 الشات بوت</h1>
                 </div>
                 <div class="admin-card">
-                    <p style="color:var(--text-secondary); margin-bottom: var(--space-4);">الشات ده بيرد بناءً على
-                        بيانات المنتجات من الداتابيز. لو اليوزر عايز منتج معين هيديله لينك المنتج.</p>
-                    <div id="admin-chat-messages"
-                        style="height:320px; overflow-y:auto; background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);">
-                    </div>
+                    <p style="color:var(--text-secondary); margin-bottom: var(--space-4);">الشات بيرد بناءً على بيانات المنتجات. لو المستخدم عايز منتج معين هيديله لينكه.</p>
+                    <div id="admin-chat-messages" style="height:300px; overflow-y:auto; background: var(--bg-tertiary); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);"></div>
                     <div style="display:flex; gap: var(--space-2);">
-                        <input type="text" id="admin-chat-input" class="form-input" placeholder="اكتب رسالة تجربة..."
-                            style="flex:1;" onkeypress="if(event.key==='Enter')sendAdminChat()">
+                        <input type="text" id="admin-chat-input" class="form-input" placeholder="اكتب رسالة تجربة..." style="flex:1;" onkeypress="if(event.key==='Enter')sendAdminChat()">
                         <button class="btn btn-primary btn-sm" onclick="sendAdminChat()">إرسال</button>
                     </div>
                 </div>
             </div>
-            <!-- Users Section -->
+            <!-- Users -->
             <div id="sec-users" class="admin-section">
                 <div class="admin-header">
-                    <h1 style="font-size:var(--text-2xl);">Users</h1>
+                    <h1 style="font-size:var(--text-2xl);">👥 المستخدمين</h1>
                 </div>
                 <div class="admin-card">
                     <div id="users-table" style="overflow-x:auto;"></div>
                 </div>
             </div>
-            <!-- Settings Section -->
+            <!-- Settings -->
             <div id="sec-settings" class="admin-section">
                 <div class="admin-header">
-                    <h1 style="font-size:var(--text-2xl);">Site Settings</h1>
+                    <h1 style="font-size:var(--text-2xl);">⚙️ إعدادات الموقع</h1>
                 </div>
                 <div class="admin-card">
-                    <h3>General</h3>
+                    <h3>الإعدادات العامة</h3>
                     <form id="settings-form"></form>
                 </div>
             </div>
@@ -372,179 +401,159 @@
     <!-- Product Modal -->
     <div class="modal-overlay" id="product-modal">
         <div class="modal">
-            <h3 id="product-modal-title">Add Product</h3>
+            <h3 id="product-modal-title">إضافة منتج</h3>
             <form id="product-form">
                 <div class="form-row">
-                    <div class="form-group"><label>Name (EN)</label><input name="name" required></div>
-                    <div class="form-group"><label>Name (AR)</label><input name="nameAr" dir="rtl" required></div>
+                    <div class="form-group"><label>الاسم (بالإنجليزي)</label><input name="name" required dir="ltr"></div>
+                    <div class="form-group"><label>الاسم (بالعربي)</label><input name="nameAr" dir="rtl" required></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>Category</label><select name="category">
-                            <option>necklaces</option>
-                            <option>rings</option>
-                            <option>earrings</option>
-                            <option>bracelets</option>
+                    <div class="form-group"><label>القسم</label><select name="category">
+                            <option value="necklaces">سلاسل</option>
+                            <option value="rings">خواتم</option>
+                            <option value="earrings">حلقان</option>
+                            <option value="bracelets">أساور</option>
                         </select></div>
-                    <div class="form-group"><label>Gender</label><select name="gender">
-                            <option>women</option>
-                            <option>men</option>
-                            <option>unisex</option>
+                    <div class="form-group"><label>الفئة</label><select name="gender">
+                            <option value="women">حريمي</option>
+                            <option value="men">رجالي</option>
+                            <option value="unisex">للجنسين</option>
                         </select></div>
                 </div>
-                <div class="form-header-small" style="margin-top: var(--space-4); font-weight: 700; color: var(--gold); border-bottom: 1px solid var(--border-color); margin-bottom: var(--space-2); padding-bottom: 2px;">Silver Variant (Base / default)</div>
+                <div class="form-header-small" style="margin-top:var(--space-4);font-weight:700;color:var(--gold);border-bottom:1px solid var(--border-color);margin-bottom:var(--space-2);padding-bottom:2px;">نسخة الفضة (الأساسية)</div>
                 <div class="form-row">
-                    <div class="form-group"><label>Silver Sale Price (EGP)</label><input type="number" name="priceSilver" required></div>
-                    <div class="form-group"><label>Silver Original Price (EGP)</label><input type="number" name="oldPriceSilver"></div>
+                    <div class="form-group"><label>سعر الفضة (جنيه)</label><input type="number" name="priceSilver" required></div>
+                    <div class="form-group"><label>سعر الفضة قبل الخصم</label><input type="number" name="oldPriceSilver"></div>
                 </div>
-                <div class="form-header-small" style="margin-top: var(--space-2); font-weight: 700; color: var(--gold); border-bottom: 1px solid var(--border-color); margin-bottom: var(--space-2); padding-bottom: 2px;">Gold Variant</div>
+                <div class="form-header-small" style="margin-top:var(--space-2);font-weight:700;color:var(--gold);border-bottom:1px solid var(--border-color);margin-bottom:var(--space-2);padding-bottom:2px;">نسخة الذهب</div>
                 <div class="form-row">
-                    <div class="form-group"><label>Gold Sale Price (EGP)</label><input type="number" name="priceGold"></div>
-                    <div class="form-group"><label>Gold Original Price (EGP)</label><input type="number" name="oldPriceGold"></div>
+                    <div class="form-group"><label>سعر الذهب (جنيه)</label><input type="number" name="priceGold"></div>
+                    <div class="form-group"><label>سعر الذهب قبل الخصم</label><input type="number" name="oldPriceGold"></div>
                 </div>
-                <!-- Legacy hidden fields to prevent breakage -->
                 <input type="hidden" name="price" value="0">
                 <input type="hidden" name="oldPrice" value="">
                 <div class="form-row">
-                    <div class="form-group"><label>Material</label><input name="material"></div>
-                    <div class="form-group"><label>Style</label><select name="style">
-                            <option>classic</option>
-                            <option>modern</option>
-                            <option>bohemian</option>
-                            <option>luxury</option>
+                    <div class="form-group"><label>الخامة</label><input name="material"></div>
+                    <div class="form-group"><label>الستايل</label><select name="style">
+                            <option value="classic">كلاسيك</option>
+                            <option value="modern">عصري</option>
+                            <option value="bohemian">بوهيمي</option>
+                            <option value="luxury">فاخر</option>
                         </select></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>Color</label><input name="color"></div>
-                    <div class="form-group"><label>Badge</label><input name="badge" placeholder="e.g. Best Seller, New">
-                    </div>
+                    <div class="form-group"><label>اللون</label><input name="color"></div>
+                    <div class="form-group"><label>البادج (مثل: الأكثر مبيعاً)</label><input name="badge"></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>Rating</label><input name="rating" type="number" step="0.1" min="0"
-                            max="5" value="4.5"></div>
-                    <div class="form-group"><label>Reviews</label><input name="reviews" type="number" value="0"></div>
+                    <div class="form-group"><label>التقييم</label><input name="rating" type="number" step="0.1" min="0" max="5" value="4.5"></div>
+                    <div class="form-group"><label>عدد التقييمات</label><input name="reviews" type="number" value="0"></div>
                 </div>
-                <div class="form-group"><label>Occasion</label><input name="occasion"
-                        placeholder="daily, evening, formal, casual"></div>
-                <div class="form-group"><label>Dimensions</label><input name="dimensions"></div>
-                <div class="form-group"><label>Weight</label><input name="weight"></div>
-                <div class="form-group"><label>Care (EN)</label><textarea name="care" rows="2"></textarea></div>
-                <div class="form-group"><label>Story (EN)</label><textarea name="story" rows="2"></textarea></div>
-                <div class="form-group"><label>Story (AR)</label><textarea name="storyAr" rows="2" dir="rtl"></textarea>
-                </div>
-                <div class="form-group"><label>Sizes (comma-separated)</label><input name="sizes" placeholder="S, M, L">
-                </div>
-                <div class="form-group"><label>Colors (comma-separated)</label><input name="colors"
-                        placeholder="Gold, Silver"></div>
-                <div class="form-group"><label>Materials (comma-separated)</label><input name="materials"
-                        placeholder="18K Gold, Sterling Silver"></div>
-                <!-- Customization Settings -->
-                <div style="margin: var(--space-6) 0; padding: var(--space-4); border: 1px dashed var(--gold); border-radius: var(--radius-md);">
-                    <h4 style="color:var(--gold); margin-bottom: var(--space-3); font-size: var(--text-sm);">Product Customization</h4>
+                <div class="form-group"><label>المناسبة</label><input name="occasion" placeholder="يومي, سهرة, رسمي"></div>
+                <div class="form-group"><label>الأبعاد</label><input name="dimensions"></div>
+                <div class="form-group"><label>الوزن</label><input name="weight"></div>
+                <div class="form-group"><label>طريقة العناية (إنجليزي)</label><textarea name="care" rows="2"></textarea></div>
+                <div class="form-group"><label>قصة المنتج (إنجليزي)</label><textarea name="story" rows="2"></textarea></div>
+                <div class="form-group"><label>قصة المنتج (عربي)</label><textarea name="storyAr" rows="2" dir="rtl"></textarea></div>
+                <div class="form-group"><label>المقاسات (مفصولة بفاصلة)</label><input name="sizes" placeholder="S, M, L"></div>
+                <div class="form-group"><label>الألوان (مفصولة بفاصلة)</label><input name="colors" placeholder="ذهب, فضة"></div>
+                <div class="form-group"><label>الخامات (مفصولة بفاصلة)</label><input name="materials" placeholder="18K Gold, Sterling Silver"></div>
+                <!-- Customization -->
+                <div style="margin:var(--space-5) 0;padding:var(--space-4);border:1px dashed var(--gold);border-radius:var(--radius-md);">
+                    <h4 style="color:var(--gold);margin-bottom:var(--space-3);font-size:var(--text-sm);">تخصيص المنتج</h4>
                     <div class="form-group">
-                        <label style="display:flex; align-items:center; gap:var(--space-2); cursor:pointer;">
-                            <input type="checkbox" name="hasCustomization" style="width:auto;"> Enable Customization (Letters/Names)
+                        <label style="display:flex;align-items:center;gap:var(--space-2);cursor:pointer;">
+                            <input type="checkbox" name="hasCustomization" style="width:auto;"> تفعيل التخصيص (حروف/أسماء)
                         </label>
                     </div>
                     <div id="custom-settings" style="display:none;">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Customization Type</label>
+                                <label>نوع التخصيص</label>
                                 <select name="customizationType">
-                                    <option value="letters">Letters (e.g. A, B, C)</option>
-                                    <option value="names">Names (Full Text)</option>
+                                    <option value="letters">حروف</option>
+                                    <option value="names">أسماء</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Character Limit</label>
+                                <label>عدد الحروف المسموح</label>
                                 <input name="customizationLimit" type="number" value="1" min="1">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Custom Questions (one per line)</label>
-                            <textarea name="customQuestionsRaw" rows="3" placeholder="e.g. What color box would you like?"></textarea>
-                            <small style="color:var(--text-secondary)">Add questions for the user to answer during checkout.</small>
+                            <label>أسئلة إضافية (كل سؤال في سطر)</label>
+                            <textarea name="customQuestionsRaw" rows="3" placeholder="مثال: ما هو لون العلبة؟"></textarea>
                         </div>
                     </div>
                 </div>
-
-                <div class="form-header-small" style="margin-top: var(--space-4); font-weight: 700; color: var(--gold); border-bottom: 1px solid var(--border-color); margin-bottom: var(--space-2); padding-bottom: 2px;">Media (Images)</div>
                 <div class="form-group">
-                    <label>Upload New Images</label>
-                    <input name="imageFiles" type="file" accept="image/*" multiple style="margin-bottom: var(--space-2);">
+                    <label>صور المنتج (إدارة الصور)</label>
+                    <div id="product-images-preview" class="image-management-grid"></div>
                 </div>
-                <div class="form-group">
-                    <label>Image URLs (One per line)</label>
-                    <textarea name="imageUrls" rows="3" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" style="font-size: var(--text-xs);"></textarea>
-                </div>
-                <div id="product-images-preview" style="display:flex; flex-wrap:wrap; gap:var(--space-2); margin-top:var(--space-2); min-height: 40px; border: 1px dashed rgba(212,175,55,0.2); padding: 8px; border-radius: var(--radius-md);">
-                    <small style="color:var(--text-secondary); width:100%; text-align:center;">Current images will appear here when editing.</small>
+                <div class="form-group" style="margin-top:var(--space-4);">
+                    <label>تحميل صور جديدة</label>
+                    <input type="file" name="imageFiles" multiple accept="image/*" class="form-input">
+                    <textarea name="imageUrls" rows="3" style="display:none;"></textarea>
+                    <p style="font-size:10px; color:var(--text-secondary); margin-top:4px;">يمكنك رفع عدة صور مرة واحدة. سيتم إضافتها للمنتج عند الحفظ.</p>
                 </div>
                 <input type="hidden" name="editId" value="">
-                <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6);">
-                    <button type="button" class="btn btn-outline btn-sm"
-                        onclick="closeModal('product-modal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Save Product</button>
+                <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-5);">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('product-modal')"> إلغاء</button>
+                    <button type="submit" class="btn btn-primary btn-sm">حفظ المنتج</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Order Details Modal -->
+    <!-- Order Modal -->
     <div class="modal-overlay" id="order-modal">
-        <div class="modal" style="max-width: 600px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: var(--space-6);">
-                <h3>Order Details <span id="ord-id-display" style="color:var(--gold); margin-left:var(--space-2);"></span></h3>
+        <div class="modal" style="max-width:600px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-5);">
+                <h3>تفاصيل الطلب <span id="ord-id-display" style="color:var(--gold);margin-right:var(--space-2);"></span></h3>
                 <button class="nav-icon-btn" onclick="closeModal('order-modal')">✕</button>
             </div>
-            <div id="order-details-content" style="font-size: var(--text-sm);">
-                <!-- Dynamic content -->
-            </div>
-            <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-color);">
+            <div id="order-details-content" style="font-size:var(--text-sm);"></div>
+            <div style="margin-top:var(--space-5);padding-top:var(--space-4);border-top:1px solid var(--border-color);">
                 <div class="form-group">
-                    <label>Internal/Customer Note</label>
-                    <textarea id="ord-admin-note" class="form-input" rows="3" placeholder="Add a note for the customer..."></textarea>
+                    <label>ملاحظة للعميل</label>
+                    <textarea id="ord-admin-note" class="form-input" rows="3" placeholder="اكتب ملاحظة..."></textarea>
                 </div>
-                <div style="display:flex; gap: var(--space-3); align-items:center; margin-top:var(--space-4);">
-                    <select id="ord-status-select" class="form-input" style="width: auto;">
-                        <option value="pending">pending</option>
-                        <option value="processing">processing</option>
-                        <option value="shipped">shipped</option>
-                        <option value="delivered">delivered</option>
-                        <option value="cancelled">cancelled</option>
+                <div style="display:flex;gap:var(--space-3);align-items:center;margin-top:var(--space-4);flex-wrap:wrap;">
+                    <select id="ord-status-select" class="form-input" style="width:auto;">
+                        <option value="pending">قيد الانتظار</option>
+                        <option value="processing">جاري التجهيز</option>
+                        <option value="shipped">تم الشحن</option>
+                        <option value="delivered">تم التوصيل</option>
+                        <option value="cancelled">ملغي</option>
                     </select>
-                    <button class="btn btn-primary btn-sm" onclick="saveOrderChange()">Update Order</button>
+                    <button class="btn btn-primary btn-sm" onclick="saveOrderChange()">تحديث الطلب</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Blog Modal -->
-
     <div class="modal-overlay" id="blog-modal">
         <div class="modal">
-            <h3 id="blog-modal-title">Add Blog Post</h3>
+            <h3 id="blog-modal-title">إضافة مقال</h3>
             <form id="blog-form">
                 <div class="form-row">
-                    <div class="form-group"><label>Title (EN)</label><input name="title" required></div>
-                    <div class="form-group"><label>Title (AR)</label><input name="titleAr" dir="rtl" required></div>
+                    <div class="form-group"><label>عنوان المقال (إنجليزي)</label><input name="title" required dir="ltr"></div>
+                    <div class="form-group"><label>عنوان المقال (عربي)</label><input name="titleAr" dir="rtl" required></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>Category (EN)</label><input name="category"></div>
-                    <div class="form-group"><label>Category (AR)</label><input name="categoryAr" dir="rtl"></div>
+                    <div class="form-group"><label>تصنيف المقال (إنجليزي)</label><input name="category" dir="ltr"></div>
+                    <div class="form-group"><label>تصنيف المقال (عربي)</label><input name="categoryAr" dir="rtl"></div>
                 </div>
-                <div class="form-group"><label>Excerpt (EN)</label><textarea name="excerpt" rows="2"></textarea></div>
-                <div class="form-group"><label>Excerpt (AR)</label><textarea name="excerptAr" rows="2"
-                        dir="rtl"></textarea></div>
-                <div class="form-group"><label>Content (EN)</label><textarea name="content" rows="4"></textarea></div>
-                <div class="form-group"><label>Content (AR)</label><textarea name="contentAr" rows="4"
-                        dir="rtl"></textarea></div>
-                <!-- Image upload for blog post -->
-                <div class="form-group"><label>Image</label><input name="image" type="file" accept="image/*"></div>
+                <div class="form-group"><label>ملخص المقال (إنجليزي)</label><textarea name="excerpt" rows="2" dir="ltr"></textarea></div>
+                <div class="form-group"><label>ملخص المقال (عربي)</label><textarea name="excerptAr" rows="2" dir="rtl"></textarea></div>
+                <div class="form-group"><label>محتوى المقال (إنجليزي)</label><textarea name="content" rows="4" dir="ltr"></textarea></div>
+                <div class="form-group"><label>محتوى المقال (عربي)</label><textarea name="contentAr" rows="4" dir="rtl"></textarea></div>
+                <div class="form-group"><label>صورة المقال</label><input name="image" type="file" accept="image/*"></div>
                 <input type="hidden" name="editId" value="">
-                <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6);">
-                    <button type="button" class="btn btn-outline btn-sm"
-                        onclick="closeModal('blog-modal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Save Post</button>
+                <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-5);">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('blog-modal')">إلغاء</button>
+                    <button type="submit" class="btn btn-primary btn-sm">حفظ المقال</button>
                 </div>
             </form>
         </div>
@@ -662,11 +671,11 @@
 
                 const s = await res.json();
                 document.getElementById('stats-grid').innerHTML = `
-                <div class="stat-box"><div class="number">${s.totalProducts}</div><div class="label">Products</div></div>
-                <div class="stat-box"><div class="number">${s.totalOrders}</div><div class="label">Orders</div></div>
-                <div class="stat-box"><div class="number">${s.totalUsers}</div><div class="label">Users</div></div>
-                <div class="stat-box"><div class="number">EGP ${(s.totalRevenue || 0).toLocaleString()}</div><div class="label">Revenue</div></div>`;
-                document.getElementById('recent-orders-table').innerHTML = s.recentOrders.length ? `<table class="admin-table"><thead><tr><th>Order</th><th>Total</th><th>Status</th><th>Date</th></tr></thead><tbody>${s.recentOrders.map(o => `<tr><td>${o.orderNumber || o.id}</td><td>EGP ${(o.total || 0).toLocaleString()}</td><td>${o.status}</td><td>${new Date(o.createdAt).toLocaleDateString()}</td></tr>`).join('')}</tbody></table>` : '<p style="color:var(--text-secondary);text-align:center;padding:var(--space-6);">No orders yet</p>';
+                <div class="stat-box"><div class="number">${s.totalProducts}</div><div class="label">المنتجات</div></div>
+                <div class="stat-box"><div class="number">${s.totalOrders}</div><div class="label">الطلبات</div></div>
+                <div class="stat-box"><div class="number">${s.totalUsers}</div><div class="label">المستخدمين</div></div>
+                <div class="stat-box"><div class="number">EGP ${(s.totalRevenue || 0).toLocaleString()}</div><div class="label">الإيرادات</div></div>`;
+                document.getElementById('recent-orders-table').innerHTML = s.recentOrders.length ? `<table class="admin-table"><thead><tr><th>رقم الطلب</th><th>المبلغ</th><th>الحالة</th><th>التاريخ</th></tr></thead><tbody>${s.recentOrders.map(o => `<tr><td>${o.orderNumber || o.id}</td><td>EGP ${(o.total || 0).toLocaleString()}</td><td>${o.status}</td><td>${new Date(o.createdAt).toLocaleDateString('ar-EG')}</td></tr>`).join('')}</tbody></table>` : '<p style="color:var(--text-secondary);text-align:center;padding:var(--space-6);">مافيش طلبات لسه</p>';
             } catch (e) { console.error(e); }
         }
 
@@ -687,21 +696,63 @@
                 const products = await res.json();
                 
                 if (!Array.isArray(products)) {
-                    document.getElementById('products-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary)">No products found or error loading products.</p>';
+                    document.getElementById('products-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary)">مافيش منتجات أو خطأ في التحميل.</p>';
                     return;
                 }
 
-                document.getElementById('products-table').innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Badge</th><th>Actions</th></tr></thead><tbody>${products.map(p => `<tr><td>${p.id}</td><td>${p.images && p.images.length ? `<img src="${p.images[0]}" style="width:40px;height:40px;object-fit:cover;margin-right:8px;border-radius:4px;">` : ''}${p.name}<br><small style="color:var(--text-secondary)">${p.nameAr || ''}</small></td><td>${getLabel(p.category)}</td><td>EGP ${(p.price || 0).toLocaleString()}</td><td>${p.badge || '-'}</td><td><button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">Edit</button> <button class="btn-danger" onclick="deleteProduct('${p.id}')">Delete</button></td></tr>`).join('')}</tbody></table>`;
+                document.getElementById('products-table').innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>المنتج</th><th>القسم</th><th>السعر</th><th>البادج</th><th>إجراءات</th></tr></thead><tbody>${products.map(p => `<tr><td style="font-size:0.7rem;color:var(--text-secondary);max-width:60px;overflow:hidden;text-overflow:ellipsis;">${String(p.id).slice(0,8)}</td><td>${p.images && p.images.length ? `<img src="${p.images[0]}" style="width:36px;height:36px;object-fit:cover;margin-left:6px;border-radius:4px;vertical-align:middle;">` : ''}<span>${p.nameAr || p.name}</span></td><td>${getLabel(p.category)}</td><td>EGP ${(p.price || 0).toLocaleString()}</td><td>${p.badge || '-'}</td><td><button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')"> تعديل</button> <button class="btn-danger" onclick="deleteProduct('${p.id}')"> حذف</button></td></tr>`).join('')}</tbody></table>`;
             } catch (e) {
                 console.error('Load products error:', e);
-                document.getElementById('products-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--accent)">Error connecting to server.</p>';
+                document.getElementById('products-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--accent)">خطأ في الاتصال بالخادم.</p>';
             }
+        }
+
+        function renderImagePreviews(images) {
+            const previewCon = document.getElementById('product-images-preview');
+            const textarea = document.querySelector('#product-form [name="imageUrls"]');
+            
+            // Clean and update source
+            const cleanImages = images.filter(img => img && img.trim());
+            textarea.value = cleanImages.join('\n');
+
+            if (cleanImages.length === 0) {
+                previewCon.innerHTML = '<small style="color:var(--text-secondary); width:100%; text-align:center;">لم يتم العثور على صور.</small>';
+                return;
+            }
+
+            previewCon.innerHTML = cleanImages.map((src, i) => `
+                <div class="image-card ${i === 0 ? 'is-main' : ''}">
+                    ${i === 0 ? '<span class="badge-main">الواجهة</span>' : ''}
+                    <img src="${src}">
+                    <div class="actions">
+                        ${i !== 0 ? `<button type="button" class="img-btn" onclick="setMainProductImage('${src}')">تعيين كواجهة</button>` : ''}
+                        <button type="button" class="img-btn img-btn-danger" onclick="deleteProductImage('${src}')">حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteProductImage(url) {
+            const textarea = document.querySelector('#product-form [name="imageUrls"]');
+            const images = textarea.value.split('\n').filter(img => img !== url);
+            renderImagePreviews(images);
+        }
+
+        function setMainProductImage(url) {
+            const textarea = document.querySelector('#product-form [name="imageUrls"]');
+            let images = textarea.value.split('\n');
+            const index = images.indexOf(url);
+            if (index > -1) {
+                images.splice(index, 1);
+                images.unshift(url);
+            }
+            renderImagePreviews(images);
         }
 
         function openProductModal(data = null) {
             const form = document.getElementById('product-form');
             form.reset();
-            document.getElementById('product-modal-title').textContent = 'Add Product';
+            document.getElementById('product-modal-title').textContent = 'إضافة منتج';
             form.querySelector('[name="editId"]').value = '';
             
             document.getElementById('product-modal').classList.add('active');
@@ -714,21 +765,10 @@
             };
             hasCustCheckbox.onchange = updateCustVisibility;
             
-            const previewCon = document.getElementById('product-images-preview');
-            previewCon.innerHTML = '';
-
             if (data) {
-                document.getElementById('product-modal-title').textContent = 'Edit Product';
-                
+                document.getElementById('product-modal-title').textContent = 'تعديل منتج';
                 const currentImages = Array.isArray(data.images) ? data.images : (data.image ? [data.image] : []);
-                if (currentImages.length) {
-                    previewCon.innerHTML = currentImages.map(src => `<div style="position:relative; width:45px; height:45px; border-radius:4px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);"><img src="${src}" style="width:100%; height:100%; object-fit:cover;"></div>`).join('');
-                } else {
-                    previewCon.innerHTML = '<small style="color:var(--text-secondary); width:100%; text-align:center;">No images found.</small>';
-                }
-                
-                // Populate URLs textarea
-                form.querySelector('[name="imageUrls"]').value = currentImages.join('\n');
+                renderImagePreviews(currentImages);
 
                 Object.keys(data).forEach(k => { 
                     const el = form.querySelector(`[name="${k}"]`); 
@@ -748,6 +788,8 @@
                 }
                 
                 form.querySelector('[name="editId"]').value = data.id;
+            } else {
+                renderImagePreviews([]);
             }
             updateCustVisibility();
         }
@@ -770,10 +812,10 @@
         }
 
         async function deleteProduct(id) {
-            if (!confirm(document.documentElement.lang === 'ar' ? 'حذف هذا المنتج؟' : 'Delete this product?')) return;
+            if (!confirm('حذف هذا المنتج؟')) return;
             const r = await fetch(`${API}/api/products/${id}`, { method: 'DELETE', headers: getHeaders() });
 
-            if (r.ok) loadProducts(); else alert((await r.json()).error || 'Failed');
+            if (r.ok) loadProducts(); else alert((await r.json()).error || 'فشل الحذف');
         }
 
         document.getElementById('product-form').addEventListener('submit', async e => {
@@ -828,8 +870,8 @@
 
             const editId = data.editId; delete data.editId;
             const r = editId ? await fetch(`${API}/api/products/${editId}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(data) }) : await fetch(`${API}/api/products`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) });
-            if (!r.ok) alert((await r.json()).error || (document.documentElement.lang === 'ar' ? 'فشل الحفظ' : 'Save failed'));
-            else alert(document.documentElement.lang === 'ar' ? 'تم حفظ المنتج بنجاح!' : 'Product saved!');
+            if (!r.ok) alert((await r.json()).error || 'فشل الحفظ');
+            else alert('تم حفظ المنتج بنجاح!');
             closeModal('product-modal');
             loadProducts();
         });
@@ -844,29 +886,29 @@
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>Order #</th>
-                        <th>Customer</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th>رقم الطلب</th>
+                        <th>العميل</th>
+                        <th>المبلغ</th>
+                        <th>الحالة</th>
+                        <th>التاريخ</th>
+                        <th>إجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${orders.map(o => `
                         <tr>
                             <td>${o.order_number || o.orderNumber || 'N/A'}</td>
-                            <td>${o.customer_name || o.customerName || 'Guest'}</td>
+                            <td>${o.customer_name || o.customerName || 'زائر'}</td>
                             <td>EGP ${(o.total || 0).toLocaleString()}</td>
                             <td><span class="badge ${o.status === 'delivered' ? 'badge-success' : (o.status === 'pending' ? 'badge-warning' : '')}">${o.status}</span></td>
-                            <td>${new Date(o.createdAt || o.created_at).toLocaleDateString()}</td>
+                            <td>${new Date(o.createdAt || o.created_at).toLocaleDateString('ar-EG')}</td>
                             <td>
-                                <button class="btn btn-outline btn-sm" onclick="viewOrderDetails('${o.id}')">View Details</button>
+                                <button class="btn btn-outline btn-sm" onclick="viewOrderDetails('${o.id}')"> عرض التفاصيل</button>
                             </td>
                         </tr>
                     `).join('')}
                 </tbody>
-            </table>` : '<p style="color:var(--text-secondary);text-align:center;padding:var(--space-6);">No orders yet</p>';
+            </table>` : '<p style="color:var(--text-secondary);text-align:center;padding:var(--space-6);">لا توجد طلبات حالياً</p>';
         }
 
         async function viewOrderDetails(id) {
@@ -880,41 +922,41 @@
             document.getElementById('order-details-content').innerHTML = `
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4);">
                     <div>
-                        <strong style="color:var(--gold);">Customer Info:</strong><br>
+                        <strong style="color:var(--gold);">بيانات العميل:</strong><br>
                         ${o.customer_name || o.customerName || 'N/A'}<br>
                         ${o.customer_email || o.customerEmail || 'N/A'}<br>
                         ${o.customer_phone || o.customerPhone || 'N/A'}
                     </div>
                     <div>
-                        <strong style="color:var(--gold);">Shipping Address:</strong><br>
+                        <strong style="color:var(--gold);">عنوان التوصيل:</strong><br>
                         ${o.address || 'N/A'}
                     </div>
                 </div>
                 <div style="margin-bottom:var(--space-4);">
-                    <strong style="color:var(--gold);">User Notes:</strong><br>
-                    ${o.notes || 'None'}
+                    <strong style="color:var(--gold);">ملاحظات العميل:</strong><br>
+                    ${o.notes || 'لا يوجد'}
                 </div>
                 <div style="margin-bottom:var(--space-4);">
-                    <strong style="color:var(--gold);">Items:</strong><br>
+                    <strong style="color:var(--gold);">المنتجات:</strong><br>
                     <div style="display:flex; flex-direction:column; gap: var(--space-3); margin-top: var(--space-2);">
                     ${o.order_items ? o.order_items.map(item => `
-                        <div style="padding: var(--space-3); background: rgba(255,255,255,0.03); border-radius: var(--radius-md); border-left: 3px solid var(--gold);">
+                        <div style="padding: var(--space-3); background: rgba(255,255,255,0.03); border-radius: var(--radius-md); border-right: 3px solid var(--gold);">
                             <div style="display:flex; justify-content:space-between; margin-bottom: var(--space-1);">
-                                <strong>${item.name || 'Product ID: ' + item.product_id}</strong>
+                                <strong>${item.name || 'منتج: ' + item.product_id}</strong>
                                 <span>${item.qty}x — EGP ${item.price}</span>
                             </div>
-                            ${item.customization_value ? `<div><span style="color:var(--gold);">Custom Text:</span> ${item.customization_value}</div>` : ''}
+                            ${item.customization_value ? `<div><span style="color:var(--gold);">التخصيص:</span> ${item.customization_value}</div>` : ''}
                             ${item.custom_answers && Array.isArray(item.custom_answers) && item.custom_answers.length ? `
                                 <div style="margin-top: 4px; font-size: var(--text-xs); color: var(--text-secondary);">
-                                    <span style="color:var(--gold);">Custom Answers:</span><br>
-                                    ${item.custom_answers.map(ans => `Q: ${ans.question}<br>A: <strong>${ans.answer}</strong>`).join('<br>')}
+                                    <span style="color:var(--gold);">إجابات التخصيص:</span><br>
+                                    ${item.custom_answers.map(ans => `س: ${ans.question}<br>ج: <strong>${ans.answer}</strong>`).join('<br>')}
                                 </div>
                             ` : ''}
                         </div>
-                    `).join('') : 'Details not available'}
+                    `).join('') : 'التفاصيل غير متاحة'}
                     </div>
                 </div>
-                <div style="font-size: var(--text-lg); font-weight:700;">Total: EGP ${(o.total || 0).toLocaleString()}</div>
+                <div style="font-size: var(--text-lg); font-weight:700;">الإجمالي: EGP ${(o.total || 0).toLocaleString()}</div>
             `;
             document.getElementById('ord-admin-note').value = o.admin_note || '';
             document.getElementById('ord-status-select').value = o.status;
@@ -926,8 +968,6 @@
             const status = document.getElementById('ord-status-select').value;
             const admin_note = document.getElementById('ord-admin-note').value;
             
-            console.log('Sending update for order:', currentEditingOrder, { status, admin_note });
-            
             try {
                 const r = await fetch(`${API}/api/orders/${currentEditingOrder}`, { 
                     method: 'PUT', 
@@ -938,20 +978,23 @@
                 const result = await r.json();
                 
                 if (r.ok) {
-                    alert('Order updated successfully!');
+                    alert('تم تحديث الطلب بنجاح!');
                     closeModal('order-modal');
                     loadOrders();
                 } else {
                     console.error('Update failed:', result);
-                    alert(result.error || 'Failed to update order');
+                    alert(result.error || 'فشل التحديث');
                 }
             } catch (err) {
                 console.error('Network error during update:', err);
-                alert('Connection error. Please check if the server is running.');
+                alert('خطأ في الاتصال. تأكد من تشغيل الخادم.');
             }
         }
 
-
+        // Mobile Drawer
+        function toggleDrawer() {
+            document.getElementById('mobile-drawer').classList.toggle('active');
+        }
 
         // Blog
         async function loadBlog() {
@@ -960,14 +1003,14 @@
                 const posts = await res.json();
                 
                 if (!Array.isArray(posts)) {
-                    document.getElementById('blog-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary)">No blog posts found.</p>';
+                    document.getElementById('blog-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary)">لا توجد مقالات.</p>';
                     return;
                 }
 
-                document.getElementById('blog-table').innerHTML = `<table class="admin-table"><thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead><tbody>${posts.map(p => `<tr><td>${p.image_url || p.image ? `<img src="${p.image_url || p.image}" style="width:40px;height:40px;object-fit:cover;margin-right:8px;border-radius:4px;">` : ''}${p.title}<br><small style="color:var(--text-secondary)">${p.title_ar || p.titleAr || ''}</small></td><td>${p.category}</td><td>${p.published_at ? new Date(p.published_at).toLocaleDateString() : (p.date || '')}</td><td><button class="btn btn-outline btn-sm" onclick="editBlog('${p.id}')">Edit</button> <button class="btn-danger" onclick="deleteBlog('${p.id}')">Delete</button></td></tr>`).join('')}</tbody></table>`;
+                document.getElementById('blog-table').innerHTML = `<table class="admin-table"><thead><tr><th>العنوان</th><th>التصنيف</th><th>التاريخ</th><th>إجراءات</th></tr></thead><tbody>${posts.map(p => `<tr><td>${p.image_url || p.image ? `<img src="${p.image_url || p.image}" style="width:36px;height:36px;object-fit:cover;margin-left:6px;border-radius:4px;vertical-align:middle;">` : ''}${p.title_ar || p.titleAr || p.title}<br><small style="color:var(--text-secondary)">${p.title || ''}</small></td><td>${p.category_ar || p.category}</td><td>${p.published_at ? new Date(p.published_at).toLocaleDateString('ar-EG') : (p.date || '')}</td><td><button class="btn btn-outline btn-sm" onclick="editBlog('${p.id}')"> تعديل</button> <button class="btn-danger" onclick="deleteBlog('${p.id}')"> حذف</button></td></tr>`).join('')}</tbody></table>`;
             } catch (e) {
                 console.error('Load blog error:', e);
-                document.getElementById('blog-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--accent)">Error loading blog.</p>';
+                document.getElementById('blog-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--accent)">خطأ في تحميل المقالات.</p>';
             }
         }
 
@@ -975,9 +1018,9 @@
             const form = document.getElementById('blog-form');
             form.reset();
             form.querySelector('[name="editId"]').value = '';
-            document.getElementById('blog-modal-title').textContent = 'Add Blog Post';
+            document.getElementById('blog-modal-title').textContent = 'إضافة مقال';
             if (data) {
-                document.getElementById('blog-modal-title').textContent = 'Edit Blog Post';
+                document.getElementById('blog-modal-title').textContent = 'تعديل مقال';
                 Object.keys(data).forEach(k => { const el = form.querySelector(`[name="${k}"]`); if (el) el.value = data[k] ?? ''; });
                 form.querySelector('[name="editId"]').value = data.id;
             }
@@ -1017,8 +1060,8 @@
             const editId = data.editId; delete data.editId;
             const payload = { ...data, image_url: data.image, titleAr: data.titleAr, excerptAr: data.excerptAr, contentAr: data.contentAr };
             const r = editId ? await fetch(`${API}/api/blog/${editId}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(payload) }) : await fetch(`${API}/api/blog`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(payload) });
-            if (!r.ok) alert((await r.json()).error || (document.documentElement.lang === 'ar' ? 'فشل الحفظ' : 'Save failed'));
-            else alert(document.documentElement.lang === 'ar' ? 'تم حفظ المقال بنجاح!' : 'Post saved!');
+            if (!r.ok) alert((await r.json()).error || 'فشل الحفظ');
+            else alert('تم حفظ المقال بنجاح!');
             closeModal('blog-modal');
             loadBlog();
         });
@@ -1030,22 +1073,22 @@
                 const users = await res.json();
                 
                 if (!Array.isArray(users)) {
-                    document.getElementById('users-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary)">No users found.</p>';
+                    document.getElementById('users-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary)">مافيش مستخدمين.</p>';
                     return;
                 }
 
-                document.getElementById('users-table').innerHTML = `<table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Points</th><th>Joined</th></tr></thead><tbody>${users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td><span class="badge ${u.role === 'admin' ? 'badge-primary' : ''}">${u.role}</span></td><td>${u.ora_points || 0}</td><td>${u.created_at ? new Date(u.created_at).toLocaleDateString() : '-'}</td></tr>`).join('')}</tbody></table>`;
+                document.getElementById('users-table').innerHTML = `<table class="admin-table"><thead><tr><th>الاسم</th><th>الإيميل</th><th>الدور</th><th>النقاط</th><th>تاريخ الانضمام</th></tr></thead><tbody>${users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td><span class="badge ${u.role === 'admin' ? 'badge-primary' : ''}">${u.role === 'admin' ? 'أدمن' : 'عميل'}</span></td><td>${u.ora_points || 0}</td><td>${u.created_at ? new Date(u.created_at).toLocaleDateString('ar-EG') : '-'}</td></tr>`).join('')}</tbody></table>`;
             } catch (e) {
                 console.error('Load users error:', e);
-                document.getElementById('users-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--accent)">Error loading users.</p>';
+                document.getElementById('users-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--accent)">خطأ في تحميل المستخدمين.</p>';
             }
         }
 
         async function changeRole(id, role) { await fetch(`${API}/api/users/${id}/role`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({ role }) }); }
         async function deleteUser(id) {
-            if (!confirm(document.documentElement.lang === 'ar' ? 'حذف هذا المستخدم؟' : 'Delete this user?')) return;
+            if (!confirm('حذف هذا المستخدم؟')) return;
             const r = await fetch(`${API}/api/users/${id}`, { method: 'DELETE', headers: getHeaders() });
-            if (r.ok) loadUsers(); else alert((await r.json()).error || 'Failed');
+            if (r.ok) loadUsers(); else alert((await r.json()).error || 'فشل الحذف');
         }
 
         // Settings
@@ -1053,46 +1096,46 @@
             const res = await fetch(`${API}/api/settings/admin`, { headers: getHeaders() });
             const s = await res.json();
             document.getElementById('settings-form').innerHTML = `
-            <div class="form-row"><div class="form-group"><label>Site Name (EN)</label><input name="siteName" value="${s.siteName || ''}"></div><div class="form-group"><label>Site Name (AR)</label><input name="siteNameAr" value="${s.siteNameAr || ''}" dir="rtl"></div></div>
-            <div class="form-row"><div class="form-group"><label>Hero Title (EN)</label><input name="heroTitle" value="${s.heroTitle || ''}"></div><div class="form-group"><label>Hero Title (AR)</label><input name="heroTitleAr" value="${s.heroTitleAr || ''}" dir="rtl"></div></div>
-            <div class="form-row"><div class="form-group"><label>Hero Highlight (EN)</label><input name="heroHighlight" value="${s.heroHighlight || ''}"></div><div class="form-group"><label>Hero Highlight (AR)</label><input name="heroHighlightAr" value="${s.heroHighlightAr || ''}" dir="rtl"></div></div>
-            <div class="form-row"><div class="form-group"><label>Hero Subtitle (EN)</label><textarea name="heroSubtitle" rows="2">${s.heroSubtitle || ''}</textarea></div><div class="form-group"><label>Hero Subtitle (AR)</label><textarea name="heroSubtitleAr" rows="2" dir="rtl">${s.heroSubtitleAr || ''}</textarea></div></div>
-            <div class="form-row"><div class="form-group"><label>Contact Email</label><input name="contactEmail" value="${s.contactEmail || ''}"></div><div class="form-group"><label>Contact Phone</label><input name="contactPhone" value="${s.contactPhone || ''}"></div></div>
-            <div class="form-row"><div class="form-group"><label>Contact Address (EN)</label><input name="contactAddress" value="${s.contactAddress || ''}"></div><div class="form-group"><label>Contact Address (AR)</label><input name="contactAddressAr" value="${s.contactAddressAr || ''}" dir="rtl"></div></div>
-            <div class="form-row"><div class="form-group"><label>Shipping Fee (EGP)</label><input name="shippingFee" type="number" value="${s.shippingFee || 50}"></div><div class="form-group"><label>Free Shipping Threshold (EGP)</label><input name="freeShippingThreshold" type="number" value="${s.freeShippingThreshold || 500}"></div></div>
-            <h3 style="color:var(--gold);margin:var(--space-6) 0 var(--space-4);">Social Links</h3>
+            <div class="form-row"><div class="form-group"><label>اسم الموقع (إنجليزي)</label><input name="siteName" value="${s.siteName || ''}"></div><div class="form-group"><label>اسم الموقع (عربي)</label><input name="siteNameAr" value="${s.siteNameAr || ''}" dir="rtl"></div></div>
+            <div class="form-row"><div class="form-group"><label>عنوان الهيرو (إنجليزي)</label><input name="heroTitle" value="${s.heroTitle || ''}"></div><div class="form-group"><label>عنوان الهيرو (عربي)</label><input name="heroTitleAr" value="${s.heroTitleAr || ''}" dir="rtl"></div></div>
+            <div class="form-row"><div class="form-group"><label>تمييز الهيرو (إنجليزي)</label><input name="heroHighlight" value="${s.heroHighlight || ''}"></div><div class="form-group"><label>تمييز الهيرو (عربي)</label><input name="heroHighlightAr" value="${s.heroHighlightAr || ''}" dir="rtl"></div></div>
+            <div class="form-row"><div class="form-group"><label>عنوان فرعي الهيرو (إنجليزي)</label><textarea name="heroSubtitle" rows="2">${s.heroSubtitle || ''}</textarea></div><div class="form-group"><label>عنوان فرعي الهيرو (عربي)</label><textarea name="heroSubtitleAr" rows="2" dir="rtl">${s.heroSubtitleAr || ''}</textarea></div></div>
+            <div class="form-row"><div class="form-group"><label>إيميل التواصل</label><input name="contactEmail" value="${s.contactEmail || ''}"></div><div class="form-group"><label>رقم التليفون</label><input name="contactPhone" value="${s.contactPhone || ''}"></div></div>
+            <div class="form-row"><div class="form-group"><label>عنوان التواصل (إنجليزي)</label><input name="contactAddress" value="${s.contactAddress || ''}"></div><div class="form-group"><label>عنوان التواصل (عربي)</label><input name="contactAddressAr" value="${s.contactAddressAr || ''}" dir="rtl"></div></div>
+            <div class="form-row"><div class="form-group"><label>تكلفة الشحن (جنيه)</label><input name="shippingFee" type="number" value="${s.shippingFee || 50}"></div><div class="form-group"><label>حد الشحن المجاني (جنيه)</label><input name="freeShippingThreshold" type="number" value="${s.freeShippingThreshold || 500}"></div></div>
+            <h3 style="color:var(--gold);margin:var(--space-6) 0 var(--space-4);">روابط التواصل الاجتماعي</h3>
             <div class="form-row"><div class="form-group"><label>Instagram</label><input name="instagram" value="${s.socialLinks?.instagram || ''}"></div><div class="form-group"><label>Facebook</label><input name="facebook" value="${s.socialLinks?.facebook || ''}"></div></div>
             <div class="form-row"><div class="form-group"><label>Twitter</label><input name="twitter" value="${s.socialLinks?.twitter || ''}"></div><div class="form-group"><label>WhatsApp</label><input name="whatsapp" value="${s.socialLinks?.whatsapp || ''}"></div></div>
-            <h3 style="color:var(--gold);margin:var(--space-6) 0 var(--space-4);">AI Configuration</h3>
+            <h3 style="color:var(--gold);margin:var(--space-6) 0 var(--space-4);">إعدادات الذكاء الاصطناعي</h3>
             <div class="form-group"><label>OpenAI API Key</label><input name="openaiApiKey" type="password" value="${s.openaiApiKey || ''}" placeholder="sk-..."></div>
             <div class="form-group"><label>OpenAI Model</label><select name="openaiModel"><option ${s.openaiModel === 'gpt-4' ? 'selected' : ''}>gpt-4</option><option ${s.openaiModel === 'gpt-4o' ? 'selected' : ''}>gpt-4o</option><option ${s.openaiModel === 'gpt-3.5-turbo' ? 'selected' : ''}>gpt-3.5-turbo</option></select></div>
             <div class="form-group"><label>AIMLAPI Key</label><input name="aimlApiKey" type="password" value="${s.aimlApiKey || ''}" placeholder="AIMLAPI key"></div>
             <div class="form-group"><label>AIMLAPI Model</label><input name="aimlModel" value="${s.aimlModel || 'google/gemini-3-pro-preview'}"></div>
-            <h3 style="color:var(--gold);margin:var(--space-6) 0 var(--space-4);">🖼 Homepage Images</h3>
-            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin-bottom:var(--space-4);">Upload images to replace the ✦ placeholders on the homepage. Leave empty to keep current images.</p>
+            <h3 style="color:var(--gold);margin:var(--space-6) 0 var(--space-4);">🖼 صور الصفحة الرئيسية</h3>
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);margin-bottom:var(--space-4);">ارفع صوراً لاستبدال العلامات على الصفحة الرئيسية. اتركها فارغة للاحتفاظ بالحالية.</p>
             <div class="form-row">
-              <div class="form-group"><label>Women's Section — Image 1</label>
+              <div class="form-group"><label>قسم الحريمي — صورة 1</label>
                 ${s.homepageImages?.women1 ? `<img src="${s.homepageImages.women1}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;">` : ''}
                 <input type="file" name="hp_women1" accept="image/*"></div>
-              <div class="form-group"><label>Women's Section — Image 2</label>
+              <div class="form-group"><label>قسم الحريمي — صورة 2</label>
                 ${s.homepageImages?.women2 ? `<img src="${s.homepageImages.women2}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;">` : ''}
                 <input type="file" name="hp_women2" accept="image/*"></div>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>Men's Section — Image 1</label>
+              <div class="form-group"><label>قسم الرجالي — صورة 1</label>
                 ${s.homepageImages?.men1 ? `<img src="${s.homepageImages.men1}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;">` : ''}
                 <input type="file" name="hp_men1" accept="image/*"></div>
-              <div class="form-group"><label>Men's Section — Image 2</label>
+              <div class="form-group"><label>قسم الرجالي — صورة 2</label>
                 ${s.homepageImages?.men2 ? `<img src="${s.homepageImages.men2}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;">` : ''}
                 <input type="file" name="hp_men2" accept="image/*"></div>
             </div>
             <div class="form-row">
-              <div class="form-group"><label>Story Section Image</label>
+              <div class="form-group"><label>صورة قسم القصة</label>
                 ${s.homepageImages?.story ? `<img src="${s.homepageImages.story}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;display:block;">` : ''}
                 <input type="file" name="hp_story" accept="image/*"></div>
               <div class="form-group"></div>
             </div>
-            <p style="color:var(--text-secondary);font-size:var(--text-xs);margin:var(--space-2) 0 var(--space-4);">Instagram Feed (6 images)</p>
+            <p style="color:var(--text-secondary);font-size:var(--text-xs);margin:var(--space-2) 0 var(--space-4);">صور إنستجرام (6 صور)</p>
             <div class="form-row">
               <div class="form-group"><label>Insta 1</label>
                 ${s.homepageImages?.insta1 ? `<img src="${s.homepageImages.insta1}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;">` : ''}
@@ -1117,11 +1160,13 @@
                 ${s.homepageImages?.insta6 ? `<img src="${s.homepageImages.insta6}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;">` : ''}
                 <input type="file" name="hp_insta6" accept="image/*"></div>
             </div>
-            <button type="submit" class="btn btn-primary" style="margin-top:var(--space-6);">Save Settings</button>`;
+            <button type="submit" class="btn btn-primary" style="margin-top:var(--space-6);">حفظ الإعدادات</button>`;
         }
 
-        document.getElementById('settings-form').addEventListener('submit', async e => {
+        async function saveSettings(e) {
             e.preventDefault();
+            const btn = document.querySelector('#settings-form button[type="submit"]');
+            if(btn) { btn.disabled = true; btn.textContent = 'جاري الحفظ...'; }
             const fd = new FormData(e.target);
             const data = Object.fromEntries(fd);
             data.shippingFee = Number(data.shippingFee);
@@ -1132,8 +1177,6 @@
             // Handle homepage image uploads
             const hpKeys = ['hp_women1', 'hp_women2', 'hp_men1', 'hp_men2', 'hp_story', 'hp_insta1', 'hp_insta2', 'hp_insta3', 'hp_insta4', 'hp_insta5', 'hp_insta6'];
             const hpImages = {};
-            const btn = e.target.querySelector('button[type="submit"]');
-            if (btn) { btn.disabled = true; btn.textContent = 'Uploading...'; }
             for (const key of hpKeys) {
                 const input = e.target.querySelector(`[name="${key}"]`);
                 if (input && input.files && input.files[0]) {
@@ -1157,20 +1200,34 @@
             }
 
             const r_settings = await fetch(`${API}/api/settings`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(data) });
-            if (btn) { btn.disabled = false; btn.textContent = 'Save Settings'; }
             if (r_settings.ok) {
-                alert(document.documentElement.lang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
+                alert('تم حفظ الإعدادات بنجاح!');
                 loadSettings();
             } else {
-                const errData = await r_settings.json().catch(() => ({ error: 'Update failed' }));
-                alert(errData.error || 'Failed to save settings');
+                const errData = await r_settings.json().catch(() => ({ error: 'فشل الحفظ' }));
+                alert(errData.error || 'فشل حفظ الإعدادات');
             }
-        });
+            if (btn) { btn.disabled = false; btn.textContent = 'حفظ الإعدادات'; }
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', saveSettings);
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); }));
 
-        // Init — loadDashboard() is called inside initAdmin() after admin verification
+        // Mobile Drawer Functions
+        function openAdminDrawer() {
+            document.getElementById('admin-drawer').classList.add('open');
+            document.getElementById('admin-drawer-overlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeAdminDrawer() {
+            document.getElementById('admin-drawer').classList.remove('open');
+            document.getElementById('admin-drawer-overlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Init
     </script>
 </body>
 

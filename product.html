@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="ar" dir="rtl" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="View product details — Aura Accessories premium collection.">
-    <title>Product — Aura Accessories</title>
+    <meta name="description" content="عرض تفاصيل المنتج — مجموعة أورا للإكسسوارات الفاخرة.">
+    <title>المنتج — أورا للإكسسوارات</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="icon" type="image/svg+xml"
@@ -20,7 +20,7 @@
             const desc = lang === 'ar' ? (product.description_ar || product.description) : product.description;
             const img = (product.images && product.images.length) ? product.images[0] : (product.image || '');
             
-            document.title = `${name} — Aura Accessories`;
+            document.title = `${name} — أورا للإكسسوارات`;
             
             const metaDesc = document.querySelector('meta[name="description"]');
             if (metaDesc) metaDesc.setAttribute('content', desc || name);
@@ -69,14 +69,14 @@
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="nav-brand"><img src="aura-accessories-logo.svg" alt="AURA" class="nav-logo"></a>
-            <div class="nav-links"><a href="index.html" data-i18n="home">Home</a><a href="shop.html" class="active"
-                    data-i18n="shop">Shop</a><a href="design.html" data-i18n="design">Design Your Aura</a><a
-                    href="blog.html" data-i18n="journal">Journal</a><a href="about.html" data-i18n="about">About</a><a
-                    href="contact.html" data-i18n="contact">Contact</a></div>
+            <div class="nav-links"><a href="index.html" data-i18n="home">الرئيسية</a><a href="shop.html" class="active"
+                    data-i18n="shop">المتجر</a><a href="design.html" data-i18n="design">صمم قطعتك</a><a
+                    href="blog.html" data-i18n="journal">المدونة</a><a href="about.html" data-i18n="about">عن أورا</a><a
+                    href="contact.html" data-i18n="contact">اتصل بنا</a></div>
             <div class="nav-icons">
                 <a href="#" class="nav-icon-btn" id="lang-toggle"
                     style="font-weight:700; font-size:var(--text-xs); width:auto; padding:0 var(--space-2);">EN</a>
-                <div class="theme-toggle" title="Toggle theme"></div>
+                <div class="theme-toggle" title="تبديل الوضع"></div>
                 <a href="cart.html" class="nav-icon-btn" style="position:relative"><svg width="20" height="20"
                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1" />
@@ -100,27 +100,27 @@
         <div class="mobile-menu-links">
             <a href="index.html" class="mobile-menu-item stagger-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                <span data-i18n="home">Home</span>
+                <span data-i18n="home">الرئيسية</span>
             </a>
             <a href="shop.html" class="mobile-menu-item active stagger-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span data-i18n="shop">Shop</span>
+                <span data-i18n="shop">المتجر</span>
             </a>
             <a href="design.html" class="mobile-menu-item stagger-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                <span data-i18n="design">Design Your Aura</span>
+                <span data-i18n="design">صمم قطعتك</span>
             </a>
             <a href="blog.html" class="mobile-menu-item stagger-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                <span data-i18n="journal">Journal</span>
+                <span data-i18n="journal">المدونة</span>
             </a>
             <a href="about.html" class="mobile-menu-item stagger-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                <span data-i18n="about">About</span>
+                <span data-i18n="about">عن أورا</span>
             </a>
             <a href="contact.html" class="mobile-menu-item stagger-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                <span data-i18n="contact">Contact</span>
+                <span data-i18n="contact">اتصل بنا</span>
             </a>
         </div>
         <div class="mobile-menu-footer stagger-item">
@@ -129,15 +129,15 @@
                 <a href="#" aria-label="Facebook"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
                 <a href="#" aria-label="Twitter"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
             </div>
-            <p style="text-align:center; margin-top: var(--space-4); font-size: var(--text-xs); color: var(--text-secondary); letter-spacing: 1px;">© 2026 AURA ACCESSORIES</p>
+            <p style="text-align:center; margin-top: var(--space-4); font-size: var(--text-xs); color: var(--text-secondary); letter-spacing: 1px;">© 2026 أورا للإكسسوارات</p>
         </div>
     </div>
 
     <section class="section" style="padding-top: calc(80px + var(--space-10));">
         <div class="container">
             <div class="breadcrumbs" style="margin-bottom: var(--space-8);">
-                <a href="index.html">Home</a><span class="separator">/</span><a href="shop.html">Shop</a><span
-                    class="separator">/</span><span style="color:var(--gold)" id="breadcrumb-name">Product</span>
+                <a href="index.html" data-i18n="home">الرئيسية</a><span class="separator">/</span><a href="shop.html" data-i18n="shop">المتجر</a><span
+                    class="separator">/</span><span style="color:var(--gold)" id="breadcrumb-name" data-i18n="product">المنتج</span>
             </div>
             <div id="product-detail">
                 <!-- Rendered by JS -->
@@ -148,12 +148,12 @@
     <!-- Reviews Section -->
     <section class="section section-dark">
         <div class="container">
-            <span class="section-label reveal" data-i18n="reviews">Reviews</span>
-            <h2 class="section-title reveal" style="margin-bottom: var(--space-8);" data-i18n="customerReviews">Customer Reviews</h2>
+            <span class="section-label reveal" data-i18n="reviews">التقييمات</span>
+            <h2 class="section-title reveal" style="margin-bottom: var(--space-8);" data-i18n="customerReviews">تقييمات العملاء</h2>
             <div style="display:grid; grid-template-columns: 300px 1fr; gap: var(--space-10); align-items:start;">
                 <div id="product-ratings-summary" class="glass-card reveal-left" style="text-align:center;">
                     <div style="font-size: var(--text-6xl); font-weight:700; color: var(--gold);">0</div>
-                    <p style="color: var(--text-secondary); font-size: var(--text-sm);">Based on 0 reviews</p>
+                    <p style="color: var(--text-secondary); font-size: var(--text-sm);">بناءً على 0 تقييم</p>
                     <div style="margin-top: var(--space-6);">
                         <div
                             style="display:flex; align-items:center; gap: var(--space-3); margin-bottom: var(--space-2);">
@@ -196,23 +196,23 @@
 
             <!-- Write a Review Form -->
             <div class="reveal" style="margin-top: var(--space-10);">
-                <h3 style="font-size: var(--text-xl); margin-bottom: var(--space-6);">Write a Review</h3>
+                <h3 style="font-size: var(--text-xl); margin-bottom: var(--space-6);">اكتب تقييماً</h3>
                 <div class="glass-card" style="padding: var(--space-6);">
                     <form id="review-form"
-                        onsubmit="event.preventDefault(); document.getElementById('review-form').reset(); showToast('Thank you for your review! ⭐','success');">
+                        onsubmit="event.preventDefault(); document.getElementById('review-form').reset(); showToast('شكراً لتقييمك! ⭐','success');">
                         <div
                             style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4); margin-bottom:var(--space-4);">
                             <div>
-                                <label class="form-label">Your Name</label>
-                                <input type="text" class="form-input" placeholder="Enter your name" required>
+                                <label class="form-label">اسمك</label>
+                                <input type="text" class="form-input" placeholder="أدخل اسمك" required>
                             </div>
                             <div>
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-input" placeholder="Enter your email" required>
+                                <label class="form-label">البريد الإلكتروني</label>
+                                <input type="email" class="form-input" placeholder="أدخل بريدك الإلكتروني" required>
                             </div>
                         </div>
                         <div style="margin-bottom:var(--space-4);">
-                            <label class="form-label">Rating</label>
+                            <label class="form-label">التقييم</label>
                             <input type="hidden" id="review-stars-value" value="0">
                             <div style="display:flex; gap:var(--space-2);" id="review-stars">
                                 <button type="button" class="review-star" onclick="setReviewRating(1); document.getElementById('review-stars-value').value=1"
@@ -228,25 +228,24 @@
                             </div>
                         </div>
                         <div style="margin-bottom:var(--space-4);">
-                            <label class="form-label">Review Title</label>
-                            <input type="text" class="form-input" placeholder="Summarize your experience" required>
+                            <label class="form-label">عنوان التقييم</label>
+                            <input type="text" class="form-input" placeholder="لخص تجربتك" required>
                         </div>
                         <div style="margin-bottom:var(--space-4);">
-                            <label class="form-label">Your Review</label>
+                            <label class="form-label">تقييمك</label>
                             <textarea class="form-input" rows="4"
-                                placeholder="Tell us about your experience with this product..." required
+                                placeholder="أخبرنا عن تجربتك مع هذا المنتج..." required
                                 style="resize:vertical;"></textarea>
                         </div>
                         <div style="margin-bottom:var(--space-6);">
-                            <label class="form-label">Upload Photos (Optional)</label>
+                            <label class="form-label">تحميل صور (اختياري)</label>
                             <div style="border:2px dashed var(--border-color); border-radius:var(--radius-md); padding:var(--space-6); text-align:center; cursor:pointer;"
                                 onclick="document.getElementById('review-photos').click()">
-                                <p style="color:var(--text-secondary); font-size:var(--text-sm);">📷 Click to upload
-                                    photos of your purchase</p>
+                                <p style="color:var(--text-secondary); font-size:var(--text-sm);">📷 اضغط لتحميل صور مشترياتك</p>
                                 <input type="file" id="review-photos" accept="image/*" multiple style="display:none;">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                        <button type="submit" class="btn btn-primary">إرسال التقييم</button>
                     </form>
                 </div>
             </div>
@@ -256,10 +255,9 @@
     <!-- Complete the Look -->
     <section class="section">
         <div class="container">
-            <span class="section-label reveal">Style Suggestion</span>
-            <h2 class="section-title reveal" style="margin-bottom: var(--space-8);">Complete the Look</h2>
-            <p class="section-subtitle reveal" style="margin-bottom: var(--space-8); color:var(--text-secondary);">Pair
-                this piece with complementary accessories for a cohesive style.</p>
+            <span class="section-label reveal">اقتراح تنسيق</span>
+            <h2 class="section-title reveal" style="margin-bottom: var(--space-8);">أكمل المظهر</h2>
+            <p class="section-subtitle reveal" style="margin-bottom: var(--space-8); color:var(--text-secondary);">نسّق هذه القطعة مع إكسسوارات متكاملة للحصول على أسلوب متناسق.</p>
             <div class="product-grid stagger-children" id="complete-look"></div>
         </div>
     </section>
@@ -267,8 +265,8 @@
     <!-- Related Products -->
     <section class="section section-dark">
         <div class="container">
-            <span class="section-label reveal">You May Also Like</span>
-            <h2 class="section-title reveal" style="margin-bottom: var(--space-8);">Related Products</h2>
+            <span class="section-label reveal">قد يعجبك أيضاً</span>
+            <h2 class="section-title reveal" style="margin-bottom: var(--space-8);">منتجات ذات صلة</h2>
             <div class="product-grid stagger-children" id="related-products"></div>
         </div>
     </section>
@@ -279,7 +277,7 @@
                 <div class="footer-brand">
                     <a href="index.html" class="nav-brand" style="margin-bottom: var(--space-4);"><img
                             src="aura-accessories-logo.svg" alt="AURA" class="nav-logo"></a>
-                    <p data-i18n="footerText">Premium handcrafted accessories for men and women.</p>
+                    <p data-i18n="footerText">إكسسوارات يدوية فاخرة للرجال والنساء.</p>
                     <div class="footer-social" style="margin-top: var(--space-4); display:flex; gap:var(--space-4);">
                         <a href="#" style="transition:color var(--transition-fast);"
                             onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color=''"
@@ -305,32 +303,32 @@
                     </div>
                 </div>
                 <div>
-                    <h4 class="footer-heading" data-i18n="shop">Shop</h4>
+                    <h4 class="footer-heading" data-i18n="shop">المتجر</h4>
                     <ul class="footer-links">
-                        <li><a href="shop.html?gender=women" data-i18n="womenCollection">Women</a></li>
-                        <li><a href="shop.html?gender=men" data-i18n="menCollection">Men</a></li>
-                        <li><a href="shop.html" data-i18n="viewAll">All</a></li>
+                        <li><a href="shop.html?gender=women" data-i18n="womenCollection">حريمي</a></li>
+                        <li><a href="shop.html?gender=men" data-i18n="menCollection">رجالي</a></li>
+                        <li><a href="shop.html" data-i18n="viewAll">الكل</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="footer-heading" data-i18n="company">Company</h4>
+                    <h4 class="footer-heading" data-i18n="company">الشركة</h4>
                     <ul class="footer-links">
-                        <li><a href="about.html" data-i18n="about">About</a></li>
-                        <li><a href="blog.html" data-i18n="journal">Journal</a></li>
-                        <li><a href="contact.html" data-i18n="contact">Contact</a></li>
+                        <li><a href="about.html" data-i18n="about">عنّا</a></li>
+                        <li><a href="blog.html" data-i18n="journal">المدونة</a></li>
+                        <li><a href="contact.html" data-i18n="contact">اتصل بنا</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="footer-heading" data-i18n="legal">Legal</h4>
+                    <h4 class="footer-heading" data-i18n="legal">قانوني</h4>
                     <ul class="footer-links">
-                        <li><a href="privacy.html" data-i18n="privacy">Privacy Policy</a></li>
-                        <li><a href="terms.html" data-i18n="terms">Terms of Use</a></li>
-                        <li><a href="faq.html" data-i18n="faq">FAQ</a></li>
+                        <li><a href="privacy.html" data-i18n="privacy">سياسة الخصوصية</a></li>
+                        <li><a href="terms.html" data-i18n="terms">شروط الاستخدام</a></li>
+                        <li><a href="faq.html" data-i18n="faq">الأسئلة الشائعة</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p data-i18n="rightsReserved">© 2026 Aura Accessories. All rights reserved.</p>
+                <p data-i18n="rightsReserved">© 2026 أورا إكسسوارات. جميع الحقوق محفوظة.</p>
                 <div class="footer-payments"><span>VISA</span><span>MasterCard</span><span>Vodafone
                         Cash</span><span>Fawry</span></div>
             </div>

@@ -450,7 +450,8 @@ h6 {
   display: flex;
   gap: var(--space-6);
   align-items: center;
-  /* Retained from original, as it was likely an omission in the instruction */
+  margin-left: auto;
+  margin-right: var(--space-12);
 }
 
 .nav-links a {
