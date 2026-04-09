@@ -1027,6 +1027,11 @@ async function initProductPage() {
           <span style="color: var(--text-secondary); margin-left: 8px;">${product.rating} (${product.reviews} reviews)</span>
         </div>
 
+        <!-- Material Selector -->
+        ${matOptions ? `<div>
+          <div style="display:flex; gap: var(--space-2); flex-wrap:wrap;">${matOptions}</div>
+        </div>` : ''}
+
         <!-- Dynamic Price Display -->
         <div id="variant-price-display" style="display:flex; align-items:baseline; gap: var(--space-4);">
           ${initialPriceHtml}
@@ -1048,12 +1053,6 @@ async function initProductPage() {
         ${colorOptions ? `<div>
           <label class="form-label">${t.color}</label>
           <div style="display:flex; gap: var(--space-2); flex-wrap:wrap;">${colorOptions}</div>
-        </div>` : ''}
-
-        <!-- Material Selector -->
-        ${matOptions ? `<div>
-          <label class="form-label">${t.material}</label>
-          <div style="display:flex; gap: var(--space-2); flex-wrap:wrap;">${matOptions}</div>
         </div>` : ''}
 
         <!-- Customization -->
