@@ -983,7 +983,7 @@ async function initProductPage() {
   const mainImageHtml = images.length
     ? `<img src="${window.optimizeCloudinaryUrl(images[0], 1200)}" alt="${name}" style="width:100%; height:100%; object-fit:cover; border-radius: inherit;">`
     : `<span style="font-size:5rem; color: var(--gold);">✦</span>`;
-  const badgeHtml = product.badge ? `<span class="product-card-badge" style="position:absolute;top:var(--space-4);left:var(--space-4);">${product.badge}</span>` : '';
+  const badgeHtml = product.badge ? `<span class="product-card-badge">${product.badge}</span>` : '';
   const thumbHtml = images.length
     ? images.map((src, i) => `<div style="flex:1; aspect-ratio:1; border-radius: var(--radius-md); border: 1px solid var(--border-color); overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center;" class="hover-lift" onclick="changeMainImage(${i})"><img src="${window.optimizeCloudinaryUrl(src, 300)}" alt="thumb" style="width:100%; height:100%; object-fit:cover;"></div>`).join('')
     : [1, 2, 3, 4].map(() => `<div style="flex:1; aspect-ratio:1; background: linear-gradient(135deg, #1a1a1a, #2a2a2a); border-radius: var(--radius-md); border: 1px solid var(--border-color); display:flex; align-items:center; justify-content:center; cursor:pointer;"><span style="color:var(--gold);">✦</span></div>`).join('');
@@ -1144,7 +1144,7 @@ async function initProductPage() {
     if (src) {
       imgContainer.innerHTML = `<img src="${window.optimizeCloudinaryUrl(src, 1200)}" alt="${name}" style="width:100%; height:100%; object-fit:cover; border-radius: inherit;">`;
       if (product.badge) {
-        imgContainer.innerHTML += `<span class="product-card-badge" style="position:absolute;top:var(--space-4);left:var(--space-4);">${product.badge}</span>`;
+        imgContainer.innerHTML += `<span class="product-card-badge">${product.badge}</span>`;
       }
     }
   };
