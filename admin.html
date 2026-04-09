@@ -651,6 +651,7 @@
             return data.secure_url;
         }
 
+        window.PRODUCTS_CACHE = [];
         const getHeaders = () => ({ 
             'Content-Type': 'application/json', 
             'Authorization': `Bearer ${localStorage.getItem('aura_token')}` 
@@ -674,6 +675,7 @@
                 }
                 // Admin verified — load dashboard
                 loadDashboard();
+                loadProducts(); // Prefetch for names
             } catch (e) { 
                 console.error('Admin init error:', e);
                 window.location.href = 'account.html'; 
@@ -753,6 +755,7 @@
             try {
                 const res = await fetch(`${API}/api/products?admin=true`, { headers: getHeaders() });
                 const products = await res.json();
+                window.PRODUCTS_CACHE = products;
                 
                 if (!Array.isArray(products)) {
                     document.getElementById('products-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary)">مافيش منتجات أو خطأ في التحميل.</p>';
@@ -1001,7 +1004,7 @@
                     ${o.order_items ? o.order_items.map(item => `
                         <div style="padding: var(--space-3); background: rgba(255,255,255,0.03); border-radius: var(--radius-md); border-right: 3px solid var(--gold);">
                             <div style="display:flex; justify-content:space-between; margin-bottom: var(--space-1);">
-                                <strong>${item.name || 'منتج: ' + item.product_id}</strong>
+                                <strong>${item.name || (window.PRODUCTS_CACHE?.find(p => String(p.id) === String(item.product_id))?.nameAr || window.PRODUCTS_CACHE?.find(p => String(p.id) === String(item.product_id))?.name) || 'منتج: ' + (item.product_id ? item.product_id.slice(0,8) : 'N/A')}</strong>
                                 <span>${item.qty}x — EGP ${item.price}</span>
                             </div>
                             ${item.customization_value ? `<div><span style="color:var(--gold);">التخصيص:</span> ${item.customization_value}</div>` : ''}
@@ -1237,7 +1240,7 @@
             <div class="form-row"><div class="form-group"><label>عنوان فرعي الهيرو (إنجليزي)</label><textarea name="heroSubtitle" rows="2">${s.heroSubtitle || ''}</textarea></div><div class="form-group"><label>عنوان فرعي الهيرو (عربي)</label><textarea name="heroSubtitleAr" rows="2" dir="rtl">${s.heroSubtitleAr || ''}</textarea></div></div>
             <div class="form-row"><div class="form-group"><label>إيميل التواصل</label><input name="contactEmail" value="${s.contactEmail || ''}"></div><div class="form-group"><label>رقم التليفون</label><input name="contactPhone" value="${s.contactPhone || ''}"></div></div>
             <div class="form-row"><div class="form-group"><label>عنوان التواصل (إنجليزي)</label><input name="contactAddress" value="${s.contactAddress || ''}"></div><div class="form-group"><label>عنوان التواصل (عربي)</label><input name="contactAddressAr" value="${s.contactAddressAr || ''}" dir="rtl"></div></div>
-            <div class="form-row"><div class="form-group"><label>تكلفة الشحن (جنيه)</label><input name="shippingFee" type="number" value="${s.shippingFee || 50}"></div><div class="form-group"><label>حد الشحن المجاني (جنيه)</label><input name="freeShippingThreshold" type="number" value="${s.freeShippingThreshold || 500}"></div></div>
+            <div class="form-row"><div class="form-group"><label>تكلفة الشحن (جنيه)</label><input name="shippingFee" type="number" value="${s.shippingFee || 55}"></div><div class="form-group"><label>حد الشحن المجاني (جنيه)</label><input name="freeShippingThreshold" type="number" value="${s.freeShippingThreshold || 500}"></div></div>
             <h3 style="color:var(--gold);margin:var(--space-6) 0 var(--space-4);">روابط التواصل الاجتماعي</h3>
             <div class="form-row"><div class="form-group"><label>إنستجرام</label><input name="instagram" value="${s.socialLinks?.instagram || ''}"></div><div class="form-group"><label>فيسبوك</label><input name="facebook" value="${s.socialLinks?.facebook || ''}"></div></div>
             <div class="form-row"><div class="form-group"><label>تيك توك</label><input name="tiktok" value="${s.socialLinks?.tiktok || ''}"></div><div class="form-group"><label>واتساب</label><input name="whatsapp" value="${s.socialLinks?.whatsapp || ''}"></div></div>

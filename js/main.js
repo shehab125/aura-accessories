@@ -1277,7 +1277,7 @@ function renderCartPage() {
       <div style="flex:1;">
         <h4 style="font-family: var(--font-heading); font-size: var(--text-base);">${displayName}</h4>
         ${item.customizationValue ? `<p style="font-size: var(--text-xs); color: var(--gold); margin-top: 4px;"><strong>${t.customization}:</strong> ${item.customizationValue}</p>` : ''}
-        ${item.customAnswers ? Object.entries(item.customAnswers).map(([q, a]) => `<p style="font-size: var(--text-xs); color: var(--text-secondary);"><strong>${q}:</strong> ${a}</p>`).join('') : ''}
+        ${item.customAnswers && Array.isArray(item.customAnswers) ? item.customAnswers.map(ans => `<p style="font-size: var(--text-xs); color: var(--text-secondary);"><strong>${ans.question}:</strong> ${ans.answer}</p>`).join('') : ''}
         <p style="color: var(--gold); font-weight:600; margin-top: var(--space-1);">EGP ${item.price.toLocaleString()}</p>
       </div>
       <div class="qty-selector">
@@ -1297,7 +1297,7 @@ function renderCartPage() {
 
   const total = getCartTotal();
   if (subtotalEl) subtotalEl.textContent = `EGP ${total.toLocaleString()}`;
-  if (totalEl) totalEl.textContent = `EGP ${(total + 50).toLocaleString()}`; // +50 shipping
+  if (totalEl) totalEl.textContent = `EGP ${(total + 55).toLocaleString()}`; // +55 shipping
 }
 
 // ==========================================
@@ -2034,6 +2034,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (page === 'shop.html' || page === 'shop') initShopFilters();
   if (page === 'product.html' || page === 'product') initProductPage();
   if (page === 'account.html' || page === 'account') initAuthPage();
+  if (page === 'cart.html' || page === 'cart') renderCartPage();
   if (page === 'index.html' || page === 'index' || page === '' || path === '/') initHomepage();
 
   // Safe Loader Removal
