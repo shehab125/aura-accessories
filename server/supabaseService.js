@@ -321,6 +321,49 @@ async function updateSettings(settingsData) {
     return data.data;
 }
 
+// --- Custom Requests
+async function getCustomRequests() {
+  const { data, error } = await supabase.from('custom_requests').select('*').order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+async function getCustomRequestsByUser(userId) {
+  const { data, error } = await supabase.from('custom_requests').select('*').eq('user_id', String(userId)).order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+async function createCustomRequest(reqData) {
+  const { data, error } = await supabase.from('custom_requests').insert([{
+    user_id: reqData.userId ? String(reqData.userId) : null,
+    customer_name: reqData.customerName,
+    customer_contact: reqData.customerContact,
+    image_url: reqData.imageUrl,
+    description: reqData.description,
+    status: 'pending'
+  }]).select().single();
+  if (error) {
+    console.error('Supabase Custom Request Insert Error:', error);
+    throw error;
+  }
+  return data;
+}
+
+async function updateCustomRequest(id, reqData) {
+  const toUpdate = {};
+  if (reqData.price !== undefined) toUpdate.price = reqData.price;
+  if (reqData.status !== undefined) toUpdate.status = reqData.status;
+  if (reqData.admin_note !== undefined) toUpdate.admin_note = reqData.admin_note;
+
+  const { data, error } = await supabase.from('custom_requests').update(toUpdate).eq('id', id).select().single();
+  if (error) {
+    console.error('Supabase Custom Request Update Error:', error);
+    throw error;
+  }
+  return data;
+}
+
 module.exports = {
   supabase,
   getProducts,
@@ -345,4 +388,8 @@ module.exports = {
   updateUserPoints,
   getSettings,
   updateSettings,
+  getCustomRequests,
+  getCustomRequestsByUser,
+  createCustomRequest,
+  updateCustomRequest,
 };

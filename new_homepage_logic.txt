@@ -1,0 +1,38 @@
+
+async function applyHomepageSettings() {
+  try {
+    const res = await fetch(`${window.location.origin}/api/settings`);
+    if (!res.ok) return;
+    const s = await res.json();
+    const lang = document.documentElement.lang || 'ar';
+    
+    // 1. Hero Text
+    if (s.heroTitleAr || s.heroTitle) {
+      const titleEl = document.querySelector('.hero-content h1');
+      if (titleEl) {
+        const t1 = lang === 'ar' ? (s.heroTitleAr || 'حوّل اسمك') : (s.heroTitle || 'Transform Your Name');
+        const h = lang === 'ar' ? (s.heroHighlightAr || 'لقطعة مميزة') : (s.heroHighlight || 'Into A Statement');
+        titleEl.innerHTML = `${t1}<br><span class="text-gold" style="position:relative;">${h} 💎</span>`;
+      }
+    }
+    
+    // 2. Homepage Images
+    const imgData = s.homepageImages || {};
+    const imgConfigs = [
+      { id: 'hp-women1', key: 'women1' }, { id: 'hp-women2', key: 'women2' },
+      { id: 'hp-men1', key: 'men1' }, { id: 'hp-men2', key: 'men2' },
+      { id: 'hp-story', key: 'story' },
+      { id: 'hp-insta1', key: 'insta1' }, { id: 'hp-insta2', key: 'insta2' },
+      { id: 'hp-insta3', key: 'insta3' }, { id: 'hp-insta4', key: 'insta4' },
+      { id: 'hp-insta5', key: 'insta5' }, { id: 'hp-insta6', key: 'insta6' }
+    ];
+
+    imgConfigs.forEach(cfg => {
+      const container = document.getElementById(cfg.id);
+      if (container && imgData[cfg.key]) {
+        container.innerHTML = `<img src="${window.optimizeCloudinaryUrl(imgData[cfg.key], 800)}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" onerror="this.style.display='none'">`;
+        container.style.background = 'none';
+      }
+    });
+  } catch (e) { console.error('Settings error:', e); }
+}

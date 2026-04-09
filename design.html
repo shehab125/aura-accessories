@@ -5,8 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="صمم أورا الخاصة بك — استخدم استوديو التصميم المدعوم بالذكاء الاصطناعي لإنشاء إكسسوارك المخصص المثالي.">
-    <title>صمم قطعتك — استوديو التصميم بالذكاء الاصطناعي</title>
+        content="صمم إكسسوارك الخاص — ابعتلنا صورة أي تصميم عجبك وإحنا هننفذهولك بأعلى جودة وضمان أورا.">
+    <title>صمم قطعتك — خدمة التصميم المخصص | Aura Accessories Design</title>
+
+    <!-- SEO & Social Media -->
+    <link rel="canonical" href="https://www.auraaccessories.store/design.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="صمم قطعتك — خدمة التصميم المخصص" />
+    <meta property="og:description" content="نفذ طلبك الخاص عن طريق رفع صورة الإكسسوار الذي يعجبك." />
+    <meta property="og:url" content="https://www.auraaccessories.store/design.html" />
+    <meta property="og:image" content="https://www.auraaccessories.store/aura-accessories-logo.svg" />
+
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="icon" type="image/svg+xml"
@@ -303,13 +312,13 @@
     <div class="page-header" style="padding-bottom: var(--space-10);">
         <div class="container">
             <div style="display:flex; gap: var(--space-3); justify-content:center; margin-bottom: var(--space-4);">
-                <span class="feature-pill">✨ مدعوم بالذكاء الاصطناعي</span>
+                <span class="feature-pill">✨ خدمة مخصصة</span>
                 <span class="feature-pill">🎨 تصميم مخصص</span>
                 <span class="feature-pill">💎 صناعة يدوية</span>
             </div>
             <h1 style="font-size: var(--text-5xl); margin-bottom: var(--space-4);">صمم قطعتك من <span
                     class="text-gold">أورا</span></h1>
-            <p style="color: var(--text-secondary); max-width:600px; margin: 0 auto;">أنشئ إكسسوارك المثالي باستخدام استوديو التصميم المدعوم بالذكاء الاصطناعي الخاص بنا. اختر أسلوبك، أو صف رؤيتك، أو دع الذكاء الاصطناعي لدينا يفاجئك.</p>
+            <p style="color: var(--text-secondary); max-width:600px; margin: 0 auto;">نفذ طلبك الخاص عن طريق رفع صورة الإكسسوار الذي يعجبك، وسنقوم بمراجعة طلبك وتوفير أفضل سعر لك وضمان جودة أورا.</p>
         </div>
     </div>
 
@@ -317,296 +326,44 @@
     <section class="section" style="padding-top: var(--space-8);">
         <div class="container">
 
-            <!-- Step Tabs -->
-            <div style="display:flex; justify-content:center; gap: var(--space-2); margin-bottom: var(--space-12);"
-                class="reveal">
-                <button class="btn btn-primary" id="tab-builder" onclick="switchTab('builder')"
-                    style="border-radius: var(--radius-2xl);" data-i18n="accessoryBuilder">✦ أداة البناء</button>
-                <button class="btn btn-outline" id="tab-ai" onclick="switchTab('ai')"
-                    style="border-radius: var(--radius-2xl);" data-i18n="aiAssistant">✨ مساعد الذكاء الاصطناعي</button>
-                <button class="btn btn-outline" id="tab-tryon" onclick="switchTab('tryon')"
-                    style="border-radius: var(--radius-2xl);" data-i18n="virtualTryOn">📸 تجربة افتراضية</button>
-            </div>
 
-            <!-- BUILDER TAB -->
-            <div id="panel-builder" class="design-studio">
-                <div class="reveal-left">
-                    <!-- Type -->
-                    <div class="builder-section">
-                        <span class="builder-label" data-i18n="accessoryType">1. نوع الإكسسوار</span>
-                        <div class="option-grid">
-                            <div class="option-card active" onclick="selectOption(this, 'type')">
-                                <div style="font-size:2rem; margin-bottom: var(--space-2);">📿</div>
-                                <span data-i18n="necklace">سلسلة</span>
-                            </div>
-                            <div class="option-card" onclick="selectOption(this, 'type')">
-                                <div style="font-size:2rem; margin-bottom: var(--space-2);">⌚</div>
-                                <span data-i18n="bracelet">انسيال</span>
-                            </div>
-                            <div class="option-card" onclick="selectOption(this, 'type')">
-                                <div style="font-size:2rem; margin-bottom: var(--space-2);">💍</div>
-                                <span data-i18n="ring">خاتم</span>
-                            </div>
-                            <div class="option-card" onclick="selectOption(this, 'type')">
-                                <div style="font-size:2rem; margin-bottom: var(--space-2);">✨</div>
-                                <span data-i18n="earrings">حلق</span>
-                            </div>
-                            <div class="option-card" onclick="selectOption(this, 'type')">
-                                <div style="font-size:2rem; margin-bottom: var(--space-2);">⛓️</div>
-                                <span data-i18n="anklet">خلخال</span>
-                            </div>
-                            <div class="option-card" onclick="selectOption(this, 'type')">
-                                <div style="font-size:2rem; margin-bottom: var(--space-2);">🎁</div>
-                                <span data-i18n="giftSet">طقم هدايا</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Material -->
-                    <div class="builder-section">
-                        <span class="builder-label" data-i18n="materialStep">2. المواد</span>
-                        <div style="display:flex; gap: var(--space-4); flex-wrap:wrap;">
-                            <div style="text-align:center; cursor:pointer;" onclick="selectMaterial(this)">
-                                <div class="material-swatch active"
-                                    style="background: linear-gradient(135deg, #D4AF37, #FFD700);"></div>
-                                <span style="font-size: var(--text-xs); color: var(--text-secondary);" data-i18n="gold">ذهب</span>
-                            </div>
-                            <div style="text-align:center; cursor:pointer;" onclick="selectMaterial(this)">
-                                <div class="material-swatch"
-                                    style="background: linear-gradient(135deg, #C0C0C0, #E8E8E8);"></div>
-                                <span style="font-size: var(--text-xs); color: var(--text-secondary);" data-i18n="silver">فضة</span>
-                            </div>
-                            <div style="text-align:center; cursor:pointer;" onclick="selectMaterial(this)">
-                                <div class="material-swatch"
-                                    style="background: linear-gradient(135deg, #B76E79, #E8A0B0);"></div>
-                                <span style="font-size: var(--text-xs); color: var(--text-secondary);" data-i18n="roseGold">ذهب وردي</span>
-                            </div>
-                            <div style="text-align:center; cursor:pointer;" onclick="selectMaterial(this)">
-                                <div class="material-swatch"
-                                    style="background: linear-gradient(135deg, #5C4033, #8B6914);"></div>
-                                <span style="font-size: var(--text-xs); color: var(--text-secondary);" data-i18n="leather">جلد</span>
-                            </div>
-                            <div style="text-align:center; cursor:pointer;" onclick="selectMaterial(this)">
-                                <div class="material-swatch"
-                                    style="background: linear-gradient(135deg, #4A4A4A, #7A7A7A);"></div>
-                                <span style="font-size: var(--text-xs); color: var(--text-secondary);" data-i18n="titanium">تيتانيوم</span>
-                            </div>
-                            <div style="text-align:center; cursor:pointer;" onclick="selectMaterial(this)">
-                                <div class="material-swatch"
-                                    style="background: linear-gradient(135deg, #87CEEB, #B0E0E6);"></div>
-                                <span style="font-size: var(--text-xs); color: var(--text-secondary);" data-i18n="crystal">كريستال</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Style -->
-                    <div class="builder-section">
-                        <span class="builder-label" data-i18n="styleStep">3. الأسلوب</span>
-                        <div class="option-grid" style="grid-template-columns: repeat(4, 1fr);">
-                            <div class="option-card active" onclick="selectOption(this, 'style')" data-i18n="classic">كلاسيك</div>
-                            <div class="option-card" onclick="selectOption(this, 'style')" data-i18n="modern">مودرن</div>
-                            <div class="option-card" onclick="selectOption(this, 'style')" data-i18n="bohemian">بوهيمي</div>
-                            <div class="option-card" onclick="selectOption(this, 'style')" data-i18n="luxury">فاخر</div>
-                        </div>
-                    </div>
-
-                    <!-- Stones -->
-                    <div class="builder-section">
-                        <span class="builder-label" data-i18n="gemstone">4. أحجار كريمة (اختياري)</span>
-                        <div class="option-grid" style="grid-template-columns: repeat(4, 1fr);">
-                            <div class="option-card" onclick="selectOption(this, 'stone')" data-i18n="none">بدون</div>
-                            <div class="option-card active" onclick="selectOption(this, 'stone')" data-i18n="diamond">ألماس</div>
-                            <div class="option-card" onclick="selectOption(this, 'stone')" data-i18n="sapphire">ياقوت</div>
-                            <div class="option-card" onclick="selectOption(this, 'stone')" data-i18n="ruby">ياقوت أحمر</div>
-                            <div class="option-card" onclick="selectOption(this, 'stone')" data-i18n="emerald">زمرد</div>
-                            <div class="option-card" onclick="selectOption(this, 'stone')" data-i18n="pearl">لؤلؤ</div>
-                            <div class="option-card" onclick="selectOption(this, 'stone')" data-i18n="onyx">عقيق</div>
-                            <div class="option-card" onclick="selectOption(this, 'stone')" data-i18n="turquoise">فيروز</div>
-                        </div>
-                    </div>
-
-                    <!-- Engraving -->
-                    <div class="builder-section">
-                        <span class="builder-label" data-i18n="engraving">5. نقش (اختياري)</span>
-                        <input type="text" class="form-input" placeholder="أدخل النص للنقش..." maxlength="20"
-                            style="font-size: var(--text-sm);">
-                        <p style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-2);">
-                            <span data-i18n="engravingNote">بحد أقصى 20 حرفاً. متاح لقطع مختارة.</span></p>
-                    </div>
-
-                    <div style="display:flex; gap: var(--space-3); margin-top: var(--space-8);">
-                        <button class="btn btn-primary btn-lg" style="flex:1;"
-                            onclick="showToast('تم حفظ التصميم! سيتصل بك فريقنا خلال 24 ساعة.', 'success')">✦
-                            إرسال التصميم</button>
-                        <button class="btn btn-outline"
-                            onclick="showToast('تم حفظ التصميم في حسابك!', 'info')">حفظ</button>
-                        <button class="btn btn-outline" onclick="showToast('تم نسخ رابط المشاركة!', 'info')">مشاركة</button>
-                    </div>
-                </div>
-
-                <!-- Preview -->
-                <div class="reveal-right" style="position:sticky; top:100px;">
-                    <div class="design-preview" id="design-preview">
-                        <div class="aura-ring" style="width:280px; height:280px;"></div>
-                        <div class="aura-ring" style="width:200px; height:200px; animation-delay:1s;"></div>
-                        <div class="aura-ring" style="width:120px; height:120px; animation-delay:2s;"></div>
-                        <div style="text-align:center; position:relative; z-index:1;">
-                            <div style="font-size:5rem; margin-bottom: var(--space-4);">📿</div>
-                            <h3 style="color: var(--gold); font-size: var(--text-lg);" data-i18n="yourDesign">تصميمك</h3>
-                            <p
-                                style="color: var(--text-secondary); font-size: var(--text-sm); margin-top: var(--space-2);">
-                                ذهب • كلاسيك • ألماس</p>
-                        </div>
-                    </div>
-                        <div class="glass-card" style="margin-top: var(--space-4); padding: var(--space-5);">
-                        <div style="display:flex; justify-content:space-between; margin-bottom: var(--space-3);">
-                            <span style="color: var(--text-secondary); font-size: var(--text-sm);" data-i18n="estimatedPrice">السعر التقديري</span>
-                            <span style="color: var(--gold); font-weight:700; font-size: var(--text-lg);">1,250 ج.م</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom: var(--space-3);">
-                            <span style="color: var(--text-secondary); font-size: var(--text-sm);" data-i18n="productionTime">وقت الإنتاج</span>
-                            <span style="font-size: var(--text-sm);" data-i18n="productionDays">5-7 أيام عمل</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <span style="color: var(--text-secondary); font-size: var(--text-sm);" data-i18n="shipping">الشحن</span>
-                            <span style="font-size: var(--text-sm); color: var(--success);" data-i18n="free">مجاني</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI ASSISTANT TAB -->
-            <div id="panel-ai" style="display:none; max-width:800px; margin:0 auto;">
-                <div class="glass-card reveal" style="padding: var(--space-10);">
+            <div id="custom-request-panel" style="max-width:800px; margin:0 auto;">
+                <div class="glass-card reveal" style="padding: var(--space-8);">
                     <div style="text-align:center; margin-bottom: var(--space-8);">
-                        <div
-                            style="width:80px; height:80px; border-radius:50%; background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(183,110,121,0.1)); display:flex; align-items:center; justify-content:center; margin: 0 auto var(--space-4); font-size:2rem; animation: goldGlow 3s ease-in-out infinite;">
-                            ✨</div>
-                        <h3 style="font-size: var(--text-2xl); margin-bottom: var(--space-2);" data-i18n="aiDesignAssistant">مساعد التصميم بالذكاء الاصطناعي</h3>
-                        <p style="color: var(--text-secondary);" data-i18n="aiDesc">صف قطعة أحلامك، وسيقوم الذكاء الاصطناعي لدينا بتقديمها لك.</p>
-                    </div>
-
-                    <div class="ai-prompt">
-                        <textarea
-                            data-i18n-placeholder="aiPlaceholder"
-                            placeholder="صف رؤيتك للإكسسوار..."></textarea>
-                    </div>
-
-                    <div
-                        style="display:flex; gap: var(--space-2); flex-wrap:wrap; margin: var(--space-4) 0 var(--space-6);">
-                        <span style="font-size: var(--text-xs); color: var(--text-secondary);" data-i18n="tryPrompts">جرب:</span>
-                        <button class="feature-pill"
-                            onclick="this.closest('.glass-card').querySelector('textarea').value = 'خاتم فضة بسيط مع ألماسة صغيرة، تصميم هندسي حديث'"
-                            style="cursor:pointer;">خاتم بسيط</button>
-                        <button class="feature-pill"
-                            onclick="this.closest('.glass-card').querySelector('textarea').value = 'سوار جلدي جريء مع لمسات من التيتانيوم، خشن ولكنه أنيق'"
-                            style="cursor:pointer;">سوار رجالي</button>
-                        <button class="feature-pill"
-                            onclick="this.closest('.glass-card').querySelector('textarea').value = 'أقراط ذهب وردي أنيقة مع لؤلؤ، مستوحاة من زهور اللوتس'"
-                            style="cursor:pointer;">أقراط زهرية</button>
-                        <button class="feature-pill"
-                            onclick="this.closest('.glass-card').querySelector('textarea').value = 'طقم قلادة ذهبية متعدد الطبقات مع أحجار كريمة مختلطة، بأسلوب فاخر بوهيمي'"
-                            style="cursor:pointer;">طقم طبقات</button>
-                    </div>
-
-                    <div style="display:flex; gap: var(--space-3); margin-bottom: var(--space-4);">
-                        <select class="form-select" style="font-size: var(--text-sm);">
-                            <option value="women">للنساء</option>
-                            <option value="men">للرجال</option>
-                            <option value="unisex">للجنسين</option>
-                        </select>
-                        <select class="form-select" style="font-size: var(--text-sm);">
-                            <option value="any">أي ميزانية</option>
-                            <option value="under-500">أقل من 500 ج.م</option>
-                            <option value="500-1000">500 - 1000 ج.م</option>
-                            <option value="1000-2000">1000 - 2000 ج.م</option>
-                            <option value="over-2000">أكثر من 2000 ج.م</option>
-                        </select>
-                    </div>
-
-                    <button id="ai-generate-btn" class="btn btn-primary btn-lg" style="width:100%;"
-                        onclick="handleAIGenerateClick(event)">
-                        ✨ إنشاء التصميم
-                    </button>
-
-                    <!-- Generated Result -->
-                    <div id="ai-result" style="margin-top: var(--space-8);"></div>
-                </div>
-            </div>
-
-            <!-- VIRTUAL TRY-ON TAB -->
-            <div id="panel-tryon" style="display:none; max-width:700px; margin: 0 auto;">
-                <div class="glass-card reveal" style="padding: var(--space-10); text-align:center;">
-                    <div
-                        style="width:80px; height:80px; border-radius:50%; background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(183,110,121,0.1)); display:flex; align-items:center; justify-content:center; margin: 0 auto var(--space-4); font-size:2rem;">
-                        📸</div>
-                    <h3 style="font-size: var(--text-2xl); margin-bottom: var(--space-2);">تجربة افتراضية</h3>
-                    <p style="color: var(--text-secondary); margin-bottom: var(--space-8);">شاهد كيف تبدو إكسسواراتنا عليك باستخدام الواقع المعزز.</p>
-
-                    <div class="try-on-area">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gold)"
-                            stroke-width="1.5">
-                            <path
-                                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                            <circle cx="12" cy="13" r="4" />
-                        </svg>
-                        <p style="color: var(--text-secondary); font-size: var(--text-sm);">انقر لفتح الكاميرا أو رفع صورة</p>
-                        <button class="btn btn-outline btn-sm">رفع صورة</button>
-                    </div>
-
-                    <div style="margin-top: var(--space-8);">
-                        <p
-                            style="color: var(--text-secondary); font-size: var(--text-sm); margin-bottom: var(--space-4);">
-                            أو جرب هذه القطع الشهيرة:</p>
-                        <div style="display:flex; gap: var(--space-3); justify-content:center; flex-wrap:wrap;">
-                            <div style="width:80px; height:80px; background: var(--bg-tertiary); border-radius: var(--radius-md); border: 1px solid var(--border-color); display:flex; align-items:center; justify-content:center; cursor:pointer; transition: all var(--transition-fast); font-size:2rem;"
-                                class="hover-lift">📿</div>
-                            <div style="width:80px; height:80px; background: var(--bg-tertiary); border-radius: var(--radius-md); border: 1px solid var(--border-color); display:flex; align-items:center; justify-content:center; cursor:pointer; transition: all var(--transition-fast); font-size:2rem;"
-                                class="hover-lift">💍</div>
-                            <div style="width:80px; height:80px; background: var(--bg-tertiary); border-radius: var(--radius-md); border: 1px solid var(--border-color); display:flex; align-items:center; justify-content:center; cursor:pointer; transition: all var(--transition-fast); font-size:2rem;"
-                                class="hover-lift">⌚</div>
-                            <div style="width:80px; height:80px; background: var(--bg-tertiary); border-radius: var(--radius-md); border: 1px solid var(--border-color); display:flex; align-items:center; justify-content:center; cursor:pointer; transition: all var(--transition-fast); font-size:2rem;"
-                                class="hover-lift">✨</div>
+                        <div style="width:80px; height:80px; border-radius:50%; background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(183,110,121,0.1)); display:flex; align-items:center; justify-content:center; margin: 0 auto var(--space-4); font-size:2.5rem;">
+                            📸
                         </div>
+                        <h3 style="font-size: var(--text-2xl); margin-bottom: var(--space-2);" data-i18n="customRequest">طلب تصميم خاص</h3>
+                        <p style="color: var(--text-secondary);" data-i18n="customRequestDesc">عجبك تصميم معين؟ ارفع صورته واكتب تفاصيله وسنقوم بتنفيذه لك خصيصاً.</p>
                     </div>
 
-                    <div
-                        style="margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--border-color);">
-                        <div class="feature-pill" style="margin: 0 auto;">🔒 صورك لا يتم تخزينها أو مشاركتها أبداً
+                    <form id="custom-request-form">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4);">
+                            <div>
+                                <label style="display:block; font-size: var(--text-sm); margin-bottom: var(--space-2); color: var(--text-secondary);" data-i18n="fullName">الاسم بالكامل</label>
+                                <input type="text" id="cr-name" class="form-input" required placeholder="الاسم" style="width: 100%;">
+                            </div>
+                            <div>
+                                <label style="display:block; font-size: var(--text-sm); margin-bottom: var(--space-2); color: var(--text-secondary);" data-i18n="phoneNumber">رقم الهاتف للتواصل</label>
+                                <input type="tel" id="cr-contact" class="form-input" required placeholder="01xxxxxxxxx" style="width: 100%;">
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-        </div>
-    </section>
+                        <div style="margin-bottom: var(--space-4);">
+                            <label style="display:block; font-size: var(--text-sm); margin-bottom: var(--space-2); color: var(--text-secondary);" data-i18n="designImage">صورة التصميم</label>
+                            <input type="file" id="cr-image" accept="image/*" class="form-input" required style="padding: var(--space-2); width: 100%; cursor: pointer;">
+                            <div id="cr-image-preview" style="margin-top: var(--space-4); display:none; text-align:center;">
+                                <img src="" style="max-width:200px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                            </div>
+                        </div>
 
-    <!-- Style Suggestions -->
-    <section class="section section-dark section-center">
-        <div class="container">
-            <span class="section-label reveal">مدعوم بالذكاء الاصطناعي</span>
-            <h2 class="section-title reveal">اقتراحات ستايل لك</h2>
-            <div class="section-divider reveal"></div>
-            <p class="section-subtitle reveal">بناءً على الصيحات الحالية والخيارات الشهيرة في مصر.</p>
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6);"
-                class="stagger-children">
-                <div class="glass-card reveal hover-lift" style="text-align:center; cursor:pointer;">
-                    <div style="font-size:3rem; margin-bottom: var(--space-4);">🌙</div>
-                    <h4 style="margin-bottom: var(--space-2);">أناقة المساء</h4>
-                    <p style="color: var(--text-secondary); font-size: var(--text-sm);">قلادات ذهبية مع لمسات من الياقوت — مثالية للمناسبات الخاصة.</p>
-                    <span class="tag tag-gold" style="margin-top: var(--space-4);">رائج حالياً</span>
-                </div>
-                <div class="glass-card reveal hover-lift" style="text-align:center; cursor:pointer;">
-                    <div style="font-size:3rem; margin-bottom: var(--space-4);">⚡</div>
-                    <h4 style="margin-bottom: var(--space-2);">عصري رجالي</h4>
-                    <p style="color: var(--text-secondary); font-size: var(--text-sm);">مزيج التيتانيوم والجلد — لمسات قوية للرجل العصري.</p>
-                    <span class="tag tag-gold" style="margin-top: var(--space-4);">شهير</span>
-                </div>
-                <div class="glass-card reveal hover-lift" style="text-align:center; cursor:pointer;">
-                    <div style="font-size:3rem; margin-bottom: var(--space-4);">🌸</div>
-                    <h4 style="margin-bottom: var(--space-2);">روح بوهيمية</h4>
-                    <p style="color: var(--text-secondary); font-size: var(--text-sm);">أحجار كريمة مختلطة وقطع متعددة الطبقات — فخامة بلمسة بوهيمية.</p>
-                    <span class="tag tag-rose" style="margin-top: var(--space-4);">جديد</span>
+                        <div style="margin-bottom: var(--space-6);">
+                            <label style="display:block; font-size: var(--text-sm); margin-bottom: var(--space-2); color: var(--text-secondary);" data-i18n="designDetails">تفاصيل القطعة (نوع المعدن، الأحجار، المقاس...)</label>
+                            <textarea id="cr-description" class="form-input" rows="4" required placeholder="اكتب تفاصيل المجوهرات المطلوبة هنا..." style="width: 100%;"></textarea>
+                        </div>
+
+                        <button type="submit" id="cr-submit-btn" class="btn btn-primary btn-lg" style="width:100%;" data-i18n="submitRequest">✦ إرسال الطلب لتحديد السعر</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -618,29 +375,9 @@
                 <div class="footer-brand">
                     <a href="index.html" class="nav-brand" style="margin-bottom: var(--space-4);"><img
                             src="aura-accessories-logo.svg" alt="AURA" class="nav-logo"></a>
-                    <p data-i18n="footerText">إكسسوارات يدوية فاخرة للرجال والنساء.</p>
-                    <div class="footer-social" style="margin-top: var(--space-4); display:flex; gap:var(--space-4);">
-                        <a href="#" style="transition:color var(--transition-fast);"
-                            onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color=''"
-                            aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <rect x="2" y="2" width="20" height="20" rx="5" />
-                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                                <path d="M17.5 6.5h.01" />
-                            </svg></a>
-                        <a href="#" style="transition:color var(--transition-fast);"
-                            onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color=''"
-                            aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                            </svg></a>
-                        <a href="#" style="transition:color var(--transition-fast);"
-                            onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color=''"
-                            aria-label="Twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path
-                                    d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                            </svg></a>
+                    <p data-i18n="footerText">إكسسورات يدوية فاخرة بجودة حقيقية.</p>
+                    <div class="footer-social" id="footer-social-links" style="margin-top: var(--space-4); display:flex; gap:var(--space-4);">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
                 <div>
@@ -659,14 +396,7 @@
                         <li><a href="contact.html" data-i18n="contact">اتصل بنا</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="footer-heading" data-i18n="legal">قانوني</h4>
-                    <ul class="footer-links">
-                        <li><a href="privacy.html" data-i18n="privacy">سياسة الخصوصية</a></li>
-                        <li><a href="terms.html" data-i18n="terms">شروط الاستخدام</a></li>
-                        <li><a href="faq.html" data-i18n="faq">الأسئلة الشائعة</a></li>
-                    </ul>
-                </div>
+                
             </div>
             <div class="footer-bottom">
                 <p data-i18n="rightsReserved">© 2026 أورا إكسسوارات. جميع الحقوق محفوظة.</p>
@@ -682,32 +412,115 @@
 
     <script src="js/main.js"></script>
     <script>
-        function switchTab(tab) {
-            ['builder', 'ai', 'tryon'].forEach(t => {
-                document.getElementById('panel-' + t).style.display = t === tab ? '' : 'none';
-                document.getElementById('tab-' + t).className = t === tab ? 'btn btn-primary' : 'btn btn-outline';
+        // Cloudinary Details for client upload
+        // Note: It is better to use signed uploads in production, but unsigned works here
+        const CLOUD_NAME = 'dldw5b65h';
+        const UPLOAD_PRESET = 'aura_unsigned';
+
+        const crImageInput = document.getElementById('cr-image');
+        const crImagePreview = document.getElementById('cr-image-preview');
+        const crPreviewImg = crImagePreview ? crImagePreview.querySelector('img') : null;
+        const submitBtn = document.getElementById('cr-submit-btn');
+
+        if (crImageInput) {
+            crImageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    crPreviewImg.src = URL.createObjectURL(file);
+                    crImagePreview.style.display = 'block';
+                } else {
+                    crImagePreview.style.display = 'none';
+                }
             });
-            document.getElementById('tab-' + tab).style.borderRadius = 'var(--radius-2xl)';
         }
 
-        function selectOption(el, group) {
-            const parent = el.parentElement;
-            parent.querySelectorAll('.option-card').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
+        function compressImage(file, maxWidth = 1000, quality = 0.8) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let w = img.width, h = img.height;
+                        if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }
+                        canvas.width = w; canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        canvas.toBlob((blob) => {
+                            const newFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", { type: 'image/jpeg' });
+                            resolve(newFile);
+                        }, 'image/jpeg', quality);
+                    };
+                };
+            });
         }
 
-        function selectMaterial(el) {
-            document.querySelectorAll('.material-swatch').forEach(s => s.classList.remove('active'));
-            el.querySelector('.material-swatch').classList.add('active');
+        async function uploadToCloudinary(file) {
+            const compressedFile = await compressImage(file);
+            const formData = new FormData();
+            formData.append('file', compressedFile);
+            formData.append('upload_preset', UPLOAD_PRESET);
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+            if (!res.ok) throw new Error('Upload failed');
+            const data = await res.json();
+            return data.secure_url;
         }
 
-        function handleAIGenerateClick(ev) {
-            const card = ev.target.closest('.glass-card');
-            const textarea = card.querySelector('textarea');
-            const selects = card.querySelectorAll('select');
-            const gender = selects[0]?.value || 'unisex';
-            const budget = selects[1]?.value || 'any';
-            generateAIDesign(textarea.value, gender, budget);
+        const crForm = document.getElementById('custom-request-form');
+        if (crForm) {
+            crForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const file = crImageInput.files[0];
+                if (!file) {
+                    showToast('الرجاء اختيار صورة للتصميم', 'error');
+                    return;
+                }
+
+                try {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = 'جاري المعالجة والرفع...';
+
+                    const imageUrl = await uploadToCloudinary(file);
+                    
+                    const reqData = {
+                        customerName: document.getElementById('cr-name').value,
+                        customerContact: document.getElementById('cr-contact').value,
+                        imageUrl: imageUrl,
+                        description: document.getElementById('cr-description').value
+                    };
+
+                    const token = localStorage.getItem('auraToken');
+                    const headers = { 'Content-Type': 'application/json' };
+                    if (token) headers['Authorization'] = 'Bearer ' + token;
+
+                    const res = await fetch(API + '/api/custom-requests', {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify(reqData)
+                    });
+
+                    if (!res.ok) throw new Error('فشل إرسال الطلب');
+
+                    showToast('تم إرسال طلبك بنجاح! سنتواصل معك قريباً بالسعر.', 'success');
+                    crForm.reset();
+                    if(crImagePreview) crImagePreview.style.display = 'none';
+
+                    if (token) {
+                        setTimeout(() => {
+                            window.location.href = 'account.html';
+                        }, 2000);
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    showToast('عذرياً، حدث خطأ أثناء إرسال الطلب.', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '✦ إرسال الطلب لتحديد السعر';
+                }
+            });
         }
     </script>
 </body>

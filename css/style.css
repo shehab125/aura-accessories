@@ -51,6 +51,11 @@
   --shadow-color: rgba(0, 0, 0, 0.3);
   --overlay: rgba(10, 10, 10, 0.7);
 
+  /* Specific Components */
+  --hero-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 30%, #0d0d0d 60%, #0a0a0a 100%);
+  --hero-circle-border: rgba(212, 175, 55, 0.08);
+  --hero-shimmer: rgba(212, 175, 55, 0.03);
+
   /* Typography */
   --font-heading: 'Playfair Display', Georgia, serif;
   --font-body: 'Inter', 'Cairo', sans-serif;
@@ -125,6 +130,11 @@
   --border-hover: rgba(212, 175, 55, 0.6);
   --shadow-color: rgba(0, 0, 0, 0.1);
   --overlay: rgba(245, 240, 232, 0.8);
+
+  /* Specific Components */
+  --hero-bg: linear-gradient(135deg, var(--cream) 0%, var(--white) 30%, var(--cream-dark) 60%, var(--cream) 100%);
+  --hero-circle-border: rgba(212, 175, 55, 0.12);
+  --hero-shimmer: rgba(212, 175, 55, 0.05);
 }
 
 /* ---------- Reset & Base ---------- */

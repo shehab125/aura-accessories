@@ -288,6 +288,53 @@ app.post('/api/ai/chat', async (req, res) => {
         res.status(500).json({ error: 'Chat failed.', reply: 'عذراً، حصل مشكلة في الربط مع الذكاء الاصطناعي. جرب تاني كمان شوية.' });
     }
 } );
+// ==========================================
+// Custom Requests Routes
+// ==========================================
+app.get('/api/custom-requests', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const requests = await supabaseService.getCustomRequests();
+        res.json(requests);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.get('/api/custom-requests/my', authMiddleware, async (req, res) => {
+    try {
+        const requests = await supabaseService.getCustomRequestsByUser(req.user.id);
+        res.json(requests);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.post('/api/custom-requests', async (req, res) => {
+    try {
+        const reqData = req.body;
+        const token = req.headers.authorization?.split(' ')[1];
+        if (token) {
+            try {
+                const decoded = jwt.verify(token, JWT_SECRET);
+                reqData.userId = decoded.id;
+            } catch (e) {}
+        }
+        const created = await supabaseService.createCustomRequest(reqData);
+        res.json(created);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to create custom request' });
+    }
+});
+
+app.put('/api/custom-requests/:id', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const updated = await supabaseService.updateCustomRequest(req.params.id, req.body);
+        res.json(updated);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to update custom request' });
+    }
+});
+
 
 // ==========================================
 // Dashboard Stats (Admin)

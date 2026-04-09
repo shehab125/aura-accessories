@@ -8,6 +8,15 @@
 const PRODUCTS = [];
 const BLOG_POSTS = [];
 
+window.optimizeCloudinaryUrl = (url, width = 800) => {
+  if (!url || typeof url !== 'string') return url || '';
+  if (url.includes('cloudinary.com') && url.includes('/upload/')) {
+    if (url.match(/\/upload\/[a-z]_/)) return url; // Already has transformation
+    return url.replace('/upload/', `/upload/w_${width},f_auto,q_auto/`);
+  }
+  return url;
+};
+
 // ==========================================
 // Supabase initialization
 // ==========================================
@@ -295,8 +304,32 @@ function initNavigation() {
     });
   }
 
-  // Active link highlight
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    if (mobileMenu) {
+      const linksContainer = mobileMenu.querySelector('.mobile-menu-links');
+      if (linksContainer && !linksContainer.querySelector('a[href="account.html"]')) {
+        const lang = document.documentElement.lang || 'ar';
+        const accountStr = lang === 'ar' ? 'حسابي' : 'Account';
+        const wishlistStr = lang === 'ar' ? 'المفضلة' : 'Wishlist';
+        linksContainer.insertAdjacentHTML('beforeend', `
+            <a href="account.html" class="mobile-menu-item stagger-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span data-i18n="account">${accountStr}</span>
+            </a>
+            <a href="account.html" class="mobile-menu-item stagger-item" onclick="setTimeout(()=>window.dispatchEvent(new Event('hashchange')),100)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                <span data-i18n="wishlist">${wishlistStr}</span>
+            </a>
+        `);
+      }
+    }
+
+    // Active link highlight
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(link => {
     const href = link.getAttribute('href');
     if (href === currentPage) {
@@ -525,7 +558,7 @@ function createProductCard(product) {
   const viewText = translations[lang].view;
 
   // Determine which image to display: prefer the first in the images array, then fallback to the single image property
-  const imgSrc = product.images && product.images.length ? product.images[0] : product.image;
+  const imgSrc = product.images && product.images.length ? window.optimizeCloudinaryUrl(product.images[0], 600) : window.optimizeCloudinaryUrl(product.image, 600);
   const imgHtml = imgSrc
     ? `<img src="${imgSrc}" alt="${name}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius: inherit;">`
     : `<div style="${imgStyle} width:100%; aspect-ratio:1;">✦</div>`;
@@ -771,23 +804,71 @@ function initHomepage() {
   initHomepageImages();
 }
 
-// Load homepage images from admin settings
+// Load homepage images, social links, and team members from admin settings
 async function initHomepageImages() {
   try {
     const res = await fetch(`${API_BASE}/api/settings`);
     if (!res.ok) return;
     const settings = await res.json();
+    
+    // 1. Homepage Images
     const imgs = settings.homepageImages;
-    if (!imgs) return;
-    const slots = ['women1', 'women2', 'men1', 'men2', 'story', 'insta1', 'insta2', 'insta3', 'insta4', 'insta5', 'insta6'];
-    slots.forEach(key => {
-      if (imgs[key]) {
-        const el = document.getElementById('hp-' + key);
-        if (el) {
-          el.innerHTML = `<img src="${imgs[key]}" alt="" style="width:100%;height:100%;object-fit:cover;">`;
+    if (imgs) {
+      const slots = ['women1', 'women2', 'men1', 'men2', 'story', 'insta1', 'insta2', 'insta3', 'insta4', 'insta5', 'insta6'];
+      slots.forEach(key => {
+        if (imgs[key]) {
+          const el = document.getElementById('hp-' + key);
+          if (el) {
+            el.innerHTML = `<img src="${imgs[key]}" alt="" style="width:100%;height:100%;object-fit:cover;">`;
+          }
         }
-      }
-    });
+      });
+    }
+
+    // 2. Social Links (Footers & Contact)
+    const social = settings.socialLinks;
+    if (social) {
+      const renderSocial = (containerId) => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        let html = '';
+        if (social.instagram) {
+          html += `<a href="${social.instagram}" target="_blank" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><path d="M17.5 6.5h.01" /></svg></a>`;
+        }
+        if (social.facebook) {
+          html += `<a href="${social.facebook}" target="_blank" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg></a>`;
+        }
+        if (social.tiktok) {
+          html += `<a href="${social.tiktok}" target="_blank" aria-label="TikTok"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg></a>`;
+        }
+        if (social.whatsapp) {
+          const waUrl = social.whatsapp.startsWith('http') ? social.whatsapp : `https://wa.me/${social.whatsapp.replace(/\D/g, '')}`;
+          html += `<a href="${waUrl}" target="_blank" aria-label="WhatsApp"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>`;
+        }
+        if (social.twitter) {
+          html += `<a href="${social.twitter}" target="_blank" aria-label="Twitter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg></a>`;
+        }
+        container.innerHTML = html;
+      };
+      renderSocial('footer-social-links');
+      renderSocial('contact-social-links');
+    }
+
+    // 3. Aura Family (About Page)
+    const family = settings.auraFamily;
+    const familyGrid = document.getElementById('aura-family-grid');
+    if (family && familyGrid) {
+      familyGrid.innerHTML = family.map((member, i) => `
+        <div class="reveal" style="text-align:center;">
+          <div style="width:140px; height:140px; border-radius:50%; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); margin: 0 auto var(--space-4); display:flex; align-items:center; justify-content:center; overflow:hidden; border: 2px solid var(--gold);">
+            ${member.image ? `<img src="${member.image}" alt="${member.name}" style="width:100%;height:100%;object-fit:cover;">` : `<span style="font-size:3rem; color: var(--black); font-weight:700;">${(member.name || 'A')[0]}</span>`}
+          </div>
+          <h4 style="font-size: var(--text-xl);">${member.name || ''}</h4>
+        </div>
+      `).join('');
+      initScrollReveal(); // Re-init for new elements
+    }
   } catch (_) { /* settings not available */ }
 }
 
@@ -887,7 +968,7 @@ async function initProductPage() {
       
       let html = `<span style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);">EGP ${sale.toLocaleString()}</span>`;
       if (original && original > sale) {
-        html += `<span class="old-price" style="font-size: var(--text-xl); margin-left: var(--space-2);">EGP ${original.toLocaleString()}</span>`;
+        html += `<span class="old-price" style="font-size: var(--text-xl); margin-left: var(--space-2); text-decoration: line-through; color: var(--text-secondary);">EGP ${original.toLocaleString()}</span>`;
         html += `<span class="discount-badge">-${Math.round((1 - sale / original) * 100)}% OFF</span>`;
       }
       priceEl.innerHTML = html;
@@ -900,11 +981,11 @@ async function initProductPage() {
   // Build image gallery HTML dynamically based on product images (from Supabase or API).
   const images = Array.isArray(product.images) && product.images.length ? product.images : (product.image ? [product.image] : []);
   const mainImageHtml = images.length
-    ? `<img src="${images[0]}" alt="${name}" style="width:100%; height:100%; object-fit:cover; border-radius: inherit;">`
+    ? `<img src="${window.optimizeCloudinaryUrl(images[0], 1200)}" alt="${name}" style="width:100%; height:100%; object-fit:cover; border-radius: inherit;">`
     : `<span style="font-size:5rem; color: var(--gold);">✦</span>`;
   const badgeHtml = product.badge ? `<span class="product-card-badge" style="position:absolute;top:var(--space-4);left:var(--space-4);">${product.badge}</span>` : '';
   const thumbHtml = images.length
-    ? images.map((src, i) => `<div style="flex:1; aspect-ratio:1; border-radius: var(--radius-md); border: 1px solid var(--border-color); overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center;" class="hover-lift" onclick="changeMainImage(${i})"><img src="${src}" alt="thumb" style="width:100%; height:100%; object-fit:cover;"></div>`).join('')
+    ? images.map((src, i) => `<div style="flex:1; aspect-ratio:1; border-radius: var(--radius-md); border: 1px solid var(--border-color); overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center;" class="hover-lift" onclick="changeMainImage(${i})"><img src="${window.optimizeCloudinaryUrl(src, 300)}" alt="thumb" style="width:100%; height:100%; object-fit:cover;"></div>`).join('')
     : [1, 2, 3, 4].map(() => `<div style="flex:1; aspect-ratio:1; background: linear-gradient(135deg, #1a1a1a, #2a2a2a); border-radius: var(--radius-md); border: 1px solid var(--border-color); display:flex; align-items:center; justify-content:center; cursor:pointer;"><span style="color:var(--gold);">✦</span></div>`).join('');
   
   // Initial price calculation (default Silver)
@@ -912,7 +993,7 @@ async function initProductPage() {
   const initialOriginal = product.old_price_silver || product.oldPrice || null;
   const initialPriceHtml = `
     <span style="font-size: var(--text-3xl); font-weight:700; color: var(--gold);">EGP ${initialSale.toLocaleString()}</span>
-    ${initialOriginal && initialOriginal > initialSale ? `<span class="old-price" style="font-size: var(--text-xl); margin-left: var(--space-2);">EGP ${initialOriginal.toLocaleString()}</span>` : ''}
+    ${initialOriginal && initialOriginal > initialSale ? `<span class="old-price" style="font-size: var(--text-xl); margin-left: var(--space-2); text-decoration: line-through; color: var(--text-secondary);">EGP ${initialOriginal.toLocaleString()}</span>` : ''}
     ${initialOriginal && initialOriginal > initialSale ? `<span class="discount-badge">-${Math.round((1 - initialSale / initialOriginal) * 100)}% OFF</span>` : ''}
   `;
 
@@ -954,7 +1035,7 @@ async function initProductPage() {
         <!-- Product Story -->
         <div class="glass-card" style="padding: var(--space-5); border-left: 3px solid var(--gold);">
           <h4 style="font-size:var(--text-sm); color:var(--gold); margin-bottom:var(--space-2);">${t.theStory}</h4>
-          <p style="color: var(--text-secondary); line-height:1.8; font-size:var(--text-sm);">${lang === 'ar' ? (product.story_ar || product.storyAr || product.story || '') : (product.story || '')}</p>
+          <p style="color: var(--text-secondary); line-height:1.8; font-size:var(--text-sm); white-space:pre-wrap;" class="pre-wrap">${lang === 'ar' ? (product.story_ar || product.storyAr || product.story || '') : (product.story || '')}</p>
         </div>
 
         <!-- Size Selector -->
@@ -1061,7 +1142,7 @@ async function initProductPage() {
     if (!imgContainer || !window.currentProductImages) return;
     const src = window.currentProductImages[idx];
     if (src) {
-      imgContainer.innerHTML = `<img src="${src}" alt="${name}" style="width:100%; height:100%; object-fit:cover; border-radius: inherit;">`;
+      imgContainer.innerHTML = `<img src="${window.optimizeCloudinaryUrl(src, 1200)}" alt="${name}" style="width:100%; height:100%; object-fit:cover; border-radius: inherit;">`;
       if (product.badge) {
         imgContainer.innerHTML += `<span class="product-card-badge" style="position:absolute;top:var(--space-4);left:var(--space-4);">${product.badge}</span>`;
       }
@@ -1312,32 +1393,7 @@ function initCounters() {
   counters.forEach(el => observer.observe(el));
 }
 
-// ==========================================
-// Init on DOM Ready
-// ==========================================
-document.addEventListener('DOMContentLoaded', () => {
-  initPageLoader();
-  initNavigation();
-  initThemeToggle();
-  initScrollReveal();
-  initCursorGlow();
-  initBackToTop();
-  initAccordion();
-  initChatWidget();
-  initNewsletter();
-  initSearch();
-  initCounters();
-
-  updateCartBadge();
-  updateWishlistBadge();
-
-  // Page-specific inits
-  const page = window.location.pathname.split('/').pop() || 'index.html';
-  if (page === 'index.html' || page === '') initHomepage();
-  if (page === 'shop.html') initShopFilters();
-  if (page === 'product.html') initProductPage();
-  if (page === 'cart.html') renderCartPage();
-});
+/* Consolidated at the bottom */
 
 /* Translation System */
 const translations = {
@@ -1439,15 +1495,16 @@ const translations = {
     heroTitle1: "Turn Your Name", heroTitle2: "Into a Masterpiece 💎", heroSubtitle2: "Necklaces, bracelets, and rings with your name or your loved one's name", heroBenefit: "Premium Materials • Rust-Free • 6-Month Guarantee",
     orderNow: "Order Now", rustFree: "Rust-free for one year", material925: "925 Silver or 21K Gold", guarantee6m: "6-Month Guarantee", freeGift: "🎁 Free Premium Gift Box",
     mCustomName: "✦ Custom Name Accessories 💎", mRustFree: "✦ Rust-Free & Color Fast ✔", mGuarantee: "✦ 6-Month Guarantee 🛡", mFreeShipping: "✦ Free Shipping Over EGP 500 🚚", mFreeGift: "✦ Free Premium Gift Box 🎁", mNameLang: "✦ Name in Arabic or English ✍️", mPerfectGift: "✦ Perfect Gift for Every Occasion ❤️",
-    aiTag: "AI-Powered", ctaDesignTitlePart1: "Design Your Own", ctaDesignTitlePart2: "Accessory", ctaDesignSubtitle: "Very simple — in 3 steps and we execute it with high quality 💎",
-    step1Title: "Enter Name", step1Desc: "Arabic, English or two names", step2Title: "Choose Shape", step2Desc: "Necklace, bracelet or ring", step3Title: "See Design Instantly", step3Desc: "And we'll make it for you 💎", startDesignNow: "✦ Start Designing Now",
+    specialService: "Special Service",
+    aiTag: "Custom Request", ctaDesignTitlePart1: "Bring Any Design", ctaDesignTitlePart2: "To Life", ctaDesignSubtitle: "Saw an accessory you liked? Send us the photo and we will craft it for you with Aura's quality and guarantee 💎",
+    step1Title: "Upload Photo", step1Desc: "Of any accessory you saw anywhere", step2Title: "Get a Quote", step2Desc: "We'll review your request and reply with price and details", step3Title: "Receive Your Piece 🎁", step3Desc: "With a free premium gift box with every order", startDesignNow: "✦ Start Your Design Now",
     whyAuraTag: "Why Choose Aura?", whyAuraTitle1: "Not Just", whyAuraTitle2: "Looking Good", whyAuraTitle3: "Real Quality",
     realMaterials: "Real Materials", realMaterialsDesc: "925 Italian Silver or High Quality 21K Gold Plating — not just ordinary plating",
     guarantee6mTitle: "6-Month Guarantee", guarantee6mDesc: "Any manufacturing defect? We replace it immediately without argument — that's our promise",
     nameAnyLang: "Name in Any Language", nameAnyLangDesc: "Arabic, English, two names together — each piece is made specifically for you",
     perfectGiftTitle: "Perfect Gift", perfectGiftDesc: "Birthday, engagement, or marriage — free premium gift box with every order",
-    fastDeliveryTitle: "Fast Delivery", fastDeliveryDesc: "Delivery to all Egypt governorates — free shipping over 500 EGP",
-    neverChanges: "Never Changes", neverChangesDesc: "Rust-free and color fast — wear it every day as much as you like all year",
+    neverChanges: "Gold/Silver Plating", neverChangesDesc: "High quality gold or silver plating — wear it every day as much as you like all year",
+    fastDeliveryTitle: "Delivery 4-7 Days", fastDeliveryDesc: "Delivery to all Egypt governorates — 55 EGP shipping",
     storyTag: "Our Story", storyTitleH1: "Simple", storyTitleH2: "Idea", storyTitleH3: "Real Beginning",
     indexStoryP1: "Aura started from a simple question: Why can't you have an accessory with your name or the name of someone you love?",
     indexStoryP2: "From here we began crafting custom pieces with real quality and chic designs. Our goal isn't just to sell — our goal is for every piece to have a meaning ❤️",
@@ -1497,7 +1554,7 @@ const translations = {
     ourStory: "قصتنا", theAura: "فلسفة", philosophy: "", storyP1: "أورا اتولدت في قلب مصر برؤية واحدة: نخلق اكسسوارات مش بس تكمل ستايلك — لكن تعلي طاقتك الخاصة.", storyP2: "كل قطعة عندنا بتشهد على شغل بإتقان، خامات فخمة، وفهم ان الفخامة الحقيقية في التفاصيل.", happyCustomers: "عملاء مبسوطين", uniqueDesigns: "تصميمات مميزة", awardsWon: "جوائز", readOurStory: "اعرف قصتنا →", eleganceQuote: "\"الأناقة مش بس تخلي الناس تشوفك، الأناقة تخلي الناس يفتكروك\"",
     whatTheySay: "الناس بتقول ايه", customerStories: "تجارب العملاء", testimonialsSubtitle: "آراء حقيقية من عيلة أورا.",
     followUs: "تابعنا", stayConnected: "خليك على تواصل", joinFamily: "انضم لعيلة أورا", newsletterDesc: "خليك أول واحد يعرف عن مجموعاتنا الجديدة، العروض الحصرية، ونصايح الشياكة.", subscribe: "اشترك", emailPlaceholder: "اكتب إيميلك",
-    footerText: "اكسسوارات فاخرة ومصنوعة بإيدينا للرجالة والستات.", company: "الشركة", legal: "القانون", privacy: "سياسة الخصوصية", terms: "شروط الاستخدام", faq: "الأسئلة المتكررة", rightsReserved: "© ٢٠٢٦ أورا للإكسسوارات. كل الحقوق محفوظة.",
+    footerText: "إكسسورات يدوية فاخرة بجودة حقيقية.", company: "الشركة", legal: "القانون", privacy: "سياسة الخصوصية", terms: "شروط الاستخدام", faq: "الأسئلة المتكررة", rightsReserved: "© ٢٠٢٦ أورا للإكسسوارات. كل الحقوق محفوظة.",
     addToCart: "أضف للسلة", view: "شوف", price: "السعر", size: "المقاس", color: "اللون", material: "الخامة", quantity: "الكمية", dimensions: "الأبعاد", weight: "الوزن", occasion: "المناسبة", careInstructions: "طريقة العناية", share: "شارك", relatedProducts: "ممكن يعجبك كمان", completeLook: "كمّل طلتك", theStory: "✦ القصة", reviews: "التقييمات", customerReviews: "آراء العملاء", writeReview: "اكتب تقييم", basedOnReviews: "بناءً على", lifestyleGallery: "معرض الصور", styledLook: "طلة مميزة", detailShot: "صور التفاصيل", freeShippingNote: "🚚 شحن مجاني لأكثر من ٥٠٠ جنيه", returnsNote: "↩ تقدر ترجع خلال ١٤ يوم", authenticNote: "✓ ضمان أصلي",
     cartTitle: "عربة التسوق", cartEmpty: "سلتك فاضية", cartSubtotal: "المجموع الجزئي", cartTotal: "الإجمالي", checkout: "أكمل الطلب", remove: "حذف", orderSummary: "ملخص طلبك", shipping: "الشحن", returns: "الإرجاع", payment: "الدفع", shippingAddress: "عنوان التوصيل", fullName: "الاسم بالكامل", address: "العنوان", city: "المدينة", postalCode: "الرمز البريدي", phoneNumber: "رقم التليفون", country: "البلد", orderNotes: "ملاحظات إضافية", continuePayment: "استمر للدفع", placeOrder: "نفذ الطلب",
     search: "بحث", searchPlaceholder: "دور على اكسسوارات...", noProductsFound: "مافيش منتجات", tryAdjusting: "جرب تغير الفلاتر", noResultsFound: "مافيش نتائج", sortBy: "رتب حسب", featured: "الأبرز", priceLowHigh: "السعر: من الأقل للأعلى", priceHighLow: "السعر: من الأعلى للأقل", topRated: "أعلى تقييم", newest: "الأجدد", bestSelling: "الأكتر مبيعاً", priceRange: "حدود السعر", filterBy: "فلتر حسب",
@@ -1508,6 +1565,9 @@ const translations = {
     virtualTryOnTitle: "جرب الإكسسوار افتراضياً", tryOnDesc: "شوف شكل الاكسسوارات عليك باستخدام الواقع المعزز", tapToOpen: "اضغط لفتح الكاميرا أو حمّل صورة", uploadPhoto: "ارفع صورة", tryOnPopular: "أو جرب القطع المشهورة دي:", photoPrivacy: "🔒 صورك مش هتتخزن ولا هتتشارك",
     styleSuggestions: "اقتراحات للستايل ليك", styleSuggestionsDesc: "بناء على الترندات الحالية والاختيارات المنتشرة في مصر.", eveningElegance: "أناقة المساء", eveningEleganceDesc: "سلاسل ذهبية بلمسات ياقوت — مثالية للسهرات الخاصة.", modernMasculine: "رجولة عصرية", modernMasculineDesc: "مزيج التيتانيوم والجلد — قطع جريئة للرجل العصري.", bohemianSpirit: "روح البوهيمي", bohemianSpiritDesc: "أحجار كريمة متنوعة وطبقات — فخامة حرة.", trending: "ترند", popular: "شائع", new: "جديد",
     myAccount: "حسابي", welcomeBack: "أهلاً برجوعك،", accountOverview: "نظرة عامة على حسابك مع أورا.", dashboard: "📊 لوحة التحكم", myOrders: "📦 طلباتي", wishlist: "❤️ المفضلة", myDesigns: "🎨 تصاميمي", auraPoints: "✦ نقاط أورا", addresses: "📍 العناوين", settings: "⚙️ الإعدادات", logout: "🚪 خروج", totalOrders: "إجمالي الطلبات", wishlistItems: "قطع المفضلة", savedDesigns: "تصاميم محفوظة", recentOrders: "آخر الطلبات", yourWishlist: "مفضلتك", savedDesignsTitle: "تصاميمك المحفوظة", recentlyViewed: "شوفتها من قريب", goldMember: "✦ عضو ذهبي", auraPointsProgram: "✦ برنامج نقاط أورا", pointsInfo: "نقطة — باقي ٥٠ نقطة وتاخد خصم ١٠٠ جنيه!", toNextReward: "للمكافأة الجاية", delivered: "تم التوصيل ✓", inTransit: "قيد التوصيل 🚚", orderTracking: "طلبك في الطريق!",
+    specialService: "خدمة خاصة",
+    aiTag: "طلب مخصص", ctaDesignTitlePart1: "نفّذ أي تصميم", ctaDesignTitlePart2: "في خيالك", ctaDesignSubtitle: "شفت صورة إكسسوار وعجبتك؟ ابعتلنا الصورة وإحنا هننفذهالك بأعلى جودة وضمان أورا 💎",
+    step1Title: "ارفع الصورة", step1Desc: "لأي إكسسوار عجبك في أي مكان", step2Title: "طلب تسعير", step2Desc: "هنراجع طلبك ونرد عليك بالسعر والتفاصيل", step3Title: "استلم قطعتك 🎁", step3Desc: "مع علبة هدية فاخرة مجاناً مع كل طلب", startDesignNow: "✦ ابدأ تصميمك دلوقتي",
     loginTitle: "دخول", registerTitle: "تسجيل جديد", password: "كلمة السر", confirmPassword: "تأكيد كلمة السر", loginBtn: "دخول", registerBtn: "أنشئ حساب", noAccount: "معندكش حساب؟", hasAccount: "عندك حساب بالفعل؟", signUp: "سجّل", signIn: "ادخل",
     marquee1: "✦ شحن مجاني لما تشتري فوق ٥٠٠ جنيه", marquee2: "✦ جودة فاخرة مصنوعة بإيدينا", marquee3: "✦ تقدر ترجع خلال ١٤ يوم", marquee4: "✦ تصاميم مخصصة بالذكاء الاصطناعي", marquee5: "✦ ضمان الأصالة",
     scroll: "انزل",
@@ -1562,8 +1622,8 @@ const translations = {
     guarantee6mTitle: "ضمان 6 شهور", guarantee6mDesc: "أي عيب صناعة؟ بنبدل فورًا بدون نقاش — ده وعدنا ليك",
     nameAnyLang: "اسمك بأي لغة", nameAnyLangDesc: "عربي، إنجليزي، اسمين مع بعض — كل قطعة بتتعمل خصيصاً ليك",
     perfectGiftTitle: "هدية مثالية", perfectGiftDesc: "عيد ميلاد، خطوبة، أو جواز — علبة هدية فاخرة مجاناً مع كل طلب",
-    fastDeliveryTitle: "توصيل سريع", fastDeliveryDesc: "توصيل لكل محافظات مصر — شحن مجاني فوق ٥٠٠ جنيه",
-    neverChanges: "لا بتتغيرش", neverChangesDesc: "ضد الصدأ وتغير اللون — تلبسه كل يوم براحتك طول السنة",
+    fastDeliveryTitle: "توصيل خلال 4-7 أيام", fastDeliveryDesc: "توصيل لكل محافظات مصر — مصاريف الشحن 55 جنيه",
+    neverChanges: "طلاء ذهب/فضة", neverChangesDesc: "طلاء عالي الجودة — تلبسه كل يوم براحتك طول السنة",
     storyTag: "قصتنا", storyTitleH1: "فكرة", storyTitleH2: "بسيطة", storyTitleH3: "وبداية حقيقية",
     indexStoryP1: "أورا بدأت من سؤال بسيط: ليه ميبقاش عندك إكسسوار باسمك أو اسم أغلى حد عندك؟",
     indexStoryP2: "من هنا بدأنا نعمل قطع مخصصة بجودة حقيقية وشكل شيك. هدفنا مش نبيع بس — هدفنا كل قطعة تبقى ليها معنى ❤️",
@@ -1855,27 +1915,130 @@ async function generateAIDesign(prompt, gender, budget) {
 // ==========================================
 // Initialize Language & Auth
 // ==========================================
+
+async function renderAuraFamily() {
+  const container = document.getElementById('aura-family-grid');
+  if (!container) return;
+
+  try {
+    const res = await fetch(`${window.location.origin}/api/settings`);
+    const settings = await res.json();
+    const team = settings.auraFamily || [
+      { name: 'شهاب حسني', nameEn: 'Shehab Hosny', role: 'Founder & CEO', roleAr: 'المؤسس والمدير التنفيذي', initial: 'S' },
+      { name: 'محمود مصطفى', nameEn: 'Mahmoud Mostafa', role: 'Head of Quality', roleAr: 'مدير الجودة', initial: 'M' }
+    ];
+
+    const lang = document.documentElement.lang || 'ar';
+
+    container.innerHTML = team.map((m, idx) => {
+      const initial = m.initial || (m.name ? m.name.charAt(0).toUpperCase() : (idx === 0 ? 'S' : 'M'));
+      const displayName = lang === 'ar' ? (m.name || m.nameAr) : (m.nameEn || m.name);
+      const displayRole = lang === 'ar' ? (m.roleAr || m.role) : (m.role || m.roleAr);
+
+      return `
+        <div class="glass-card reveal" style="text-align:center; padding: var(--space-8);">
+          <div style="width:120px; height:120px; border-radius:50%; margin: 0 auto var(--space-4); position: relative; overflow: hidden; box-shadow: 0 8px 16px rgba(0,0,0,0.3); border: 2px solid var(--gold);">
+            ${m.image ? 
+              `<img src="${m.image}" style="width:100%; height:100%; object-fit:cover;" onerror="this.outerHTML='<div style=\\'width:100%; height:100%;\\'>${initial}</div>'">` : 
+              `<div style="width:100%; height:100%; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); display:flex; align-items:center; justify-content:center; font-size:2.5rem; color: var(--black); font-weight:700;">${initial}</div>`
+            }
+          </div>
+          <h4 style="margin-bottom: var(--space-1); color: var(--gold);">${displayName || 'عضو فريق'}</h4>
+          <p style="color: var(--text-secondary); font-size: var(--text-xs); letter-spacing:1px; text-transform:uppercase;">${displayRole || (idx === 0 ? 'المؤسس' : 'عضو الفريق')}</p>
+        </div>
+      `;
+    }).join('');
+  } catch (e) {
+    console.error('Failed to load team:', e);
+  }
+}
+
+function injectProfileIcon() {
+  const navIcons = document.querySelector('.nav-icons');
+  if (navIcons && !navIcons.querySelector('a[href="account.html"]')) {
+     const profileBtn = document.createElement('a');
+     profileBtn.href = 'account.html';
+     profileBtn.className = 'nav-icon-btn';
+     profileBtn.title = 'حسابي';
+     profileBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>`;
+     navIcons.insertBefore(profileBtn, navIcons.firstChild);
+  }
+}
+
+async function applyHomepageSettings() {
+  try {
+    const res = await fetch(`${window.location.origin}/api/settings`);
+    if (!res.ok) return;
+    const s = await res.json();
+    const lang = document.documentElement.lang || 'ar';
+    
+    // 1. Hero Text
+    if (s.heroTitleAr || s.heroTitle) {
+      const titleEl = document.querySelector('.hero-content h1');
+      if (titleEl) {
+        const t1 = lang === 'ar' ? (s.heroTitleAr || 'حوّل اسمك') : (s.heroTitle || 'Transform Your Name');
+        const h = lang === 'ar' ? (s.heroHighlightAr || 'لقطعة مميزة') : (s.heroHighlight || 'Into A Statement');
+        titleEl.innerHTML = `${t1}<br><span class="text-gold" style="position:relative;">${h} 💎</span>`;
+      }
+    }
+    
+    // 2. Homepage Images
+    const imgData = s.homepageImages || {};
+    const imgConfigs = [
+      { id: 'hp-women1', key: 'women1' }, { id: 'hp-women2', key: 'women2' },
+      { id: 'hp-men1', key: 'men1' }, { id: 'hp-men2', key: 'men2' },
+      { id: 'hp-story', key: 'story' },
+      { id: 'hp-insta1', key: 'insta1' }, { id: 'hp-insta2', key: 'insta2' },
+      { id: 'hp-insta3', key: 'insta3' }, { id: 'hp-insta4', key: 'insta4' },
+      { id: 'hp-insta5', key: 'insta5' }, { id: 'hp-insta6', key: 'insta6' }
+    ];
+
+    imgConfigs.forEach(cfg => {
+      const container = document.getElementById(cfg.id);
+      if (container && imgData[cfg.key]) {
+        container.innerHTML = `<img src="${window.optimizeCloudinaryUrl(imgData[cfg.key], 800)}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" onerror="this.style.display='none'">`;
+        container.style.background = 'none';
+      }
+    });
+  } catch (e) { console.error('Settings error:', e); }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-  // Force Arabic as the only language
+  // Core Inits
   localStorage.setItem('aura_lang', 'ar');
   setLanguage('ar');
-
-  // Hide language toggle button since site is Arabic only
-  const langBtn = document.getElementById('lang-toggle');
-  if (langBtn) langBtn.style.display = 'none';
-
-  // Load dynamic data from API
-  await loadProducts();
-  await loadBlogPosts();
-
-  // Re-init page after data load
-  const page = window.location.pathname.split('/').pop() || 'index.html';
-  if (page === 'shop.html') initShopFilters();
-  if (page === 'product.html') initProductPage();
-  if (page === 'index.html' || page === '') initHomepage();
-  if (page === 'account.html') initAuthPage();
-
-  // Update auth UI
+  initPageLoader();
+  initNavigation();
+  initThemeToggle();
+  initScrollReveal();
+  initCursorGlow();
+  initBackToTop();
+  initAccordion();
+  initChatWidget();
+  initNewsletter();
+  initSearch();
+  initCounters();
+  updateCartBadge();
+  updateWishlistBadge();
   updateAuthUI();
-});
 
+  // Load dynamic data
+  await loadProducts().catch(e => console.error(e));
+  await loadBlogPosts().catch(e => console.error(e));
+  renderAuraFamily();
+  await applyHomepageSettings();
+
+  // Route specific
+  const path = window.location.pathname;
+  const page = path.split('/').pop() || 'index.html';
+  
+  if (page === 'shop.html' || page === 'shop') initShopFilters();
+  if (page === 'product.html' || page === 'product') initProductPage();
+  if (page === 'account.html' || page === 'account') initAuthPage();
+  if (page === 'index.html' || page === 'index' || page === '' || path === '/') initHomepage();
+
+  // Safe Loader Removal
+  setTimeout(() => {
+    document.querySelector('.page-loader')?.classList.add('hidden');
+  }, 500);
+});
