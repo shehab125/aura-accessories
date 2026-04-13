@@ -189,6 +189,8 @@ async function createOrder(orderData, items) {
     payment_method: orderData.payment_method || 'cod',
     status: 'pending',
     total: Number(orderData.total) || 0,
+    coupon_code: orderData.couponCode || orderData.coupon_code || null,
+    coupon_discount: Number(orderData.couponDiscount || orderData.coupon_discount) || 0,
   };
 
   const { data: order, error: orderError } = await supabase
@@ -215,6 +217,21 @@ async function createOrder(orderData, items) {
   if (itemsError) {
     console.error('Supabase OrderItems Insert Error:', itemsError);
     throw itemsError;
+  }
+
+  // Increment coupon usage
+  if (orderRow.coupon_code) {
+    const { data: coupon } = await supabase.from('coupons').select('id').ilike('code', orderRow.coupon_code).maybeSingle();
+    if (coupon) {
+      // Inline useCoupon logic to avoid issues with module.exports order
+      const { data, error } = await supabase.rpc('increment_coupon_usage', { coupon_id: coupon.id }).catch(() => ({}));
+      if (!data && !error) {
+        const { data: current } = await supabase.from('coupons').select('used_count').eq('id', coupon.id).single();
+        if (current) {
+          await supabase.from('coupons').update({ used_count: (current.used_count || 0) + 1 }).eq('id', coupon.id);
+        }
+      }
+    }
   }
 
   return mapOrderFromDb(order);
@@ -364,6 +381,48 @@ async function updateCustomRequest(id, reqData) {
   return data;
 }
 
+// --- Coupons
+async function getCoupons() {
+  const { data, error } = await supabase.from('coupons').select('*').order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+async function getCouponByCode(code) {
+  const { data, error } = await supabase.from('coupons').select('*').ilike('code', code).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+async function createCoupon(couponData) {
+  const row = {
+    code: (couponData.code || '').toUpperCase().trim(),
+    discount_type: couponData.discountType || couponData.discount_type,
+    discount_value: Number(couponData.discountValue || couponData.discount_value),
+    min_order_amount: Number(couponData.minOrderAmount || couponData.min_order_amount) || 0,
+    max_uses: couponData.maxUses || couponData.max_uses || null,
+    expires_at: couponData.expiresAt || couponData.expires_at || null,
+    is_active: true,
+  };
+  const { data, error } = await supabase.from('coupons').insert([row]).select().single();
+  if (error) throw error;
+  return data;
+}
+
+async function deleteCoupon(id) {
+  const { error } = await supabase.from('coupons').delete().eq('id', id);
+  if (error) throw error;
+}
+
+async function useCoupon(id) {
+  const { data, error } = await supabase.rpc('increment_coupon_usage', { coupon_id: id }).catch(() => ({}));
+  // Fallback: manual increment
+  if (!data && !error) {
+    const { data: current } = await supabase.from('coupons').select('used_count').eq('id', id).single();
+    await supabase.from('coupons').update({ used_count: (current?.used_count || 0) + 1 }).eq('id', id);
+  }
+}
+
 module.exports = {
   supabase,
   getProducts,
@@ -392,4 +451,9 @@ module.exports = {
   getCustomRequestsByUser,
   createCustomRequest,
   updateCustomRequest,
+  getCoupons,
+  getCouponByCode,
+  createCoupon,
+  deleteCoupon,
+  useCoupon,
 };

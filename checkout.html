@@ -206,6 +206,71 @@
                                 <span style="color: var(--text-secondary);" data-i18n="shipping">الشحن</span><span id="checkout-shipping">55 ج.م</span>
                             </div>
                         </div>
+                        
+                            <!-- Coupon Input -->
+                            <div id="coupon-section" style="margin-bottom: var(--space-4);">
+                                <div style="display:flex; gap: var(--space-2); align-items:center;">
+                                    <input type="text" id="coupon-input" class="form-input" placeholder="كود الخصم" style="flex:1; height:38px; padding: var(--space-2) var(--space-3); font-size:var(--text-sm); text-transform:uppercase;" dir="ltr">
+                                    <button type="button" id="apply-coupon-btn" class="btn btn-outline btn-sm" style="white-space:nowrap; height:38px;">تطبيق</button>
+                                </div>
+                                <div id="coupon-message" style="margin-top: var(--space-2); font-size: var(--text-xs); display:none;"></div>
+                            </div>
+                            <!-- Coupon discount row -->
+                            <div id="coupon-discount-row" style="display:flex; justify-content:space-between; margin-bottom: var(--space-3); display:none;">
+                                <span style="color: #2ecc71;">🏷️ خصم الكوبون</span>
+                                <span id="checkout-coupon-discount" style="color:#2ecc71; font-weight:700;">-0 ج.م</span>
+                            </div>
+                        <div style="border-top: 1px solid var(--border-color); padding-top: var(--space-4); margin: var(--space-4) 0 var(--space-6);">
+                            <div style="display:flex; justify-content:space-between; font-size: var(--text-xl); font-weight:700;">
+                                <span data-i18n="cartTotal">الإجمالي</span><span style="color: var(--gold);" id="checkout-total">0 ج.م</span>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-lg" style="width:100%;" id="place-order-btn" data-i18n="placeOrder">تأكيد الطلب</button>
+                        <p style="font-size: var(--text-xs); color: var(--text-secondary); text-align:center; margin-top: var(--space-4);">🔒 دفعتك آمنة عند الاستلام</p>
+                        <div id="checkout-ora-pts" style="margin-top: var(--space-6); padding: var(--space-4); background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.2); border-radius: var(--radius-md); text-align:center; display:none;">
+                            <span style="font-size: var(--text-sm); color: var(--gold);">✦</span>
+                            <span style="font-size: var(--text-sm);" id="checkout-ora-text"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="nav-brand" style="margin-bottom: var(--space-4);"><img
+                            src="aura-accessories-logo.svg" alt="AURA" class="nav-logo"></a>
+                    <p data-i18n="footerText">إكسسورات يدوية فاخرة بجودة حقيقية.</p>
+                    <div class="footer-social" id="footer-social-links" style="margin-top: var(--space-4); display:flex; gap:var(--space-4);">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div>
+                    <h4 class="footer-heading" data-i18n="shop">المتجر</h4>
+                    <ul class="footer-links">
+                        <li><a href="shop.html?gender=women" data-i18n="womenCollection">حريمي</a></li>
+                        <li><a href="shop.html?gender=men" data-i18n="menCollection">رجالي</a></li>
+                        <li><a href="shop.html" data-i18n="viewAll">الكل</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-heading" data-i18n="company">الشركة</h4>
+                    <ul class="footer-links">
+                        <li><a href="about.html" data-i18n="about">عنّا</a></li>
+                        <li><a href="blog.html" data-i18n="journal">المدونة</a></li>
+                        <li><a href="contact.html" data-i18n="contact">اتصل بنا</a></li>
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="footer-bottom">
+                <p data-i18n="rightsReserved">© 2026 أورا إكسسوارات. جميع الحقوق محفوظة.</p>
+                <div class="footer-payments"><span>VISA</span><span>MasterCard</span><span>Vodafone
+                        Cash</span><span>Fawry</span></div>
+            </div>
                         <div style="border-top: 1px solid var(--border-color); padding-top: var(--space-4); margin: var(--space-4) 0 var(--space-6);">
                             <div style="display:flex; justify-content:space-between; font-size: var(--text-xl); font-weight:700;">
                                 <span data-i18n="cartTotal">الإجمالي</span><span style="color: var(--gold);" id="checkout-total">0 ج.م</span>
@@ -264,6 +329,10 @@
     <script>
         const SHIPPING_FEE = 55;
         const FREE_SHIPPING_THRESHOLD = 500;
+        
+        // Coupon state
+        let appliedCoupon = null;
+        let couponDiscountAmount = 0;
 
         function renderCheckoutSummary() {
             const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
@@ -287,7 +356,7 @@
 
             const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
             const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-            const total = subtotal + shipping;
+            const total = subtotal + shipping - couponDiscountAmount;
             const points = Math.floor(total / 10);
 
             itemsEl.innerHTML = cart.map(item => `
@@ -310,6 +379,17 @@
                 oraEl.style.display = 'block';
                 oraText.innerHTML = lang === 'ar' ? `هتكتسب <strong style="color: var(--gold);">${points} نقطة أورا</strong> من الطلب ده!` : `You'll earn <strong style="color: var(--gold);">${points} Aura Points</strong> with this order!`;
             }
+            
+            // Show/hide coupon discount row
+            const couponRow = document.getElementById('coupon-discount-row');
+            if (couponRow) {
+                if (couponDiscountAmount > 0) {
+                    couponRow.style.display = 'flex';
+                    document.getElementById('checkout-coupon-discount').textContent = '-' + couponDiscountAmount.toLocaleString() + ' ج.م';
+                } else {
+                    couponRow.style.display = 'none';
+                }
+            }
         }
 
         async function placeOrder() {
@@ -331,7 +411,7 @@
             }
             const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
             const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-            const total = subtotal + shipping;
+            const total = subtotal + shipping - couponDiscountAmount;
             const items = cart.map(i => ({ 
                 id: i.id, 
                 product_id: i.id, 
@@ -357,6 +437,7 @@
                         notes,
                         payment_method: 'cod',
                         total,
+                        coupon_code: appliedCoupon ? appliedCoupon.code : null,
                         items
                     })
                 });
@@ -374,9 +455,66 @@
             }
         }
 
+        async function applyCoupon() {
+            const codeInput = document.getElementById('coupon-input');
+            const msgEl = document.getElementById('coupon-message');
+            const btn = document.getElementById('apply-coupon-btn');
+            if (!codeInput || !btn || !msgEl) return;
+            const code = codeInput.value.trim().toUpperCase();
+            if (!code) return;
+
+            // If same coupon, remove it
+            if (appliedCoupon && appliedCoupon.code === code) {
+                appliedCoupon = null;
+                couponDiscountAmount = 0;
+                codeInput.value = '';
+                msgEl.style.display = 'none';
+                btn.textContent = 'تطبيق';
+                renderCheckoutSummary();
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '...';
+            const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            try {
+                const res = await fetch(window.location.origin + '/api/coupons/validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, orderTotal: subtotal })
+                });
+                const data = await res.json();
+                if (res.ok && data.valid) {
+                    appliedCoupon = data.coupon;
+                    couponDiscountAmount = data.discountAmount;
+                    msgEl.style.cssText = 'display:block; color:#2ecc71;';
+                    msgEl.textContent = '✓ ' + data.message + ' (وفرت ' + data.discountAmount.toLocaleString() + ' ج.م)';
+                    btn.textContent = 'إزالة';
+                    renderCheckoutSummary();
+                } else {
+                    appliedCoupon = null;
+                    couponDiscountAmount = 0;
+                    msgEl.style.cssText = 'display:block; color:#e74c3c;';
+                    msgEl.textContent = '✕ ' + (data.error || 'كود غير صالح');
+                    btn.textContent = 'تطبيق';
+                    renderCheckoutSummary();
+                }
+            } catch (e) {
+                msgEl.style.cssText = 'display:block; color:#e74c3c;';
+                msgEl.textContent = '✕ خطأ في الاتصال';
+                btn.textContent = 'تطبيق';
+            }
+            btn.disabled = false;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             renderCheckoutSummary();
             document.getElementById('place-order-btn').addEventListener('click', placeOrder);
+            const applyBtn = document.getElementById('apply-coupon-btn');
+            if (applyBtn) applyBtn.addEventListener('click', applyCoupon);
+            const couponInput = document.getElementById('coupon-input');
+            if (couponInput) couponInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') applyCoupon(); });
         });
     </script>
 </body>

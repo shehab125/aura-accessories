@@ -224,6 +224,16 @@ app.post('/api/orders', async (req, res) => {
 });
 
 
+app.put('/api/orders/:id', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const updated = await supabaseService.updateOrder(req.params.id, req.body);
+        res.json(updated);
+    } catch (e) {
+        console.error('Update order error:', e);
+        res.status(500).json({ error: 'Failed to update order' });
+    }
+});
+
 app.get('/api/users', authMiddleware, adminMiddleware, async (req, res) => {
     try {
         const users = await supabaseService.getUsers();
@@ -288,6 +298,86 @@ app.post('/api/ai/chat', async (req, res) => {
         res.status(500).json({ error: 'Chat failed.', reply: 'عذراً، حصل مشكلة في الربط مع الذكاء الاصطناعي. جرب تاني كمان شوية.' });
     }
 } );
+// ==========================================
+// Coupon Routes
+// ==========================================
+app.get('/api/coupons', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const coupons = await supabaseService.getCoupons();
+        res.json(coupons);
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to load coupons' });
+    }
+});
+
+app.post('/api/coupons', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const coupon = await supabaseService.createCoupon(req.body);
+        res.json(coupon);
+    } catch (e) {
+        console.error('Create coupon error:', e);
+        res.status(500).json({ error: e.message || 'Failed to create coupon' });
+    }
+});
+
+app.delete('/api/coupons/:id', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        await supabaseService.deleteCoupon(req.params.id);
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to delete coupon' });
+    }
+});
+
+// Public route: validate a coupon code
+app.post('/api/coupons/validate', async (req, res) => {
+    try {
+        const { code, orderTotal } = req.body;
+        if (!code) return res.status(400).json({ error: 'Coupon code is required' });
+
+        const coupon = await supabaseService.getCouponByCode(code);
+        if (!coupon || !coupon.is_active) {
+            return res.status(404).json({ error: 'كود الخصم غير صالح' });
+        }
+
+        // Check expiry
+        if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
+            return res.status(400).json({ error: 'كود الخصم منتهي الصلاحية' });
+        }
+
+        // Check max uses
+        if (coupon.max_uses !== null && coupon.used_count >= coupon.max_uses) {
+            return res.status(400).json({ error: 'تم استنفاذ عدد استخدامات هذا الكود' });
+        }
+
+        // Check minimum order amount
+        const total = Number(orderTotal) || 0;
+        if (coupon.min_order_amount && total < coupon.min_order_amount) {
+            return res.status(400).json({ error: `الحد الأدنى للطلب هو EGP ${coupon.min_order_amount}` });
+        }
+
+        // Calculate discount
+        let discountAmount = 0;
+        if (coupon.discount_type === 'percentage') {
+            discountAmount = Math.round((total * coupon.discount_value) / 100);
+        } else {
+            discountAmount = Math.min(coupon.discount_value, total);
+        }
+
+        res.json({
+            valid: true,
+            coupon,
+            discountAmount,
+            message: coupon.discount_type === 'percentage'
+                ? `تم تطبيق خصم ${coupon.discount_value}%`
+                : `تم تطبيق خصم EGP ${coupon.discount_value}`
+        });
+    } catch (e) {
+        console.error('Coupon validate error:', e);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // ==========================================
 // Custom Requests Routes
 // ==========================================
