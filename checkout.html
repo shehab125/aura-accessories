@@ -329,9 +329,7 @@
         const SHIPPING_FEE = 55;
         const FREE_SHIPPING_THRESHOLD = 500;
         
-        // Coupon state
-        let appliedCoupon = null;
-        let couponDiscountAmount = 0;
+        // Use coupon state from main.js (already loaded from localStorage)
 
         function renderCheckoutSummary() {
             const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
@@ -443,6 +441,7 @@
                 const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(data.error || (document.documentElement.lang === 'ar' ? 'فشل إنشاء الطلب' : 'Failed to create order'));
                 localStorage.removeItem('aura_cart');
+                localStorage.removeItem('aura_applied_coupon');
                 if (typeof updateCartBadge === 'function') updateCartBadge();
                 const msg = document.documentElement.lang === 'ar' ? 'تم تأكيد الطلب بنجاح! رقم الطلب: ' + (data.order_number != null ? data.order_number : data.id) : 'Order placed! Order #' + (data.order_number != null ? data.order_number : data.id);
                 if (typeof showToast === 'function') showToast(msg, 'success');
@@ -466,6 +465,7 @@
             if (appliedCoupon && appliedCoupon.code === code) {
                 appliedCoupon = null;
                 couponDiscountAmount = 0;
+                localStorage.removeItem('aura_applied_coupon');
                 codeInput.value = '';
                 msgEl.style.display = 'none';
                 btn.textContent = 'تطبيق';
@@ -487,6 +487,7 @@
                 if (res.ok && data.valid) {
                     appliedCoupon = data.coupon;
                     couponDiscountAmount = data.discountAmount;
+                    localStorage.setItem('aura_applied_coupon', JSON.stringify({ code, coupon: data.coupon, discountAmount: data.discountAmount }));
                     msgEl.style.cssText = 'display:block; color:#2ecc71;';
                     msgEl.textContent = '✓ ' + data.message + ' (وفرت ' + data.discountAmount.toLocaleString() + ' ج.م)';
                     btn.textContent = 'إزالة';
@@ -494,6 +495,7 @@
                 } else {
                     appliedCoupon = null;
                     couponDiscountAmount = 0;
+                    localStorage.removeItem('aura_applied_coupon');
                     msgEl.style.cssText = 'display:block; color:#e74c3c;';
                     msgEl.textContent = '✕ ' + (data.error || 'كود غير صالح');
                     btn.textContent = 'تطبيق';
@@ -513,7 +515,19 @@
             const applyBtn = document.getElementById('apply-coupon-btn');
             if (applyBtn) applyBtn.addEventListener('click', applyCoupon);
             const couponInput = document.getElementById('coupon-input');
-            if (couponInput) couponInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') applyCoupon(); });
+            if (couponInput) {
+                if (appliedCoupon) {
+                    couponInput.value = appliedCoupon.code;
+                    const msgEl = document.getElementById('coupon-message');
+                    const btn = document.getElementById('apply-coupon-btn');
+                    if (msgEl) {
+                        msgEl.style.cssText = 'display:block; color:#2ecc71;';
+                        msgEl.textContent = '✓ كود مفعل (وفرت ' + couponDiscountAmount.toLocaleString() + ' ج.م)';
+                    }
+                    if (btn) btn.textContent = 'إزالة';
+                }
+                couponInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') applyCoupon(); });
+            }
         });
     </script>
 </body>

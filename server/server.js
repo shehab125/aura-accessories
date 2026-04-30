@@ -7,6 +7,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
+const notificationService = require('./notificationService');
 const supabaseService = require('./supabaseService');
 const geminiService = require('./geminiService');
 
@@ -196,6 +197,7 @@ app.get('/api/orders', authMiddleware, async (req, res) => {
 });
 
 app.post('/api/orders', async (req, res) => {
+    console.log('✦ Received Order Request:', req.body.customerName || req.body.customer_name);
     try {
         const { order, items, ...flatOrder } = req.body;
         const finalOrder = order || flatOrder;
@@ -207,19 +209,31 @@ app.post('/api/orders', async (req, res) => {
                 const decoded = jwt.verify(token, JWT_SECRET);
                 finalOrder.userId = decoded.id;
             } catch (e) {
-                // Invalid token, treat as guest but maybe log it
+                console.log('✦ Guest order (invalid/expired token)');
             }
         }
 
         if (!finalOrder.customerName && !finalOrder.customer_name) {
+             console.log('✦ Order rejected: Missing customer details');
              return res.status(400).json({ error: 'Missing customer details' });
         }
 
         const newOrder = await supabaseService.createOrder(finalOrder, items || finalOrder.items);
+        console.log('✦ Order created successfully in Supabase!');
+        
+        // Send Telegram Notification
+        try {
+            console.log('✦ Attempting Telegram notification...');
+            await notificationService.sendOrderNotification(newOrder);
+            console.log('✦ Telegram notification sent successfully!');
+        } catch (err) {
+            console.error('✦ Telegram notify error:', err.message);
+        }
+
         res.json(newOrder);
     } catch (e) {
-        console.error('Order creation error:', e);
-        res.status(500).json({ error: 'Failed to create order' });
+        console.error('✦ Order creation error:', e.message);
+        res.status(500).json({ error: 'Failed to create order: ' + e.message });
     }
 });
 
@@ -400,6 +414,7 @@ app.get('/api/custom-requests/my', authMiddleware, async (req, res) => {
 });
 
 app.post('/api/custom-requests', async (req, res) => {
+    console.log('✦ Received Custom Request:', req.body.customerName);
     try {
         const reqData = req.body;
         const token = req.headers.authorization?.split(' ')[1];
@@ -407,11 +422,25 @@ app.post('/api/custom-requests', async (req, res) => {
             try {
                 const decoded = jwt.verify(token, JWT_SECRET);
                 reqData.userId = decoded.id;
-            } catch (e) {}
+            } catch (e) {
+                console.log('✦ Custom request guest mode (invalid token)');
+            }
         }
         const created = await supabaseService.createCustomRequest(reqData);
+        console.log('✦ Custom Request saved in Supabase!');
+        
+        // Send Telegram Notification
+        try {
+            console.log('✦ Attempting Telegram notification for custom design...');
+            await notificationService.sendCustomRequestNotification(created);
+            console.log('✦ Telegram notification sent successfully!');
+        } catch (err) {
+            console.error('✦ Telegram notify error:', err.message);
+        }
+
         res.json(created);
     } catch (e) {
+        console.error('✦ Custom Request error:', e.message);
         res.status(500).json({ error: 'Failed to create custom request' });
     }
 });
@@ -434,7 +463,9 @@ app.get('/api/admin/stats', authMiddleware, adminMiddleware, async (req, res) =>
         const orders = await supabaseService.getOrders(null, true);
         const products = await supabaseService.getProducts(false);
         const users = await supabaseService.getUsers();
-        const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+        const totalRevenue = orders
+            .filter(o => o.status === 'delivered')
+            .reduce((sum, o) => sum + (o.total || 0), 0);
         res.json({
             totalProducts: products.length,
             totalOrders: orders.length,

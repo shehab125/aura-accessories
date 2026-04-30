@@ -68,6 +68,42 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <style>
+    /* Fix header visibility and spacing after Hero removal */
+    .navbar {
+      background: var(--bg-glass) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      border-bottom: 1px solid var(--border-color);
+      padding: var(--space-3) 0 !important;
+    }
+    .nav-logo {
+      height: 70px !important; /* Elegant compact logo */
+      transition: height var(--transition-base);
+    }
+    @media (max-width: 600px) {
+      .nav-logo { height: 50px !important; }
+    }
+    /* Ensure content starts below fixed navbar */
+    body {
+      padding-top: 110px; 
+    }
+    @media (max-width: 1024px) {
+      body { padding-top: 95px; }
+    }
+    @media (max-width: 600px) {
+      body { padding-top: 85px; }
+    }
+    
+    /* Subtle glow for the top marquee to make it pop */
+    .marquee {
+      border-top: none !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 5;
+    }
+  </style>
 </head>
 
 <body>
@@ -247,100 +283,6 @@
       </div>
     </div>
   </div>
-
-  <!-- ==================== HERO SECTION ==================== -->
-  <section class="hero" id="hero">
-    <div class="hero-bg">
-      <div
-        style="width:100%; height:100%; background: var(--hero-bg); position:relative; overflow:hidden;">
-        <!-- Animated gold particles -->
-        <div
-          style="position:absolute; top:10%; left:10%; width:3px; height:3px; background: var(--gold); border-radius:50%; animation: float 6s ease-in-out infinite; box-shadow: 0 0 20px var(--gold);">
-        </div>
-        <div
-          style="position:absolute; top:25%; right:15%; width:4px; height:4px; background: var(--gold); border-radius:50%; animation: float 8s ease-in-out infinite 1s; box-shadow: 0 0 25px var(--gold);">
-        </div>
-        <div
-          style="position:absolute; top:60%; left:40%; width:2px; height:2px; background: var(--gold-light); border-radius:50%; animation: float 5s ease-in-out infinite 2s; box-shadow: 0 0 15px var(--gold-light);">
-        </div>
-        <div
-          style="position:absolute; top:30%; right:35%; width:3px; height:3px; background: var(--gold); border-radius:50%; animation: float 7s ease-in-out infinite 0.5s; box-shadow: 0 0 20px var(--gold);">
-        </div>
-        <div
-          style="position:absolute; bottom:30%; left:20%; width:2px; height:2px; background: var(--rose-gold); border-radius:50%; animation: float 9s ease-in-out infinite 3s; box-shadow: 0 0 18px var(--rose-gold);">
-        </div>
-        <div
-          style="position:absolute; top:15%; left:55%; width:2px; height:2px; background: var(--gold); border-radius:50%; animation: float 10s ease-in-out infinite 4s; box-shadow: 0 0 12px var(--gold);">
-        </div>
-        <div
-          style="position:absolute; top:70%; right:10%; width:3px; height:3px; background: var(--gold-light); border-radius:50%; animation: float 6s ease-in-out infinite 1.5s; box-shadow: 0 0 22px var(--gold-light);">
-        </div>
-        <div
-          style="position:absolute; top:50%; left:8%; width:4px; height:4px; background: var(--rose-gold); border-radius:50%; animation: float 7s ease-in-out infinite 2.5s; box-shadow: 0 0 20px var(--rose-gold);">
-        </div>
-        <div
-          style="position:absolute; top:80%; left:60%; width:2px; height:2px; background: var(--gold); border-radius:50%; animation: float 8s ease-in-out infinite 3.5s; box-shadow: 0 0 15px var(--gold);">
-        </div>
-        <div
-          style="position:absolute; top:40%; left:75%; width:3px; height:3px; background: var(--gold-dark); border-radius:50%; animation: float 5s ease-in-out infinite 0.8s; box-shadow: 0 0 18px var(--gold-dark);">
-        </div>
-        <!-- Animated scanning light -->
-        <div
-          style="position:absolute; top:0; left:-100%; width:200px; height:100%; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.03), transparent); animation: scanLight 8s linear infinite;">
-        </div>
-        <!-- Aura circles -->
-        <div
-          style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:600px; height:600px; border-radius:50%; border: 1px solid var(--hero-circle-border); box-shadow: 0 0 100px rgba(212,175,55,0.03); animation: pulse 4s ease-in-out infinite;">
-        </div>
-        <div
-          style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:450px; height:450px; border-radius:50%; border: 1px solid var(--hero-circle-border); animation: pulse 4s ease-in-out infinite 0.8s;">
-        </div>
-        <div
-          style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:300px; height:300px; border-radius:50%; border: 1px solid var(--hero-circle-border); animation: pulse 4s ease-in-out infinite 1.6s;">
-        </div>
-        <!-- Video-like shimmer overlay -->
-        <div
-          style="position:absolute; inset:0; background: radial-gradient(ellipse at 30% 20%, var(--hero-shimmer) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(183,110,121,0.04) 0%, transparent 50%); animation: shimmerBg 12s ease-in-out infinite alternate;">
-        </div>
-      </div>
-    </div>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <!-- Animated Aura Logo Mark -->
-      <div style="margin-bottom: var(--space-4); animation: fadeIn 1s ease, goldGlow 3s ease-in-out infinite;">
-        <div
-          style="width:80px; height:80px; margin:0 auto; border:2px solid var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow: 0 0 30px rgba(212,175,55,0.3), inset 0 0 20px rgba(212,175,55,0.1);">
-          <span style="font-size:2.5rem; color:var(--gold); filter: drop-shadow(0 0 8px rgba(212,175,55,0.5));">✦</span>
-        </div>
-      </div>
-      <span class="section-label" style="animation: fadeIn 1.2s ease;">أورا للإكسسوارات — مصر</span>
-      <h1 style="animation: fadeIn 1.5s ease; font-size: clamp(2.2rem, 6vw, 4.5rem); line-height:1.15;">
-        <span data-i18n="heroTitle1">حوّل اسمك</span><br><span class="text-gold" style="position:relative;" data-i18n="heroTitle2">لقطعة مميزة 💎<span
-            style="position:absolute; bottom:-4px; left:0; width:100%; height:2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); animation: shimmer 2s infinite;"></span></span>
-      </h1>
-      <p style="animation: fadeIn 1.8s ease; max-width:600px; margin:0 auto; font-size: var(--text-lg); color: var(--text-secondary); line-height: 1.8;" data-i18n="heroSubtitle2">سلاسل، إساور، وخواتم باسمك أو اسم أغلى حد عندك<br><span style="color: var(--text-primary);" data-i18n="heroBenefit">خامات فاخرة • طلاء ذهب أو فضة • ضمان 6 شهور</span></p>
-      <div class="hero-actions" style="animation: fadeIn 2.1s ease;">
-        <a href="shop.html" class="btn btn-primary btn-lg" style="gap:var(--space-2);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
-          </svg>
-          <span data-i18n="orderNow">اطلب دلوقتي</span>
-        </a>
-        <a href="design.html" class="btn btn-outline btn-lg" data-i18n="designYourOwn">✦ صمّم قطعتك</a>
-      </div>
-      <!-- Hero Trust Badges -->
-      <div style="animation: fadeIn 2.4s ease; display:flex; flex-wrap:wrap; gap:var(--space-4); justify-content:center; margin-top:var(--space-6);">
-        <span style="display:flex; align-items:center; gap:var(--space-2); font-size:var(--text-sm); color:var(--text-secondary);"><span style="color:var(--gold);">✔</span> <span data-i18n="deliveryTime">توصيل من 4 لـ 7 أيام</span></span>
-        <span style="display:flex; align-items:center; gap:var(--space-2); font-size:var(--text-sm); color:var(--text-secondary);"><span style="color:var(--gold);">✔</span> <span data-i18n="material925">فضة 925 أو طلاء ذهبي 21</span></span>
-        <span style="display:flex; align-items:center; gap:var(--space-2); font-size:var(--text-sm); color:var(--text-secondary);"><span style="color:var(--gold);">✔</span> <span data-i18n="deliveryFee">التوصيل بـ 55 جنيه</span></span>
-        <span style="display:flex; align-items:center; gap:var(--space-2); font-size:var(--text-sm); color:var(--text-secondary);"><span style="color:var(--gold);">✔</span> <span data-i18n="freeGift">🎁 هدية علبة فاخرة مجاناً</span></span>
-      </div>
-    </div>
-    <div class="hero-scroll">
-      <span data-i18n="scroll">انزل للأسفل</span>
-      <div class="hero-scroll-line"></div>
-    </div>
-  </section>
 
   <!-- ==================== MARQUEE ==================== -->
   <div class="marquee" style="background: var(--bg-secondary);">

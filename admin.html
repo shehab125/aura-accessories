@@ -785,16 +785,27 @@
         }
 
         // Dashboard
-        async function loadDashboard() {
+        let lastOrderCount = null;
+
+        async function loadDashboard(isSilent = false) {
             try {
                 const res = await fetch(`${API}/api/admin/stats`, { headers: getHeaders() });
 
                 const s = await res.json();
+                
+                // Notification logic
+                if (lastOrderCount !== null && s.totalOrders > lastOrderCount) {
+                    showNewOrderNotification(s.totalOrders - lastOrderCount);
+                }
+                lastOrderCount = s.totalOrders;
+
+                if (isSilent) return;
+
                 document.getElementById('stats-grid').innerHTML = `
                 <div class="stat-box"><div class="number">${s.totalProducts}</div><div class="label">المنتجات</div></div>
                 <div class="stat-box"><div class="number">${s.totalOrders}</div><div class="label">الطلبات</div></div>
                 <div class="stat-box"><div class="number">${s.totalUsers}</div><div class="label">المستخدمين</div></div>
-                <div class="stat-box"><div class="number">EGP ${(s.totalRevenue || 0).toLocaleString()}</div><div class="label">الإيرادات</div></div>`;
+                <div class="stat-box"><div class="number">EGP ${(s.totalRevenue || 0).toLocaleString()}</div><div class="label">الإيرادات المكتملة</div></div>`;
                 document.getElementById('recent-orders-table').innerHTML = s.recentOrders.length ? `<table class="admin-table"><thead><tr><th>رقم الطلب</th><th>المبلغ</th><th>الحالة</th><th>التاريخ</th></tr></thead><tbody>${s.recentOrders.map(o => `<tr><td>${o.orderNumber || o.id}</td><td>EGP ${(o.total || 0).toLocaleString()}</td><td>${o.status}</td><td>${new Date(o.createdAt).toLocaleDateString('ar-EG')}</td></tr>`).join('')}</tbody></table>` : '<p style="color:var(--text-secondary);text-align:center;padding:var(--space-6);">مافيش طلبات لسه</p>';
             } catch (e) { console.error(e); }
         }
@@ -1563,7 +1574,49 @@
             }
         });
 
+        // Notifications
+        function requestNotificationPermission() {
+            if ("Notification" in window && Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+        }
+
+        function showNewOrderNotification(count) {
+            // Browser notification
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("طلب جديد! 🔔", {
+                    body: `وصلك ${count} طلب جديد في Aura Accessories.`,
+                    icon: 'favicon.ico'
+                });
+            }
+            // Sound beep
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            } catch (err) {}
+            
+            // Visual feedback if on dashboard
+            if (document.getElementById('stats-grid')) {
+                loadDashboard();
+                loadOrders();
+            }
+        }
+
+        // Auto-polling for new orders
+        setInterval(() => {
+            loadDashboard(true);
+        }, 30000); // Check every 30 seconds
+
         // Init
+        requestNotificationPermission();
     </script>
 </body>
 

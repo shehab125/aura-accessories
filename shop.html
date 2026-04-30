@@ -190,6 +190,27 @@
                         <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-6); color: var(--gold);">✦
                             <span data-i18n="filters">الفلاتر</span></h3>
 
+                        <!-- Gender Filter -->
+                        <div style="margin-bottom: var(--space-6);">
+                            <h4 style="font-size: var(--text-sm); font-weight:600; margin-bottom: var(--space-3); text-transform:uppercase; letter-spacing:1px;"
+                                data-i18n="genderLabel">
+                                الفئة</h4>
+                            <div style="display:flex; flex-direction:column; gap: var(--space-2);">
+                                <button class="category-tab active" data-filter-gender="all"
+                                    style="font-size: var(--text-xs); text-align:left; padding: var(--space-2) var(--space-4);"
+                                    data-i18n="viewAll">الكل</button>
+                                <button class="category-tab" data-filter-gender="women"
+                                    style="font-size: var(--text-xs); text-align:left; padding: var(--space-2) var(--space-4);"
+                                    data-i18n="womenCollection">حريمي</button>
+                                <button class="category-tab" data-filter-gender="men"
+                                    style="font-size: var(--text-xs); text-align:left; padding: var(--space-2) var(--space-4);"
+                                    data-i18n="menCollection">رجالي</button>
+                                <button class="category-tab" data-filter-gender="unisex"
+                                    style="font-size: var(--text-xs); text-align:left; padding: var(--space-2) var(--space-4);"
+                                    data-i18n="unisexCollection">للجنسين</button>
+                            </div>
+                        </div>
+
                         <!-- Category / Product Type -->
                         <div style="margin-bottom: var(--space-6);">
                             <h4
@@ -255,7 +276,7 @@
                         </div>
 
                         <!-- Reset Button -->
-                        <button onclick="document.querySelectorAll('[data-filter-category]').forEach(b=>{b.classList.remove('active')}); document.querySelector('[data-filter-category=\'all\']').classList.add('active'); document.querySelectorAll('[data-filter-material]').forEach(cb=>cb.checked=false); document.getElementById('price-min').value=''; document.getElementById('price-max').value=''; window.__shopApplyFilters && window.__shopApplyFilters();"
+                        <button onclick="document.querySelectorAll('[data-filter-category], [data-filter-gender]').forEach(b=>{b.classList.remove('active')}); document.querySelector('[data-filter-category=\'all\']').classList.add('active'); document.querySelector('[data-filter-gender=\'all\']').classList.add('active'); document.querySelectorAll('[data-filter-material]').forEach(cb=>cb.checked=false); document.getElementById('price-min').value=''; document.getElementById('price-max').value=''; window.__shopApplyFilters && window.__shopApplyFilters();"
                             class="btn btn-outline" style="width:100%; font-size: var(--text-xs); padding: var(--space-2);" data-i18n="resetFilters">
                             إعادة ضبط الفلاتر
                         </button>

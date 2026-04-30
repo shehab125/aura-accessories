@@ -88,6 +88,20 @@ function getLabel(key) {
 // ==========================================
 let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
 let wishlist = JSON.parse(localStorage.getItem('aura_wishlist')) || [];
+let appliedCoupon = null;
+let couponDiscountAmount = 0;
+
+// Initialize coupon from localStorage
+const savedCoupon = localStorage.getItem('aura_applied_coupon');
+if (savedCoupon) {
+  try {
+    const data = JSON.parse(savedCoupon);
+    appliedCoupon = data.coupon;
+    couponDiscountAmount = data.discountAmount;
+  } catch (e) {
+    localStorage.removeItem('aura_applied_coupon');
+  }
+}
 
 function saveCart() {
   localStorage.setItem('aura_cart', JSON.stringify(cart));
@@ -1296,8 +1310,82 @@ function renderCartPage() {
   }).join('');
 
   const total = getCartTotal();
+  const shipping = 55;
+  const discountRow = document.getElementById('coupon-discount-row');
+  const discountEl = document.getElementById('cart-discount');
+
   if (subtotalEl) subtotalEl.textContent = `EGP ${total.toLocaleString()}`;
-  if (totalEl) totalEl.textContent = `EGP ${(total + 55).toLocaleString()}`; // +55 shipping
+
+  if (couponDiscountAmount > 0) {
+    if (discountRow) discountRow.style.display = 'flex';
+    if (discountEl) discountEl.textContent = `-EGP ${couponDiscountAmount.toLocaleString()}`;
+  } else {
+    if (discountRow) discountRow.style.display = 'none';
+  }
+
+  if (totalEl) totalEl.textContent = `EGP ${(total + shipping - couponDiscountAmount).toLocaleString()}`;
+}
+
+async function applyCouponInCart() {
+  const codeInput = document.getElementById('coupon-input');
+  const msgEl = document.getElementById('coupon-message');
+  const btn = document.getElementById('apply-coupon-btn');
+  if (!codeInput || !btn || !msgEl) return;
+  
+  const code = codeInput.value.trim().toUpperCase();
+  if (!code) return;
+
+  // If same coupon is already applied, remove it
+  if (appliedCoupon && appliedCoupon.code === code) {
+    appliedCoupon = null;
+    couponDiscountAmount = 0;
+    localStorage.removeItem('aura_applied_coupon');
+    codeInput.value = '';
+    msgEl.style.display = 'none';
+    btn.textContent = (document.documentElement.lang === 'ar' ? 'تطبيق' : 'Apply');
+    renderCartPage();
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '...';
+  
+  const subtotal = getCartTotal();
+  try {
+    const apiBase = window.location.origin;
+    const res = await fetch(`${apiBase}/api/coupons/validate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, orderTotal: subtotal })
+    });
+    
+    const data = await res.json();
+    if (res.ok && data.valid) {
+      appliedCoupon = data.coupon;
+      couponDiscountAmount = data.discountAmount;
+      localStorage.setItem('aura_applied_coupon', JSON.stringify({ code, coupon: data.coupon, discountAmount: data.discountAmount }));
+      msgEl.style.cssText = 'display:block; color:var(--success);';
+      msgEl.textContent = (document.documentElement.lang === 'ar' ? '✓ ' : '✓ ') + data.message;
+      btn.textContent = (document.documentElement.lang === 'ar' ? 'إزالة' : 'Remove');
+      renderCartPage();
+    } else {
+      appliedCoupon = null;
+      couponDiscountAmount = 0;
+      msgEl.style.cssText = 'display:block; color:var(--error);';
+      msgEl.textContent = '✕ ' + (data.error || (document.documentElement.lang === 'ar' ? 'كود غير صالح' : 'Invalid code'));
+      btn.textContent = (document.documentElement.lang === 'ar' ? 'تطبيق' : 'Apply');
+      renderCartPage();
+    }
+  } catch (err) {
+    appliedCoupon = null;
+    couponDiscountAmount = 0;
+    localStorage.removeItem('aura_applied_coupon');
+    console.error('Coupon error:', err);
+    msgEl.style.cssText = 'display:block; color:var(--error);';
+    msgEl.textContent = (document.documentElement.lang === 'ar' ? '✕ خطأ في الاتصال' : '✕ Connection error');
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 // ==========================================

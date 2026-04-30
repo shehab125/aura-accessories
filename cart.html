@@ -186,16 +186,22 @@
                             <span style="color: var(--text-secondary);">تغليف الهدايا</span>
                             <span style="color: var(--success);">مجاني ✓</span>
                         </div>
+                        <div id="coupon-discount-row"
+                            style="display:none; justify-content:space-between; margin-bottom: var(--space-3); font-size: var(--text-sm);">
+                            <span style="color: var(--success);">خصم الكوبون</span>
+                            <span id="cart-discount" style="color: var(--success); font-weight:700;">-0 ج.م</span>
+                        </div>
                     </div>
 
                     <!-- Coupon -->
                     <div style="margin-bottom: var(--space-6);">
                         <div style="display:flex; gap: var(--space-2);">
-                            <input type="text" class="form-input" placeholder="كود الخصم"
-                                style="font-size: var(--text-sm);">
-                            <button class="btn btn-outline btn-sm"
-                                onclick="showToast('تم تطبيق الكود!', 'success')">تطبيق</button>
+                            <input type="text" id="coupon-input" class="form-input" placeholder="كود الخصم"
+                                style="font-size: var(--text-sm); text-transform:uppercase;" dir="ltr">
+                            <button id="apply-coupon-btn" class="btn btn-outline btn-sm"
+                                onclick="applyCouponInCart()">تطبيق</button>
                         </div>
+                        <div id="coupon-message" style="margin-top: var(--space-2); font-size: var(--text-xs); display:none;"></div>
                     </div>
 
                     <!-- Gift Wrapping -->

@@ -20,147 +20,148 @@
     <link rel="stylesheet" href="css/animations.css">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <style>
-        .design-studio {
+        .page-header {
+            padding-top: var(--space-24);
+            padding-bottom: var(--space-12);
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            text-align: center;
+        }
+
+        .process-steps {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-10);
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-8);
+            margin-bottom: var(--space-16);
+            position: relative;
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-4);
+            font-size: 1.5rem;
+            color: var(--gold);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: all var(--transition-base);
+        }
+
+        .process-step:hover .step-icon {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .process-steps::before {
+            content: '';
+            position: absolute;
+            top: 32px;
+            left: 15%;
+            right: 15%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            z-index: 1;
+        }
+
+        .design-studio-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: var(--space-12);
             align-items: start;
         }
 
-        .design-preview {
-            aspect-ratio: 1;
-            background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
-            border-radius: var(--radius-xl);
+        .gallery-card {
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .design-preview .aura-ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        .builder-section {
+            border-radius: var(--radius-xl);
+            padding: var(--space-4);
             margin-bottom: var(--space-6);
         }
 
-        .builder-label {
-            font-size: var(--text-sm);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--gold);
-            margin-bottom: var(--space-3);
-            display: block;
-        }
-
-        .option-grid {
+        .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: var(--space-3);
         }
 
-        .option-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
+        .gallery-item {
+            aspect-ratio: 1;
             border-radius: var(--radius-md);
-            padding: var(--space-4);
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            font-size: var(--text-sm);
-        }
-
-        .option-card:hover,
-        .option-card.active {
-            border-color: var(--gold);
-            background: rgba(212, 175, 55, 0.08);
-            color: var(--gold);
-        }
-
-        .material-swatch {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            margin: 0 auto var(--space-2);
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .material-swatch:hover,
-        .material-swatch.active {
-            border-color: var(--gold);
-            transform: scale(1.15);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-        }
-
-        .ai-prompt {
+            overflow: hidden;
             position: relative;
+            cursor: pointer;
         }
 
-        .ai-prompt textarea {
+        .gallery-item img {
             width: 100%;
-            min-height: 120px;
-            padding: var(--space-4);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            background: var(--bg-card);
-            color: var(--text-primary);
-            resize: vertical;
-            line-height: 1.6;
-            font-size: var(--text-sm);
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
         }
 
-        .ai-prompt textarea:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        .gallery-item:hover img {
+            transform: scale(1.1);
         }
 
-        .feature-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-2);
-            padding: var(--space-2) var(--space-4);
-            background: rgba(212, 175, 55, 0.08);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            border-radius: var(--radius-2xl);
-            font-size: var(--text-xs);
-            color: var(--gold);
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            display: flex;
+            align-items: flex-end;
+            padding: var(--space-3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .try-on-area {
-            aspect-ratio: 3/4;
-            background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
-            border-radius: var(--radius-xl);
-            border: 2px dashed var(--border-color);
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .feature-list {
+            margin-top: var(--space-8);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
             gap: var(--space-4);
-            cursor: pointer;
-            transition: all var(--transition-base);
         }
 
-        .try-on-area:hover {
-            border-color: var(--gold);
-            background: rgba(212, 175, 55, 0.03);
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
         }
 
-        @media (max-width: 768px) {
-            .design-studio {
+        .feature-item svg {
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 992px) {
+            .design-studio-grid {
                 grid-template-columns: 1fr;
             }
+        }
 
-            .option-grid {
-                grid-template-columns: repeat(2, 1fr);
+        @media (max-width: 600px) {
+            .process-steps {
+                grid-template-columns: 1fr;
+                gap: var(--space-6);
+            }
+            .process-steps::before {
+                display: none;
             }
         }
     </style>
@@ -308,62 +309,141 @@
     </div>
 
     <!-- Hero -->
-    <div class="page-header" style="padding-bottom: var(--space-10);">
+    <div class="page-header">
         <div class="container">
-            <div style="display:flex; gap: var(--space-3); justify-content:center; margin-bottom: var(--space-4);">
-                <span class="feature-pill">✨ خدمة مخصصة</span>
-                <span class="feature-pill">🎨 تصميم مخصص</span>
-                <span class="feature-pill">💎 صناعة يدوية</span>
-            </div>
-            <h1 style="font-size: var(--text-5xl); margin-bottom: var(--space-4);">صمم قطعتك من <span
-                    class="text-gold">أورا</span></h1>
-            <p style="color: var(--text-secondary); max-width:600px; margin: 0 auto;">نفذ طلبك الخاص عن طريق رفع صورة الإكسسوار الذي يعجبك، وسنقوم بمراجعة طلبك وتوفير أفضل سعر لك وضمان جودة أورا.</p>
+            <span class="feature-pill" style="margin-bottom: var(--space-4);">✦ خدمة التصميم المخصص Premium</span>
+            <h1 style="font-size: var(--text-6xl); margin-bottom: var(--space-4);">صمّم <span class="text-gold">قطعتك</span> الفريدة</h1>
+            <p style="color: var(--text-secondary); max-width:700px; margin: 0 auto; font-size: var(--text-lg);">حوّل خيالك إلى حقيقة. ارفع صورة أي تصميم عجبك، وسيقوم حرفيو أورا بتنفيذه لك بأعلى دقة وباستخدام أفخر الخامات.</p>
         </div>
     </div>
 
     <!-- Design Studio -->
     <section class="section" style="padding-top: var(--space-8);">
         <div class="container">
+            
+            <!-- Steps -->
+            <div class="process-steps reveal">
+                <div class="process-step">
+                    <div class="step-icon">📸</div>
+                    <h4 data-i18n="step1Title">ارفع الصورة</h4>
+                    <p style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;" data-i18n="step1Desc">لأي إكسسوار عجبك في أي مكان</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon">💬</div>
+                    <h4 data-i18n="step2Title">طلب تسعير</h4>
+                    <p style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;" data-i18n="step2Desc">هنراجع طلبك ونرد عليك بالسعر</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-icon">🎁</div>
+                    <h4 data-i18n="step3Title">استلم قطعتك</h4>
+                    <p style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;" data-i18n="step3Desc">بأعلى جودة ومع علبة هدية فاخرة</p>
+                </div>
+            </div>
 
-
-            <div id="custom-request-panel" style="max-width:800px; margin:0 auto;">
-                <div class="glass-card reveal" style="padding: var(--space-8);">
-                    <div style="text-align:center; margin-bottom: var(--space-8);">
-                        <div style="width:80px; height:80px; border-radius:50%; background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(183,110,121,0.1)); display:flex; align-items:center; justify-content:center; margin: 0 auto var(--space-4); font-size:2.5rem;">
-                            📸
+            <div class="design-studio-grid">
+                
+                <!-- Left: Info & Gallery -->
+                <div class="reveal-left">
+                    <div class="gallery-card">
+                        <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-4); color: var(--gold);" data-i18n="designExamples">✦ نماذج من أعمالنا الخاصة</h3>
+                        <div class="gallery-grid">
+                            <div class="gallery-item">
+                                <img src="images/custom_jewelry_example_1_1777510025172.png" alt="Custom Gold Necklace">
+                                <div class="gallery-overlay">
+                                    <span style="font-size: 10px; font-weight: 700;">سلسلة اسم مخصصة</span>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="images/custom_jewelry_example_2_1777510095027.png" alt="Custom Silver Bracelet">
+                                <div class="gallery-overlay">
+                                    <span style="font-size: 10px; font-weight: 700;">سوار فضة إيطالي</span>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=400" alt="Jewelry Crafting">
+                                <div class="gallery-overlay">
+                                    <span style="font-size: 10px; font-weight: 700;">صناعة يدوية دقيقة</span>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?auto=format&fit=crop&q=80&w=400" alt="Ring Design">
+                                <div class="gallery-overlay">
+                                    <span style="font-size: 10px; font-weight: 700;">خواتم مخصصة</span>
+                                </div>
+                            </div>
                         </div>
-                        <h3 style="font-size: var(--text-2xl); margin-bottom: var(--space-2);" data-i18n="customRequest">طلب تصميم خاص</h3>
-                        <p style="color: var(--text-secondary);" data-i18n="customRequestDesc">عجبك تصميم معين؟ ارفع صورته واكتب تفاصيله وسنقوم بتنفيذه لك خصيصاً.</p>
                     </div>
 
-                    <form id="custom-request-form">
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4);">
-                            <div>
-                                <label style="display:block; font-size: var(--text-sm); margin-bottom: var(--space-2); color: var(--text-secondary);" data-i18n="fullName">الاسم بالكامل</label>
-                                <input type="text" id="cr-name" class="form-input" required placeholder="الاسم" style="width: 100%;">
+                    <div class="glass-card">
+                        <h4 style="color: var(--gold); margin-bottom: var(--space-4);" data-i18n="whyChooseAuraDesign">لماذا تختار خدمة التصميم في أورا؟</h4>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span data-i18n="originalMaterials">خامات أصلية (طلاء فضة 925 أو ذهب عيار 21)</span>
                             </div>
-                            <div>
-                                <label style="display:block; font-size: var(--text-sm); margin-bottom: var(--space-2); color: var(--text-secondary);" data-i18n="phoneNumber">رقم الهاتف للتواصل</label>
-                                <input type="tel" id="cr-contact" class="form-input" required placeholder="01xxxxxxxxx" style="width: 100%;">
+                            <div class="feature-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span data-i18n="designGuarantee">ضمان لمدة 6 شهور على تغير اللون</span>
+                            </div>
+                            <div class="feature-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span data-i18n="freeGiftBox">علبة هدية فاخرة وشنطة أورا مجاناً</span>
+                            </div>
+                            <div class="feature-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span data-i18n="designReview">مراجعة التصميم معك قبل البدء في التنفيذ</span>
                             </div>
                         </div>
-
-                        <div style="margin-bottom: var(--space-4);">
-                            <label style="display:block; font-size: var(--text-sm); margin-bottom: var(--space-2); color: var(--text-secondary);" data-i18n="designImage">صورة التصميم</label>
-                            <input type="file" id="cr-image" accept="image/*" class="form-input" required style="padding: var(--space-2); width: 100%; cursor: pointer;">
-                            <div id="cr-image-preview" style="margin-top: var(--space-4); display:none; text-align:center;">
-                                <img src="" style="max-width:200px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom: var(--space-6);">
-                            <label style="display:block; font-size: var(--text-sm); margin-bottom: var(--space-2); color: var(--text-secondary);" data-i18n="designDetails">تفاصيل القطعة (نوع المعدن، الأحجار، المقاس...)</label>
-                            <textarea id="cr-description" class="form-input" rows="4" required placeholder="اكتب تفاصيل المجوهرات المطلوبة هنا..." style="width: 100%;"></textarea>
-                        </div>
-
-                        <button type="submit" id="cr-submit-btn" class="btn btn-primary btn-lg" style="width:100%;" data-i18n="submitRequest">✦ إرسال الطلب لتحديد السعر</button>
-                    </form>
+                    </div>
                 </div>
+
+                <!-- Right: Form -->
+                <div class="reveal-right">
+                    <div class="glass-card" style="padding: var(--space-8); border-top: 4px solid var(--gold);">
+                        <h3 style="font-size: var(--text-2xl); margin-bottom: var(--space-6);" data-i18n="customRequest">طلب تصميم خاص</h3>
+                        
+                        <form id="custom-request-form">
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4);">
+                                <div>
+                                    <label class="form-label" data-i18n="fullName">الاسم بالكامل</label>
+                                    <input type="text" id="cr-name" class="form-input" required placeholder="اسمك الثنائي">
+                                </div>
+                                <div>
+                                    <label class="form-label" data-i18n="phoneNumber">رقم الواتساب</label>
+                                    <input type="tel" id="cr-contact" class="form-input" required placeholder="01xxxxxxxxx">
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: var(--space-5);">
+                                <label class="form-label" data-i18n="designImage">ارفع صورة التصميم</label>
+                                <div class="try-on-area" onclick="document.getElementById('cr-image').click()">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--gold);">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                    <span style="font-size: var(--text-sm); color: var(--text-secondary);" data-i18n="pressToUpload">اضغط لرفع الصورة أو اسحبها هنا</span>
+                                    <input type="file" id="cr-image" accept="image/*" style="display:none;" required>
+                                </div>
+                                <div id="cr-image-preview" style="margin-top: var(--space-4); display:none; position: relative;">
+                                    <img src="" style="width:100%; height:200px; object-fit:cover; border-radius: var(--radius-md); border: 1px solid var(--gold);">
+                                    <button type="button" onclick="document.getElementById('cr-image').value=''; document.getElementById('cr-image-preview').style.display='none';" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.6); color:white; border:none; width:30px; height:30px; border-radius:50%; cursor:pointer;">✕</button>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: var(--space-6);">
+                                <label class="form-label" data-i18n="designDetails">تفاصيل إضافية</label>
+                                <textarea id="cr-description" class="form-input" rows="4" placeholder="مثلاً: أريدها فضة او مطلية ذهب، مقاس 18، مع كتابة اسم 'سارة'طلاء ..."></textarea>
+                            </div>
+
+                            <button type="submit" id="cr-submit-btn" class="btn btn-primary btn-lg" style="width:100%; height: 56px; font-size: var(--text-base);">
+                                <span style="display:flex; align-items:center; justify-content:center; gap:var(--space-2);">
+                                    <span>✦</span> <span data-i18n="submitRequest">إرسال الطلب لتحديد السعر</span>
+                                </span>
+                            </button>
+                            <p style="text-align:center; font-size: 11px; color: var(--text-secondary); margin-top: var(--space-3);" data-i18n="whatsappReply">* سنقوم بالرد عليك عبر الواتساب خلال 24 ساعة عمل.</p>
+                        </form>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
@@ -411,10 +491,12 @@
 
     <script src="js/main.js"></script>
     <script>
+        const API = window.location.origin;
         // Cloudinary Details for client upload
-        // Note: It is better to use signed uploads in production, but unsigned works here
-        const CLOUD_NAME = 'dldw5b65h';
-        const UPLOAD_PRESET = 'aura_unsigned';
+        const CLOUD_NAME = 'dqvvfwwya';
+        const UPLOAD_PRESET = 'aura';
+        const CLOUDINARY_API_KEY = '661364937126525';
+        const CLOUDINARY_API_SECRET = '44_wa1y4N8hCnGFSn31log23WYw';
 
         const crImageInput = document.getElementById('cr-image');
         const crImagePreview = document.getElementById('cr-image-preview');
@@ -458,11 +540,25 @@
 
         async function uploadToCloudinary(file) {
             const compressedFile = await compressImage(file);
+            
+            const timestamp = Math.floor(Date.now() / 1000);
+            const paramString = `timestamp=${timestamp}&upload_preset=${UPLOAD_PRESET}${CLOUDINARY_API_SECRET}`;
+            const buffer = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(paramString));
+            const signature = Array.from(new Uint8Array(buffer))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+
             const formData = new FormData();
             formData.append('file', compressedFile);
+            formData.append('api_key', CLOUDINARY_API_KEY);
+            formData.append('timestamp', timestamp);
             formData.append('upload_preset', UPLOAD_PRESET);
+            formData.append('signature', signature);
+
             const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
-            if (!res.ok) throw new Error('Upload failed');
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error?.message || 'Upload failed');
+            }
             const data = await res.json();
             return data.secure_url;
         }
@@ -490,7 +586,7 @@
                         description: document.getElementById('cr-description').value
                     };
 
-                    const token = localStorage.getItem('auraToken');
+                    const token = localStorage.getItem('aura_token');
                     const headers = { 'Content-Type': 'application/json' };
                     if (token) headers['Authorization'] = 'Bearer ' + token;
 

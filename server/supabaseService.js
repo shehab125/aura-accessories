@@ -223,9 +223,16 @@ async function createOrder(orderData, items) {
   if (orderRow.coupon_code) {
     const { data: coupon } = await supabase.from('coupons').select('id').ilike('code', orderRow.coupon_code).maybeSingle();
     if (coupon) {
-      // Inline useCoupon logic to avoid issues with module.exports order
-      const { data, error } = await supabase.rpc('increment_coupon_usage', { coupon_id: coupon.id }).catch(() => ({}));
-      if (!data && !error) {
+      // Increment usage via RPC or fallback to direct update
+      let success = false;
+      try {
+        const { error: rpcErr } = await supabase.rpc('increment_coupon_usage', { coupon_id: coupon.id });
+        if (!rpcErr) success = true;
+      } catch (err) {
+        console.warn('RPC increment_coupon_usage failed, trying fallback:', err.message);
+      }
+
+      if (!success) {
         const { data: current } = await supabase.from('coupons').select('used_count').eq('id', coupon.id).single();
         if (current) {
           await supabase.from('coupons').update({ used_count: (current.used_count || 0) + 1 }).eq('id', coupon.id);
@@ -415,9 +422,15 @@ async function deleteCoupon(id) {
 }
 
 async function useCoupon(id) {
-  const { data, error } = await supabase.rpc('increment_coupon_usage', { coupon_id: id }).catch(() => ({}));
-  // Fallback: manual increment
-  if (!data && !error) {
+  let success = false;
+  try {
+    const { error } = await supabase.rpc('increment_coupon_usage', { coupon_id: id });
+    if (!error) success = true;
+  } catch (err) {
+    console.warn('useCoupon RPC failed:', err.message);
+  }
+
+  if (!success) {
     const { data: current } = await supabase.from('coupons').select('used_count').eq('id', id).single();
     await supabase.from('coupons').update({ used_count: (current?.used_count || 0) + 1 }).eq('id', id);
   }
