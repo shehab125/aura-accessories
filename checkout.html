@@ -440,8 +440,22 @@
                 });
                 const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(data.error || (document.documentElement.lang === 'ar' ? 'فشل إنشاء الطلب' : 'Failed to create order'));
-                localStorage.removeItem('aura_cart');
-                localStorage.removeItem('aura_applied_coupon');
+                 
+                 // Track Purchase event
+                 try {
+                     if (typeof window.trackPixelEvent === 'function') {
+                         window.trackPixelEvent('Purchase', {
+                             value: total,
+                             currency: 'EGP',
+                             items: items
+                         });
+                     }
+                 } catch (e) {
+                     console.error('Pixel Purchase tracking error:', e);
+                 }
+                 
+                 localStorage.removeItem('aura_cart');
+                 localStorage.removeItem('aura_applied_coupon');
                 if (typeof updateCartBadge === 'function') updateCartBadge();
                 const msg = document.documentElement.lang === 'ar' ? 'تم تأكيد الطلب بنجاح! رقم الطلب: ' + (data.order_number != null ? data.order_number : data.id) : 'Order placed! Order #' + (data.order_number != null ? data.order_number : data.id);
                 if (typeof showToast === 'function') showToast(msg, 'success');
@@ -509,10 +523,31 @@
             btn.disabled = false;
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderCheckoutSummary();
-            document.getElementById('place-order-btn').addEventListener('click', placeOrder);
-            const applyBtn = document.getElementById('apply-coupon-btn');
+         document.addEventListener('DOMContentLoaded', () => {
+             renderCheckoutSummary();
+             document.getElementById('place-order-btn').addEventListener('click', placeOrder);
+             
+             // Track InitiateCheckout event
+             try {
+                 const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+                 const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+                 if (typeof window.trackPixelEvent === 'function') {
+                     window.trackPixelEvent('InitiateCheckout', {
+                         value: subtotal,
+                         currency: 'EGP'
+                     });
+                 } else {
+                     window.AURA_PIXEL_QUEUE = window.AURA_PIXEL_QUEUE || [];
+                     window.AURA_PIXEL_QUEUE.push({
+                         name: 'InitiateCheckout',
+                         data: { value: subtotal, currency: 'EGP' }
+                     });
+                 }
+             } catch (e) {
+                 console.error('Pixel InitiateCheckout tracking error:', e);
+             }
+             
+             const applyBtn = document.getElementById('apply-coupon-btn');
             if (applyBtn) applyBtn.addEventListener('click', applyCoupon);
             const couponInput = document.getElementById('coupon-input');
             if (couponInput) {

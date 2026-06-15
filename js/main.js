@@ -179,6 +179,20 @@ function addToCart(productId, qty = 1, productData = null) {
     });
   }
   saveCart();
+  
+  // Track AddToCart event
+  try {
+    trackPixelEvent('AddToCart', {
+      id: product.id,
+      name: name,
+      price: price,
+      qty: Number(qty),
+      currency: 'EGP'
+    });
+  } catch (e) {
+    console.error('Pixel tracking error (AddToCart):', e);
+  }
+
   showToast('تمت الإضافة للسلة!', 'success');
 }
 
@@ -942,6 +956,18 @@ async function initProductPage() {
   if (!product) product = PRODUCTS[0] || null;
   if (!product) { container.innerHTML = '<p class="text-center" style="padding:4rem;">Product not found.</p>'; return; }
   window.__currentProduct = product;
+
+  // Track ViewContent event
+  try {
+    trackPixelEvent('ViewContent', {
+      id: product.id,
+      name: product.nameAr || product.name_ar || product.name || '',
+      price: product.price_silver || product.price || 0,
+      currency: 'EGP'
+    });
+  } catch (e) {
+    console.error('Pixel tracking error (ViewContent):', e);
+  }
 
   const lang = document.documentElement.lang || 'en';
   const t = translations[lang];
@@ -2052,11 +2078,183 @@ function injectProfileIcon() {
   }
 }
 
+// ==========================================
+// Pixel Integration (Meta & TikTok)
+// ==========================================
+window.AURA_SETTINGS = null;
+window.AURA_PIXEL_QUEUE = window.AURA_PIXEL_QUEUE || [];
+
+function initPixels(settings) {
+  // 1. Meta Pixel
+  if (settings.facebookPixelId && !window.fbq) {
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    
+    fbq('init', settings.facebookPixelId);
+    fbq('track', 'PageView');
+    console.log('✦ Meta Pixel Initialized:', settings.facebookPixelId);
+  }
+
+  // 2. TikTok Pixel
+  if (settings.tiktokPixelId && !window.ttq) {
+    !function (w, d, t) {
+      w.TiktokSdkObject = t;
+      var ttq = w[t] = w[t] || [];
+      ttq.methods = ["page", "track", "identify", "instances", "debug", "on", "off", "once", "ready", "alias", "group", "enableCookie", "cleanCookie"];
+      ttq.setAndDefer = function (t, e) {
+        t[e] = function () {
+          t.push([e].concat(Array.prototype.slice.call(arguments, 0)))
+        }
+      };
+      for (var e = 0; e < ttq.methods.length; e++) ttq.setAndDefer(ttq, ttq.methods[e]);
+      ttq.instance = function (t) {
+        for (var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(e, ttq.methods[n]);
+        return e
+      };
+      ttq._i = {};
+      ttq._f = function (t) {
+        return function () {
+          var e = Array.prototype.slice.call(arguments, 0);
+          e.push(t);
+          w[t].push(e)
+        }
+      };
+      ttq.load = function (e, n) {
+        var r = "https://analytics.tiktok.com/i18n/pixel/events.js";
+        w[t]._i = w[t]._i || {};
+        w[t]._i[e] = [];
+        w[t]._i[e]._u = r;
+        w[t]._t = w[t]._t || {};
+        w[t]._t[e] = +new Date;
+        w[t]._o = w[t]._o || {};
+        w[t]._o[e] = n || {};
+        var o = d.createElement("script");
+        o.type = "text/javascript";
+        o.async = !0;
+        o.src = r;
+        var a = d.getElementsByTagName("script")[0];
+        a.parentNode.insertBefore(o, a)
+      };
+    }(window, document, 'ttq');
+
+    ttq.load(settings.tiktokPixelId);
+    ttq.page();
+    console.log('✦ TikTok Pixel Initialized:', settings.tiktokPixelId);
+  }
+}
+
+function trackPixelEvent(name, data = {}) {
+  // If settings not loaded yet, queue the event
+  if (!window.AURA_SETTINGS) {
+    window.AURA_PIXEL_QUEUE = window.AURA_PIXEL_QUEUE || [];
+    window.AURA_PIXEL_QUEUE.push({ name, data });
+    return;
+  }
+
+  // 1. Meta Pixel Event
+  if (window.fbq && window.AURA_SETTINGS.facebookPixelId) {
+    if (name === 'ViewContent') {
+      fbq('track', 'ViewContent', {
+        content_name: data.name,
+        content_ids: [String(data.id)],
+        content_type: 'product',
+        value: Number(data.price),
+        currency: data.currency || 'EGP'
+      });
+    } else if (name === 'AddToCart') {
+      fbq('track', 'AddToCart', {
+        content_name: data.name,
+        content_ids: [String(data.id)],
+        content_type: 'product',
+        value: Number(data.price) * (Number(data.qty) || 1),
+        currency: data.currency || 'EGP'
+      });
+    } else if (name === 'InitiateCheckout') {
+      fbq('track', 'InitiateCheckout', {
+        value: Number(data.value),
+        currency: data.currency || 'EGP'
+      });
+    } else if (name === 'Purchase') {
+      fbq('track', 'Purchase', {
+        value: Number(data.value),
+        currency: data.currency || 'EGP',
+        content_type: 'product',
+        content_ids: data.items ? data.items.map(item => String(item.product_id || item.id)) : []
+      });
+    }
+  }
+
+  // 2. TikTok Pixel Event
+  if (window.ttq && window.AURA_SETTINGS.tiktokPixelId) {
+    if (name === 'ViewContent') {
+      ttq.track('Browse', {
+        contents: [{
+          content_id: String(data.id),
+          content_name: data.name,
+          price: Number(data.price)
+        }],
+        value: Number(data.price),
+        currency: data.currency || 'EGP'
+      });
+    } else if (name === 'AddToCart') {
+      ttq.track('AddToCart', {
+        contents: [{
+          content_id: String(data.id),
+          content_name: data.name,
+          price: Number(data.price),
+          quantity: Number(data.qty) || 1
+        }],
+        value: Number(data.price) * (Number(data.qty) || 1),
+        currency: data.currency || 'EGP'
+      });
+    } else if (name === 'InitiateCheckout') {
+      ttq.track('InitiateCheckout', {
+        value: Number(data.value),
+        currency: data.currency || 'EGP'
+      });
+    } else if (name === 'Purchase') {
+      ttq.track('CompletePayment', {
+        value: Number(data.value),
+        currency: data.currency || 'EGP',
+        contents: data.items ? data.items.map(item => ({
+          content_id: String(item.product_id || item.id),
+          content_name: item.name,
+          price: Number(item.price),
+          quantity: Number(item.qty)
+        })) : []
+      });
+    }
+  }
+}
+
+window.trackPixelEvent = trackPixelEvent;
+
 async function applyHomepageSettings() {
   try {
     const res = await fetch(`${window.location.origin}/api/settings`);
     if (!res.ok) return;
     const s = await res.json();
+    
+    // Store settings globally and initialize Pixels
+    window.AURA_SETTINGS = s;
+    if (s.facebookPixelId || s.tiktokPixelId) {
+      initPixels(s);
+    }
+    
+    // Flush queued pixel events if any
+    if (window.AURA_PIXEL_QUEUE && window.AURA_PIXEL_QUEUE.length > 0) {
+      window.AURA_PIXEL_QUEUE.forEach(event => {
+        trackPixelEvent(event.name, event.data);
+      });
+      window.AURA_PIXEL_QUEUE = [];
+    }
+
     const lang = document.documentElement.lang || 'ar';
     
     // 1. Hero Text
