@@ -8,6 +8,26 @@
 const PRODUCTS = [];
 const BLOG_POSTS = [];
 
+// Load from cache immediately for instant UI render
+try {
+  const cachedProducts = localStorage.getItem('aura_products_cache');
+  if (cachedProducts) {
+    const parsed = JSON.parse(cachedProducts);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      parsed.forEach(p => PRODUCTS.push(p));
+    }
+  }
+  const cachedBlogs = localStorage.getItem('aura_blog_cache');
+  if (cachedBlogs) {
+    const parsed = JSON.parse(cachedBlogs);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      parsed.forEach(p => BLOG_POSTS.push(p));
+    }
+  }
+} catch (e) {
+  console.error('Error loading cached data:', e);
+}
+
 window.optimizeCloudinaryUrl = (url, width = 800) => {
   if (!url || typeof url !== 'string') return url || '';
   if (url.includes('cloudinary.com') && url.includes('/upload/')) {
@@ -595,7 +615,7 @@ function createProductCard(product) {
   const productBadge = product.badge || product.label || null;
 
   return `
-    <div class="product-card reveal" data-product-id="${product.id}" data-gender="${product.gender || ''}" data-category="${product.category || ''}" data-material="${product.material || ''}" data-style="${product.style || ''}" data-price="${product.price || 0}">
+    <div class="product-card reveal" data-product-id="${product.id}" data-gender="${product.gender || ''}" data-category="${product.category || ''}" data-material="${product.material || ''}" data-style="${product.style || ''}" data-price="${product.price || 0}" onclick="if(!event.target.closest('button') && !event.target.closest('a')) window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">
       <div class="product-card-image">
         ${imgHtml}
         ${productBadge ? `<span class="product-card-badge">${productBadge}</span>` : ''}
@@ -1932,6 +1952,11 @@ async function loadProducts() {
       if (Array.isArray(data)) {
         PRODUCTS.length = 0;
         data.forEach(p => PRODUCTS.push(p));
+        try {
+          localStorage.setItem('aura_products_cache', JSON.stringify(PRODUCTS));
+        } catch (e) {
+          console.error('Failed to cache products:', e);
+        }
       }
       return;
     } catch (err) {
@@ -1945,6 +1970,11 @@ async function loadProducts() {
       PRODUCTS.length = 0;
       const data = await res.json();
       data.forEach(p => PRODUCTS.push(p));
+      try {
+        localStorage.setItem('aura_products_cache', JSON.stringify(PRODUCTS));
+      } catch (e) {
+        console.error('Failed to cache products:', e);
+      }
     }
   } catch (e) {
     console.log('Using local products data');
@@ -1959,6 +1989,11 @@ async function loadBlogPosts() {
       if (Array.isArray(data)) {
         BLOG_POSTS.length = 0;
         data.forEach(p => BLOG_POSTS.push(p));
+        try {
+          localStorage.setItem('aura_blog_cache', JSON.stringify(BLOG_POSTS));
+        } catch (e) {
+          console.error('Failed to cache blog posts:', e);
+        }
       }
       return;
     } catch (err) {
@@ -1972,6 +2007,11 @@ async function loadBlogPosts() {
       BLOG_POSTS.length = 0;
       const data = await res.json();
       data.forEach(p => BLOG_POSTS.push(p));
+      try {
+        localStorage.setItem('aura_blog_cache', JSON.stringify(BLOG_POSTS));
+      } catch (e) {
+        console.error('Failed to cache blog posts:', e);
+      }
     }
   } catch (e) {
     console.log('Using local blog data');
@@ -2307,13 +2347,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateWishlistBadge();
   updateAuthUI();
 
-  // Load dynamic data
-  await loadProducts().catch(e => console.error(e));
-  await loadBlogPosts().catch(e => console.error(e));
-  renderAuraFamily();
-  await applyHomepageSettings();
-
-  // Route specific
+  // Route specific - RUN IMMEDIATELY using cached data if available
   const path = window.location.pathname;
   const page = path.split('/').pop() || 'index.html';
   
@@ -2322,6 +2356,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (page === 'account.html' || page === 'account') initAuthPage();
   if (page === 'cart.html' || page === 'cart') renderCartPage();
   if (page === 'index.html' || page === 'index' || page === '' || path === '/') initHomepage();
+
+  // Load dynamic data asynchronously in background
+  loadProducts().then(() => {
+    // Re-render UI once fresh database products are loaded
+    if (page === 'shop.html' || page === 'shop') {
+      if (window.__shopApplyFilters) window.__shopApplyFilters();
+    }
+    if (page === 'index.html' || page === 'index' || page === '' || path === '/') {
+      initHomepage();
+    }
+    if (page === 'product.html' || page === 'product') {
+      initProductPage();
+    }
+  }).catch(e => console.error(e));
+
+  loadBlogPosts().catch(e => console.error(e));
+  renderAuraFamily();
+  applyHomepageSettings().catch(e => console.error(e));
 
   // Safe Loader Removal
   setTimeout(() => {
