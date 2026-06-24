@@ -2144,48 +2144,14 @@ function initPixels(settings) {
   // 2. TikTok Pixel
   if (settings.tiktokPixelId && !window.ttq) {
     !function (w, d, t) {
-      w.TiktokSdkObject = t;
-      var ttq = w[t] = w[t] || [];
-      ttq.methods = ["page", "track", "identify", "instances", "debug", "on", "off", "once", "ready", "alias", "group", "enableCookie", "cleanCookie"];
-      ttq.setAndDefer = function (t, e) {
-        t[e] = function () {
-          t.push([e].concat(Array.prototype.slice.call(arguments, 0)))
-        }
-      };
-      for (var e = 0; e < ttq.methods.length; e++) ttq.setAndDefer(ttq, ttq.methods[e]);
-      ttq.instance = function (t) {
-        for (var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(e, ttq.methods[n]);
-        return e
-      };
-      ttq._i = {};
-      ttq._f = function (t) {
-        return function () {
-          var e = Array.prototype.slice.call(arguments, 0);
-          e.push(t);
-          w[t].push(e)
-        }
-      };
-      ttq.load = function (e, n) {
-        var r = "https://analytics.tiktok.com/i18n/pixel/events.js";
-        w[t]._i = w[t]._i || {};
-        w[t]._i[e] = [];
-        w[t]._i[e]._u = r;
-        w[t]._t = w[t]._t || {};
-        w[t]._t[e] = +new Date;
-        w[t]._o = w[t]._o || {};
-        w[t]._o[e] = n || {};
-        var o = d.createElement("script");
-        o.type = "text/javascript";
-        o.async = !0;
-        o.src = r;
-        var a = d.getElementsByTagName("script")[0];
-        a.parentNode.insertBefore(o, a)
-      };
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+      var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=d.createElement("script")
+      ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=d.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+      
+      ttq.load(settings.tiktokPixelId);
+      ttq.page();
+      console.log('✦ TikTok Pixel Initialized:', settings.tiktokPixelId);
     }(window, document, 'ttq');
-
-    ttq.load(settings.tiktokPixelId);
-    ttq.page();
-    console.log('✦ TikTok Pixel Initialized:', settings.tiktokPixelId);
   }
 }
 
