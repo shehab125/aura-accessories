@@ -58,8 +58,32 @@ async function sendTelegramMessage(text) {
 /**
  * Format and send order notification
  */
-async function sendOrderNotification(order) {
+async function sendOrderNotification(order, items = []) {
     const orderId = order.order_number || (order.id ? order.id.slice(0, 8) : 'N/A');
+    
+    let itemsText = '';
+    if (Array.isArray(items) && items.length > 0) {
+        items.forEach((item, index) => {
+            const itemName = item.name || `منتج ID: ${String(item.product_id || item.id).slice(0, 8)}`;
+            itemsText += `\n📦 <b>المنتج ${index + 1}:</b> ${itemName}\n`;
+            itemsText += `   • <b>الكمية:</b> ${item.qty} | <b>السعر:</b> ${item.price} ج.م\n`;
+            
+            const custVal = item.customization_value || item.customizationValue;
+            if (custVal) {
+                itemsText += `   • <b>التخصيص والطلاء:</b> ${custVal}\n`;
+            }
+            
+            const answers = item.custom_answers || item.customAnswers;
+            if (Array.isArray(answers) && answers.length > 0) {
+                answers.forEach(ans => {
+                    itemsText += `   • <b>${ans.question}:</b> ${ans.answer}\n`;
+                });
+            }
+        });
+    } else {
+        itemsText = '\n⚠️ لا توجد تفاصيل للمنتجات في هذا الإخطار.\n';
+    }
+
     const message = `
 <b>🛍️ طلب أوردر جديد!</b>
 ━━━━━━━━━━━━━
@@ -67,6 +91,10 @@ async function sendOrderNotification(order) {
 <b>العميل:</b> ${order.customer_name || 'غير معروف'}
 <b>التليفون:</b> ${order.customer_phone || 'لا يوجد'}
 <b>العنوان:</b> ${order.address || 'لا يوجد'}
+<b>البريد الإلكتروني:</b> ${order.customer_email || 'لا يوجد'}
+<b>ملاحظات العميل:</b> ${order.notes || 'لا يوجد'}
+━━━━━━━━━━━━━
+<b>📥 تفاصيل المنتجات:</b>${itemsText}
 ━━━━━━━━━━━━━
 <b>الإجمالي:</b> ${order.total || 0} ج.م
 <b>طريقة الدفع:</b> ${order.payment_method === 'cod' ? 'عند الاستلام' : 'أونلاين'}

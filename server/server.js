@@ -224,7 +224,7 @@ app.post('/api/orders', async (req, res) => {
         // Send Telegram Notification
         try {
             console.log('✦ Attempting Telegram notification...');
-            await notificationService.sendOrderNotification(newOrder);
+            await notificationService.sendOrderNotification(newOrder, items || finalOrder.items);
             console.log('✦ Telegram notification sent successfully!');
         } catch (err) {
             console.error('✦ Telegram notify error:', err.message);

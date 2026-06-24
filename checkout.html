@@ -409,15 +409,23 @@
             const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
             const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
             const total = subtotal + shipping - couponDiscountAmount;
-            const items = cart.map(i => ({ 
-                id: i.id, 
-                product_id: i.id, 
-                name: i.name,
-                qty: i.qty, 
-                price: i.price,
-                customization_value: i.customizationValue || null,
-                custom_answers: i.customAnswers || null
-            }));
+            const items = cart.map(i => {
+                let custVal = i.customizationValue || '';
+                if (i.material) {
+                    custVal = custVal 
+                        ? `${custVal} (الطلاء: ${i.material})` 
+                        : `(الطلاء: ${i.material})`;
+                }
+                return {
+                    id: i.id, 
+                    product_id: i.id, 
+                    name: i.name,
+                    qty: i.qty, 
+                    price: i.price,
+                    customization_value: custVal || null,
+                    custom_answers: i.customAnswers || null
+                };
+            });
             const btn = document.getElementById('place-order-btn');
             btn.disabled = true;
             btn.textContent = document.documentElement.lang === 'ar' ? 'جاري التأكيد...' : 'Placing...';
