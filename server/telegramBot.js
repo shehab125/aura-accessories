@@ -114,9 +114,15 @@ async function handleUpdate(update) {
   const chatId = update.message.chat.id.toString();
   const messageId = update.message.message_id;
 
-  // Security check: Only listen to messages from the configured admin chat ID
-  if (TELEGRAM_CHAT_ID && chatId !== TELEGRAM_CHAT_ID.toString()) {
+  // Security check: Only listen to messages from the configured admin chat ID(s)
+  const allowedChats = TELEGRAM_CHAT_ID ? TELEGRAM_CHAT_ID.split(',').map(id => id.trim()) : [];
+  if (allowedChats.length > 0 && !allowedChats.includes(chatId)) {
     console.log(`✦ Telegram Bot: Ignored message from unauthorized chat: ${chatId}`);
+    
+    // Only reply in private chats to avoid spamming groups
+    if (update.message.chat.type === 'private') {
+      sendReply(chatId, `❌ <b>غير مصرح باستخدام هذا البوت.</b>\n\nمعرف الشات الخاص بك هو: <code>${chatId}</code>\nيرجى إضافته إلى قائمة المعرفات المسموحة في إعدادات البيئة (TELEGRAM_CHAT_ID) لتفعيل البوت.`);
+    }
     return;
   }
 
