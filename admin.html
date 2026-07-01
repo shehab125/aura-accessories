@@ -823,6 +823,11 @@
         // Products
         async function loadProducts() {
             try {
+                // Fetch settings to know which products are pinned
+                const settingsRes = await fetch(`${API}/api/settings/admin`, { headers: getHeaders() });
+                const settings = await settingsRes.json();
+                const pinnedProductIds = settings.pinnedProductIds || [];
+
                 const res = await fetch(`${API}/api/products?admin=true`, { headers: getHeaders() });
                 const products = await res.json();
                 window.PRODUCTS_CACHE = products;
@@ -832,10 +837,53 @@
                     return;
                 }
 
-                document.getElementById('products-table').innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>المنتج</th><th>القسم</th><th>السعر</th><th>البادج</th><th>إجراءات</th></tr></thead><tbody>${products.map(p => `<tr><td style="font-size:0.7rem;color:var(--text-secondary);max-width:60px;overflow:hidden;text-overflow:ellipsis;">${String(p.id).slice(0,8)}</td><td>${p.images && p.images.length ? `<img src="${p.images[0]}" style="width:36px;height:36px;object-fit:cover;margin-left:6px;border-radius:4px;vertical-align:middle;">` : ''}<span>${p.nameAr || p.name}</span></td><td>${getLabel(p.category)}</td><td>EGP ${(p.price || 0).toLocaleString()}</td><td>${p.badge || '-'}</td><td><button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')"> تعديل</button> <button class="btn-danger" onclick="deleteProduct('${p.id}')"> حذف</button></td></tr>`).join('')}</tbody></table>`;
+                // Sort: Pinned first, then chronological
+                products.sort((a, b) => {
+                    const aPinned = pinnedProductIds.includes(a.id);
+                    const bPinned = pinnedProductIds.includes(b.id);
+                    if (aPinned && !bPinned) return -1;
+                    if (!aPinned && bPinned) return 1;
+                    return new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt);
+                });
+
+                document.getElementById('products-table').innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>المنتج</th><th>القسم</th><th>السعر</th><th>البادج</th><th>إجراءات</th></tr></thead><tbody>${products.map(p => {
+                    const isPinned = pinnedProductIds.includes(p.id);
+                    return `<tr><td style="font-size:0.7rem;color:var(--text-secondary);max-width:60px;overflow:hidden;text-overflow:ellipsis;">${String(p.id).slice(0,8)}</td><td>${p.images && p.images.length ? `<img src="${p.images[0]}" style="width:36px;height:36px;object-fit:cover;margin-left:6px;border-radius:4px;vertical-align:middle;">` : ''}<span>${p.nameAr || p.name}</span></td><td>${getLabel(p.category)}</td><td>EGP ${(p.price || 0).toLocaleString()}</td><td>${p.badge || '-'}</td><td><button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')"> تعديل</button> <button class="btn btn-outline btn-sm ${isPinned ? 'btn-danger' : ''}" style="margin-right:4px;" onclick="togglePinProduct('${p.id}', ${isPinned})">${isPinned ? '📌 إلغاء التثبيت' : '📌 تثبيت'}</button> <button class="btn-danger" style="margin-right:4px;" onclick="deleteProduct('${p.id}')"> حذف</button></td></tr>`;
+                }).join('')}</tbody></table>`;
             } catch (e) {
                 console.error('Load products error:', e);
                 document.getElementById('products-table').innerHTML = '<p style="padding:20px;text-align:center;color:var(--accent)">خطأ في الاتصال بالخادم.</p>';
+            }
+        }
+
+        async function togglePinProduct(id, isPinned) {
+            try {
+                const res = await fetch(`${API}/api/settings/admin`, { headers: getHeaders() });
+                const settings = await res.json();
+                
+                let pinnedProductIds = settings.pinnedProductIds || [];
+                if (isPinned) {
+                    pinnedProductIds = pinnedProductIds.filter(pid => pid !== id);
+                } else {
+                    pinnedProductIds.push(id);
+                }
+                
+                settings.pinnedProductIds = pinnedProductIds;
+                
+                const saveRes = await fetch(`${API}/api/settings`, {
+                    method: 'PUT',
+                    headers: getHeaders(),
+                    body: JSON.stringify(settings)
+                });
+                
+                if (saveRes.ok) {
+                    loadProducts();
+                } else {
+                    alert('فشل حفظ إعداد التثبيت');
+                }
+            } catch (e) {
+                console.error('Toggle pin error:', e);
+                alert('حدث خطأ أثناء تعديل حالة التثبيت');
             }
         }
 

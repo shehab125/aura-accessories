@@ -1947,6 +1947,17 @@ async function loadProducts() {
   // Wait for Supabase to be ready
   if (window.__supabasePromise) await window.__supabasePromise;
 
+  let pinnedProductIds = [];
+  try {
+    const res = await fetch(`${API_BASE}/api/settings`);
+    if (res.ok) {
+      const settings = await res.json();
+      pinnedProductIds = settings.pinnedProductIds || [];
+    }
+  } catch (e) {
+    console.error('Failed to load settings in loadProducts:', e);
+  }
+
   // If Supabase client is available, load products from the database.
   if (typeof window !== 'undefined' && window.fetchProductsFromDb) {
     try {
@@ -1955,6 +1966,16 @@ async function loadProducts() {
       if (Array.isArray(data)) {
         PRODUCTS.length = 0;
         data.forEach(p => PRODUCTS.push(p));
+        
+        // Sort products: pinned first, then chronological
+        PRODUCTS.sort((a, b) => {
+          const aPinned = pinnedProductIds.includes(a.id);
+          const bPinned = pinnedProductIds.includes(b.id);
+          if (aPinned && !bPinned) return -1;
+          if (!aPinned && bPinned) return 1;
+          return new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt);
+        });
+
         try {
           localStorage.setItem('aura_products_cache', JSON.stringify(PRODUCTS));
         } catch (e) {
@@ -1973,6 +1994,16 @@ async function loadProducts() {
       PRODUCTS.length = 0;
       const data = await res.json();
       data.forEach(p => PRODUCTS.push(p));
+      
+      // Sort products: pinned first, then chronological
+      PRODUCTS.sort((a, b) => {
+        const aPinned = pinnedProductIds.includes(a.id);
+        const bPinned = pinnedProductIds.includes(b.id);
+        if (aPinned && !bPinned) return -1;
+        if (!aPinned && bPinned) return 1;
+        return new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt);
+      });
+
       try {
         localStorage.setItem('aura_products_cache', JSON.stringify(PRODUCTS));
       } catch (e) {
