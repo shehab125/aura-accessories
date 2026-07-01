@@ -138,7 +138,10 @@ function addToCart(productId, qty = 1, productData = null) {
   if (!product) return;
 
   const id = product.id;
-  const name = product.name || product.name_ar || product.nameAr;
+  const lang = document.documentElement.lang || 'ar';
+  const name = lang === 'ar'
+    ? (product.nameAr || product.name_ar || product.name || '')
+    : (product.name || product.name_ar || product.nameAr || '');
   
   // Requirement: Use price based on selected material variant
   const matEl = document.querySelector('.material-option.active');

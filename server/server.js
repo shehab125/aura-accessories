@@ -10,6 +10,7 @@ const path = require('path');
 const notificationService = require('./notificationService');
 const supabaseService = require('./supabaseService');
 const geminiService = require('./geminiService');
+const telegramBot = require('./telegramBot');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -531,6 +532,19 @@ async function initAdmin() {
         console.error('Init admin error:', e);
     }
 }
+
+// ==========================================
+// Telegram Webhook Route
+// ==========================================
+app.post('/api/telegram-webhook', async (req, res) => {
+    try {
+        await telegramBot.handleUpdate(req.body);
+        res.json({ ok: true });
+    } catch (e) {
+        console.error('✦ Webhook handler error:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
 
 // ==========================================
 // Start Server

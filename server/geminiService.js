@@ -79,4 +79,54 @@ async function getChatResponse(prompt, history = []) {
     }
 }
 
-module.exports = { getChatResponse };
+/**
+ * Analyze product image and generate catalog details
+ * @param {Buffer} imageBuffer - The image data buffer.
+ * @param {string} mimeType - The mime type of the image.
+ */
+async function analyzeProductImage(imageBuffer, mimeType = 'image/jpeg') {
+    try {
+        if (!process.env.GEMINI_API_KEY) {
+            throw new Error("GEMINI_API_KEY is not set in environment variables.");
+        }
+
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        const prompt = `
+You are a catalog manager for "Aura Accessories", a premium handcrafted jewelry and accessories brand in Egypt.
+Analyze this product image.
+Generate a JSON response with the following fields:
+- nameAr: An elegant, short Arabic product name (max 4-5 words, e.g. "سلسلة فضية بفص كريستال"). Do not mention price.
+- nameEn: A matching English product name.
+- descriptionAr: An elegant Arabic description highlighting craftsmanship, elegance and beauty (1-2 sentences).
+- descriptionEn: A matching English description.
+- category: The product category. Choose ONLY from: "necklaces", "bracelets", "rings", "earrings", "custom".
+- gender: The target gender. Choose ONLY from: "women", "men", "unisex".
+
+Respond ONLY with a valid JSON object. Do not include markdown code block syntax (like \`\`\`json ... \`\`\`).
+`.trim();
+
+        const result = await model.generateContent([
+            prompt,
+            {
+                inlineData: {
+                    data: imageBuffer.toString("base64"),
+                    mimeType: mimeType
+                }
+            }
+        ]);
+
+        const text = result.response.text().trim();
+        // Remove markdown formatting if the model still outputs it
+        const cleanJsonStr = text.replace(/^```json/, '').replace(/```$/, '').trim();
+        return JSON.parse(cleanJsonStr);
+    } catch (e) {
+        console.error("Gemini Image Analysis Error:", e);
+        throw e;
+    }
+}
+
+module.exports = { 
+    getChatResponse,
+    analyzeProductImage
+};
