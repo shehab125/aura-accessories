@@ -556,11 +556,6 @@ app.post('/api/telegram-webhook', async (req, res) => {
     }
 });
 
-// Temporary endpoint to retrieve chat ID for the admin
-app.get('/api/temp-telegram-id', (req, res) => {
-    res.json({ id: process.env.TELEGRAM_CHAT_ID });
-});
-
 // ==========================================
 // Start Server
 // ==========================================
