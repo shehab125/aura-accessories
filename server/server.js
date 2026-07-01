@@ -21,6 +21,16 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '..')));
 
+// Dynamically register Telegram Webhook using current request host header in Vercel/Production
+app.use((req, res, next) => {
+    const host = req.get('host');
+    const protocol = req.protocol;
+    const isVercel = process.env.VERCEL === '1';
+    const currentSiteUrl = `${isVercel ? 'https' : protocol}://${host}`;
+    telegramBot.registerWebhookIfNeeded(currentSiteUrl);
+    next();
+});
+
 // ==========================================
 // Auth Middleware
 // ==========================================

@@ -251,30 +251,39 @@ function startPolling() {
   poll();
 }
 
-// Check environment to determine mode (Webhook for Vercel/Production, Polling for Local Dev)
-const isProductionOrVercel = process.env.VERCEL === '1' || (process.env.SITE_URL && process.env.SITE_URL.startsWith('https'));
+let webhookRegistered = false;
 
-if (isProductionOrVercel) {
-  if (TELEGRAM_BOT_TOKEN && process.env.SITE_URL) {
-    const webhookUrl = `${process.env.SITE_URL}/api/telegram-webhook`;
-    console.log(`✦ Telegram Bot: Registering Webhook at ${webhookUrl}`);
-    const registerUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook?url=${encodeURIComponent(webhookUrl)}`;
-    https.get(registerUrl, (res) => {
-      let body = '';
-      res.on('data', chunk => body += chunk);
-      res.on('end', () => {
-        console.log('✦ Telegram Bot: Webhook Registration Result:', body);
-      });
-    }).on('error', (err) => {
-      console.error('✦ Telegram Bot: Webhook Registration Error:', err);
+function registerWebhookIfNeeded(siteUrl) {
+  if (webhookRegistered) return;
+  if (!TELEGRAM_BOT_TOKEN) return;
+  
+  // Only register if it's a secure production URL
+  if (!siteUrl.startsWith('https://')) return;
+
+  webhookRegistered = true; // Mark as true so we don't register repeatedly
+  const webhookUrl = `${siteUrl}/api/telegram-webhook`;
+  console.log(`✦ Telegram Bot: Dynamically registering Webhook at ${webhookUrl}`);
+  
+  const registerUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook?url=${encodeURIComponent(webhookUrl)}`;
+  https.get(registerUrl, (res) => {
+    let body = '';
+    res.on('data', chunk => body += chunk);
+    res.on('end', () => {
+      console.log('✦ Telegram Bot: Webhook Registration Result:', body);
     });
-  } else {
-    console.log('✦ Telegram Bot: Webhook mode active but SITE_URL or BOT_TOKEN is missing.');
-  }
-} else {
+  }).on('error', (err) => {
+    console.error('✦ Telegram Bot: Webhook Registration Error:', err);
+    webhookRegistered = false; // Reset on error so we can try again
+  });
+}
+
+// Fallback to polling mode only if NOT running on Vercel/Production
+const isProductionOrVercel = process.env.VERCEL === '1' || (process.env.SITE_URL && process.env.SITE_URL.startsWith('https'));
+if (!isProductionOrVercel) {
   startPolling();
 }
 
 module.exports = {
-  handleUpdate
+  handleUpdate,
+  registerWebhookIfNeeded
 };
