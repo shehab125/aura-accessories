@@ -10,6 +10,9 @@ const supabaseService = require('./supabaseService');
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
+// In-memory cache to store pricing for Telegram albums/media groups
+const mediaGroupPrices = new Map();
+
 // Cloudinary credentials (from admin.html configuration)
 const CLOUDINARY_API_KEY = '661364937126525';
 const CLOUDINARY_API_SECRET = '44_wa1y4N8hCnGFSn31log23WYw';
@@ -140,13 +143,37 @@ async function handleUpdate(update) {
     const fileId = largestPhoto.file_id;
     const caption = update.message.caption || '';
 
-    // Extract price (any sequence of numbers)
+    // Extract price (any sequence of numbers), supporting media groups/albums
+    let price = null;
+    const mediaGroupId = update.message.media_group_id;
+
     const priceMatch = caption.match(/\d+/);
-    if (!priceMatch) {
+    if (priceMatch) {
+      price = Number(priceMatch[0]);
+      if (mediaGroupId) {
+        mediaGroupPrices.set(mediaGroupId, price);
+        // Clean up cache entry after 1 minute to avoid memory leaks
+        setTimeout(() => mediaGroupPrices.delete(mediaGroupId), 60000);
+      }
+    } else if (mediaGroupId) {
+      // If it's part of an album, wait up to 2.5 seconds for the caption update to populate the price map
+      if (mediaGroupPrices.has(mediaGroupId)) {
+        price = mediaGroupPrices.get(mediaGroupId);
+      } else {
+        for (let i = 0; i < 25; i++) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          if (mediaGroupPrices.has(mediaGroupId)) {
+            price = mediaGroupPrices.get(mediaGroupId);
+            break;
+          }
+        }
+      }
+    }
+
+    if (!price) {
       sendReply(chatId, '⚠️ <b>تنبيه:</b> لم أستطع العثور على السعر في الرسالة. يرجى إرسال الصورة وكتابة السعر كرقم في وصف الصورة (مثال: 250).', messageId);
       return;
     }
-    const price = Number(priceMatch[0]);
 
     sendReply(chatId, '⏳ جاري معالجة الصورة بالذكاء الاصطناعي ورفعها للموقع...', messageId);
 
