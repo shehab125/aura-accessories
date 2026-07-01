@@ -79,20 +79,27 @@ async function getChatResponse(prompt, history = []) {
     }
 }
 
-/**
- * Analyze product image and generate catalog details
- * @param {Buffer} imageBuffer - The image data buffer.
- * @param {string} mimeType - The mime type of the image.
- */
 async function analyzeProductImage(imageBuffer, mimeType = 'image/jpeg') {
-    try {
-        if (!process.env.GEMINI_API_KEY) {
-            throw new Error("GEMINI_API_KEY is not set in environment variables.");
-        }
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY is not set in environment variables.");
+    }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const modelsToTry = [
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-pro",
+        "gemini-1.5-pro-latest",
+        "gemini-2.5-flash"
+    ];
 
-        const prompt = `
+    let lastError = null;
+
+    for (const modelName of modelsToTry) {
+        try {
+            console.log(`✦ Gemini: Trying model "${modelName}" for image analysis...`);
+            const model = genAI.getGenerativeModel({ model: modelName });
+
+            const prompt = `
 You are a catalog manager for "Aura Accessories", a premium handcrafted jewelry and accessories brand in Egypt.
 Analyze this product image.
 Generate a JSON response with the following fields:
@@ -106,24 +113,27 @@ Generate a JSON response with the following fields:
 Respond ONLY with a valid JSON object. Do not include markdown code block syntax (like \`\`\`json ... \`\`\`).
 `.trim();
 
-        const result = await model.generateContent([
-            prompt,
-            {
-                inlineData: {
-                    data: imageBuffer.toString("base64"),
-                    mimeType: mimeType
+            const result = await model.generateContent([
+                prompt,
+                {
+                    inlineData: {
+                        data: imageBuffer.toString("base64"),
+                        mimeType: mimeType
+                    }
                 }
-            }
-        ]);
+            ]);
 
-        const text = result.response.text().trim();
-        // Remove markdown formatting if the model still outputs it
-        const cleanJsonStr = text.replace(/^```json/, '').replace(/```$/, '').trim();
-        return JSON.parse(cleanJsonStr);
-    } catch (e) {
-        console.error("Gemini Image Analysis Error:", e);
-        throw e;
+            const text = result.response.text().trim();
+            // Remove markdown formatting if the model still outputs it
+            const cleanJsonStr = text.replace(/^```json/, '').replace(/```$/, '').trim();
+            return JSON.parse(cleanJsonStr);
+        } catch (e) {
+            console.warn(`✦ Gemini: Model "${modelName}" failed during vision check:`, e.message);
+            lastError = e;
+        }
     }
+
+    throw new Error(`جميع نماذج الذكاء الاصطناعي فشلت في معالجة الصورة. الخطأ الأخير: ${lastError.message}`);
 }
 
 module.exports = { 
