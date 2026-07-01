@@ -177,13 +177,16 @@ async function handleUpdate(update) {
       // 4. Upload to Cloudinary
       const cloudinaryUrl = await uploadToCloudinary(telegramFileUrl);
 
-      // 5. Create product in Supabase database
+      // 5. Create product in Supabase database with 100 EGP added to the price
+      const originalPrice = price;
+      const finalPrice = price + 100;
+      
       const newProduct = await supabaseService.createProduct({
         name: geminiResult.nameEn || 'New Accessory',
         nameAr: geminiResult.nameAr || 'منتج جديد',
         description: geminiResult.descriptionEn || '',
         descriptionAr: geminiResult.descriptionAr || '',
-        price: price,
+        price: finalPrice,
         gender: geminiResult.gender || 'women',
         category: geminiResult.category || 'necklaces',
         images: [cloudinaryUrl],
@@ -200,7 +203,8 @@ async function handleUpdate(update) {
 ━━━━━━━━━━━━━
 <b>الاسم (عربي):</b> ${newProduct.name_ar}
 <b>الاسم (إنجليزي):</b> ${newProduct.name}
-<b>السعر:</b> ${newProduct.price} ج.م
+<b>السعر الأصلي:</b> ${originalPrice} ج.م
+<b>السعر على الموقع (+100 ج.م):</b> ${newProduct.price} ج.م
 <b>القسم:</b> ${newProduct.category}
 <b>النوع:</b> ${newProduct.gender === 'women' ? 'نسائي' : newProduct.gender === 'men' ? 'رجالي' : 'للجنسين'}
 ━━━━━━━━━━━━━
